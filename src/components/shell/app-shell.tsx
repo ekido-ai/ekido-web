@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BadgeCheck, Blocks, Coins, Gauge, History, Plus, Radio, RotateCcw, Server, ShieldCheck, SlidersHorizontal } from "lucide-react";
+import { History, Radio, RotateCcw, SlidersHorizontal } from "lucide-react";
 import { useDashboard, usePlayerSnapshot, useSourceControl } from "@/lib/events/source-context";
 import { formatClock } from "@/lib/events/describe";
 import { config } from "@/lib/config";
@@ -26,18 +26,6 @@ import { StorageNotice } from "./storage-notice";
 /** Screens that show a job, and so need the live/recorded controls. */
 const DASH_PATHS = ["/dashboard", "/recovery", "/quality", "/settlement", "/verify", "/earnings", "/replay", "/jobs"];
 
-/** Screens in the order the demo walks through them. */
-const nav = [
-  { href: "/dashboard", label: "Mission control", icon: Gauge },
-  { href: "/recovery", label: "Recovery", icon: RotateCcw },
-  { href: "/quality", label: "Quality", icon: ShieldCheck },
-  { href: "/settlement", label: "Settlement", icon: Coins },
-  { href: "/chain", label: "On-chain", icon: Blocks },
-  { href: "/earnings", label: "Earnings", icon: Coins },
-  { href: "/verify", label: "Verify", icon: BadgeCheck },
-  { href: "/provide", label: "Provide compute", icon: Server },
-  { href: "/jobs/new", label: "New job", icon: Plus, off: !config.signedJobs || config.chainId !== 84532 || !config.escrowAddress },
-] as { href: string; label: string; icon: typeof Gauge; off?: boolean }[];
 
 /**
  * Live | Recorded switch. Always visible, so nobody has to find a settings page to know

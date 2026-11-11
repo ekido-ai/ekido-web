@@ -58,22 +58,12 @@ const compare: { group: string; rows: { when: string; today: string; src?: [stri
   },
 ];
 
-const specs = [
-  { k: "Model", v: "DistilBERT + LoRA" },
-  { k: "Dataset", v: "AG News" },
-  { k: "GPU", v: "RTX 3060 Laptop" },
-  { k: "Chain", v: "Local, then Base Sepolia" },
-  { k: "Money", v: "Test USDC" },
-];
 
 
 const d = (ms: number) => ({ "--d": `${ms}ms` }) as React.CSSProperties;
 
 
 
-function Eyebrow({ children }: { children: React.ReactNode }) {
-  return <p className="inline-flex items-center gap-2 rounded-full border border-line-strong bg-surface px-3 py-1 text-xs font-medium text-ink-2 shadow-sm">{children}</p>;
-}
 
 const H2 = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
   <h2 className={`font-serif text-[clamp(2rem,3.6vw,3rem)] leading-[1.05] text-ink ${className}`}>{children}</h2>

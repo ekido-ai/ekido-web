@@ -5,7 +5,6 @@ import Link from "next/link";
 import { Check, Copy, Cpu, Download, Lock, Power, ShieldCheck, Wallet } from "lucide-react";
 import { config } from "@/lib/config";
 import { Panel } from "@/components/ui/panel";
-import { Button } from "@/components/ui/button";
 import { buttonStyles } from "@/components/ui/button-styles";
 import { cx } from "@/components/ui/cx";
 import { ChipScene } from "@/components/gpu/chip-art";
