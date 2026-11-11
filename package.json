@@ -1,0 +1,34 @@
+{
+  "name": "web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "replay:generate": "node replay/generate-sample.mts",
+    "test": "vitest run",
+    "mock": "node replay/mock-coordinator.mts"
+  },
+  "dependencies": {
+    "lucide-react": "1.58.0",
+    "next": "16.4.5",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "viem": "2.57.7"
+  },
+  "devDependencies": {
+    "@tailwindcss/turbopack": "^4",
+    "@types/node": "^24.19.2",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/ws": "8.18.2",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.5",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "vitest": "5.0.5",
+    "ws": "8.22.0"
+  }
+}

@@ -1,0 +1,805 @@
+@import "tailwindcss";
+
+/*
+ * GPUChain design tokens. See docs/design-direction.md.
+ * Color is reserved for meaning: status, provider identity, truth badges. Chrome stays neutral.
+ */
+/*
+ * "Studio" look (matches /welcome): warm paper in light, warm brown in dark.
+ * Light is the default now; dark stays one click away for dim projector rooms.
+ * The accent is brand only (logo, script words). Data colors keep their meaning.
+ */
+:root {
+  color-scheme: dark;
+  --display-font: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --bg: #16120f;
+  --surface: #201b17;
+  --surface-2: #2a241f;
+  --surface-3: #352e28;
+  --border: rgba(241, 230, 220, 0.1);
+  --border-strong: #463d35;
+  --text: #f1e6dc;
+  --text-2: #cbbfb3;
+  --muted: #93877b;
+  --grid: #352e28;
+  --ink-inverse: #16120f;
+  --accent: #ff6a4a;
+  --shadow: 0 10px 40px -18px rgba(0, 0, 0, 0.7);
+
+  /* Status: fixed, never reused for series. Always paired with icon + label. */
+  --good: #0ca30c;
+  --warning: #fab219;
+  --serious: #ec835a;
+  --critical: #d03b3b;
+
+  /* Provider identity (categorical, fixed order; first three validate all-pairs). */
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #9085e9;
+
+  /* Trust: money and on-chain proof. Calm and cool, so it never competes with ember, which means "act". */
+  --trust: #2dd4bf;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f1e6dc;
+  --surface: #fbf6f1;
+  --surface-2: #f5ece4;
+  --surface-3: #e8dacd;
+  --border: rgba(29, 26, 23, 0.12);
+  --border-strong: #d3c3b4;
+  --text: #1d1a17;
+  --text-2: #57504a;
+  --muted: #6b6159;
+  --grid: #e8dacd;
+  --ink-inverse: #ffffff;
+  --accent: #d8381b;
+  --shadow: 0 10px 40px -18px rgba(90, 45, 15, 0.35);
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --series-4: #6250d6;
+}
+
+/*
+ * "Nexora" look (data-style="nexora"): near-black with an ember-orange glow, bold tight
+ * sans headings, crisp white cards in light. Status and provider colors are unchanged.
+ */
+:root[data-style="nexora"] {
+  --display-font: var(--font-display), system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+:root[data-style="nexora"]:not([data-theme="light"]) {
+  /* Deep graphite with a hint of blue: softer on the eyes than black, still dark for projectors. */
+  --bg: #0b0d12;
+  --surface: #11141a;
+  --surface-2: #171b23;
+  --surface-3: #20252f;
+  --border: rgba(255, 255, 255, 0.07);
+  --border-strong: #2a303b;
+  --text: #eceef2;
+  --text-2: #a7adb9;
+  --muted: #747b89;
+  --grid: #1c2029;
+  --ink-inverse: #0b0d12;
+  --accent: #ff7a45;
+  --shadow: 0 24px 60px -36px rgba(0, 0, 0, 0.85);
+
+  --accent-strong: #a3e635;
+  --accent-text: #bef264;
+  --accent-soft: rgba(190, 242, 100, 0.12);
+  --accent-ink: #1a2e05;
+  --action: #eceef2;
+  --action-hover: #ffffff;
+  --action-ink: #0b0d12;
+  --danger: #ef4444;
+  --danger-soft: rgba(239, 68, 68, 0.14);
+  --danger-ink: #fca5a5;
+  --success: #4ade80;
+  --warn: #fbbf24;
+}
+:root[data-style="nexora"][data-theme="light"] {
+  /* Daylight: airy greys, white cards, ink text. Lime is the one accent, used sparingly. */
+  --bg: #f4f5f7;
+  --surface: #ffffff;
+  --surface-2: #f7f8fa;
+  --surface-3: #eceef2;
+  --border: rgba(15, 23, 42, 0.07);
+  --border-strong: #dfe2e8;
+  --text: #0f1729;
+  --text-2: #4b5563;
+  --muted: #8a919e;
+  --grid: #eceef2;
+  --ink-inverse: #ffffff;
+  --accent: #65a30d;
+
+  /* Semantic colours: name the job, not the hue. Components use these, never raw hex. */
+  --accent-strong: #65a30d;
+  --accent-text: #4d7c0f;
+  --accent-soft: #ecfccb;
+  --accent-ink: #1a2e05;
+  --action: #0f1729;
+  --action-hover: #1f2a3d;
+  --action-ink: #ffffff;
+  --danger: #ef4444;
+  --danger-soft: #fef2f2;
+  --danger-ink: #b91c1c;
+  --success: #16a34a;
+  --warn: #f59e0b;
+  --shadow: 0 16px 40px -28px rgba(15, 23, 42, 0.3);
+  --trust: #0f766e;
+}
+:root[data-style="nexora"] .font-serif {
+  font-weight: 650;
+  letter-spacing: -0.025em;
+}
+h1, h2, h3 { font-family: var(--display-font); letter-spacing: -0.015em; }
+/* Active screen: orange underline instead of a filled pill. */
+:root[data-style="nexora"] .nav-link[aria-current="page"] {
+  background: transparent;
+  color: var(--accent);
+  border-radius: 0;
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+:root[data-style="nexora"] .studio-only,
+:root:not([data-style="nexora"]) .nexora-only {
+  display: none;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-ink: var(--text);
+  --color-ink-2: var(--text-2);
+  --color-muted: var(--muted);
+  --color-ink-inverse: var(--ink-inverse);
+  --color-good: var(--good);
+  --color-warning: var(--warning);
+  --color-serious: var(--serious);
+  --color-critical: var(--critical);
+  --color-series-1: var(--series-1);
+  --color-series-2: var(--series-2);
+  --color-series-3: var(--series-3);
+  --color-series-4: var(--series-4);
+  --color-accent: var(--accent);
+  --color-trust: var(--trust);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-text: var(--accent-text);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-ink: var(--accent-ink);
+  --color-action: var(--action);
+  --color-action-hover: var(--action-hover);
+  --color-action-ink: var(--action-ink);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-danger-ink: var(--danger-ink);
+  --color-success: var(--success);
+  --color-warn: var(--warn);
+  /* Self-hosted at build time by next/font (layout.tsx), with system fallbacks. */
+  --font-sans: var(--font-body), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* Display face follows the look (--display-font), so headings switch with data-style. */
+  --font-serif: var(--display-font);
+  --font-script: "Segoe Script", "Bradley Hand", "Snell Roundhand", "Brush Script MT", cursive;
+  --font-mono: var(--font-code), ui-monospace, "SF Mono", "Cascadia Mono", Consolas, monospace;
+}
+
+html {
+  /* Readable on a projector without feeling oversized on a laptop. */
+  font-size: 16px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion="on"]) *,
+  :root:not([data-motion="on"]) *::before,
+  :root:not([data-motion="on"]) *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+:root[data-motion="off"] *,
+:root[data-motion="off"] *::before,
+:root[data-motion="off"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* Two equal groups loop seamlessly; keyboard focus pauses the strip. */
+@keyframes landing-marquee { to { transform: translateX(-50%); } }
+.landing-marquee { animation: landing-marquee 38s linear infinite; }
+.landing-marquee-viewport:focus-visible .landing-marquee { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion="on"]) .landing-marquee { animation: none; }
+  :root:not([data-motion="on"]) .landing-marquee-viewport { overflow-x: auto; }
+}
+:root[data-motion="off"] .landing-marquee { animation: none; }
+:root[data-motion="off"] .landing-marquee-viewport { overflow-x: auto; }
+
+/* Soft lifted card, used by panels and the floating header. */
+.shadow-soft {
+  box-shadow: var(--shadow);
+}
+
+/* Nexora hero band. Boots once on load; then follows the demo phase (hero-demo.tsx).
+ * Fill mode "backwards" so the resting style (and the phase rules below) win after it ends. */
+.nexora-band {
+  transform-origin: center;
+  transition: opacity 0.25s, filter 0.25s;
+  animation: band-boot 1.6s 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+}
+.nexora-band[data-phase="off"] {
+  opacity: 0.05;
+  filter: saturate(0);
+  animation: band-die 0.5s ease-out;
+}
+.nexora-band[data-phase="recovering"] {
+  animation: band-flicker 0.9s steps(1) infinite;
+}
+.nexora-band[data-phase="back"] {
+  animation: band-boot 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+}
+@keyframes band-boot {
+  0% { opacity: 0; transform: scaleX(0.04); }
+  35% { opacity: 1; transform: scaleX(1); }
+  45% { opacity: 0.3; }
+  52% { opacity: 1; }
+  58% { opacity: 0.55; }
+  100% { opacity: 1; transform: scaleX(1); }
+}
+@keyframes band-die {
+  0% { opacity: 1; filter: none; transform: scaleX(1); }
+  20% { opacity: 1; filter: brightness(2); }
+  100% { opacity: 0.05; filter: saturate(0); transform: scaleX(0.96); }
+}
+@keyframes band-flicker {
+  0% { opacity: 0.15; }
+  30% { opacity: 0.6; }
+  45% { opacity: 0.2; }
+  70% { opacity: 0.85; }
+  85% { opacity: 0.3; }
+}
+/* Red shock ring when the plug is pulled. */
+.kill-ring {
+  border: 2px solid rgba(239, 68, 68, 0.9);
+  box-shadow: 0 0 40px rgba(239, 68, 68, 0.6);
+  animation: kill-ring 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+@keyframes kill-ring {
+  from { opacity: 1; transform: translate(-50%, -50%) scale(0.9); }
+  to { opacity: 0; transform: translate(-50%, -50%) scale(1.6); }
+}
+/* A light pulse travelling along the band = data flowing while it trains. */
+.band-stream {
+  animation: band-stream 1.6s linear infinite;
+}
+@keyframes band-stream {
+  from { left: -25%; }
+  to { left: 100%; }
+}
+.orbit {
+  animation: orbit 80s linear infinite;
+}
+@keyframes orbit {
+  to { transform: rotate(360deg); }
+}
+/* Core leans slightly toward the pointer (set by Spotlight via --mx/--my). */
+.core-tilt {
+  transform: perspective(900px) rotateY(calc(var(--mx, 0) * 8deg)) rotateX(calc(var(--my, 0) * -8deg));
+  transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.landing-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* ── Motion ────────────────────────────────────────────────────────────
+ * Short and calm: things arrive, nothing bounces. Every effect ends in the
+ * normal resting state, so reduced motion (above) simply shows that state.
+ */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes line-up {
+  from { transform: translateY(105%); }
+  to { transform: none; }
+}
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+/* Entrance on load. Stagger with style="--d: 200ms". */
+.anim-rise {
+  animation: rise 0.8s var(--d, 0ms) cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.anim-fade {
+  animation: fade 1.2s var(--d, 0ms) ease-out both;
+}
+/* Headline lines slide up from behind a mask. */
+.anim-line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+}
+.anim-line > span {
+  display: block;
+  animation: line-up 0.9s var(--d, 0ms) cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+/* Only elements prepared by the observer start hidden; without JS content remains visible. */
+.reveal.reveal-ready {
+  opacity: 0;
+  transform: translateY(32px);
+  transition:
+    opacity 0.8s cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: var(--d, 0ms);
+}
+.reveal.reveal-ready.is-in {
+  opacity: 1;
+  transform: none;
+}
+/* Product shot: tilted back, settles flat as it scrolls in. */
+.reveal-tilt.reveal-ready {
+  opacity: 0.4;
+  transform: perspective(1600px) rotateX(16deg) scale(0.94);
+  transform-origin: 50% 0;
+  transition:
+    opacity 1.1s cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 1.1s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.reveal-tilt.reveal-ready.is-in {
+  opacity: 1;
+  transform: none;
+}
+/* Press: a quick, small give under the pointer. */
+.press {
+  transition:
+    transform 0.16s cubic-bezier(0.2, 0.7, 0.2, 1),
+    background-color 0.2s,
+    border-color 0.2s,
+    box-shadow 0.2s,
+    color 0.2s;
+}
+.press:hover {
+  transform: translateY(-1px);
+}
+.press:active {
+  transform: translateY(0) scale(0.97);
+  transition-duration: 0.06s;
+}
+.press:disabled,
+.press[aria-disabled="true"] {
+  transform: none;
+}
+.press .nudge {
+  transition: transform 0.2s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.press:hover .nudge {
+  transform: translate(2px, -2px);
+}
+/* Dashboard: each screen settles in when opened. */
+.page-enter {
+  animation: rise 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion="on"]) .reveal.reveal-ready,
+  :root:not([data-motion="on"]) .reveal-tilt.reveal-ready {
+    opacity: 1;
+    transform: none;
+  }
+}
+:root[data-motion="off"] .reveal.reveal-ready,
+:root[data-motion="off"] .reveal-tilt.reveal-ready { opacity: 1; transform: none; }
+
+/* Loading placeholders indicate work without implying a job is running. */
+.loading-shimmer {
+  background: linear-gradient(100deg, var(--surface-2) 25%, var(--surface-3) 45%, var(--surface-2) 65%);
+  background-size: 220% 100%;
+  animation: loading-shimmer 1.8s ease-in-out infinite;
+}
+@keyframes loading-shimmer { to { background-position: -220% 0; } }
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion="on"]) .loading-shimmer { animation: none; background: var(--surface-2); }
+}
+:root[data-motion="off"] .loading-shimmer { animation: none; background: var(--surface-2); }
+
+/* ── Landing interactive bits ─────────────────────────────────────── */
+/* Unverified work: diagonal stripes in the current provider's color (set via `color`). */
+.stripes {
+  background: repeating-linear-gradient(-45deg, currentColor 0 6px, color-mix(in srgb, currentColor 35%, transparent) 6px 12px);
+  opacity: 0.75;
+  animation: stripes-move 0.8s linear infinite;
+  background-size: 17px 17px;
+}
+@keyframes stripes-move {
+  to { background-position: 17px 0; }
+}
+.shake {
+  animation: shake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+@keyframes shake {
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(3px); }
+  30%, 50%, 70% { transform: translateX(-5px); }
+  40%, 60% { transform: translateX(5px); }
+}
+/* Pulsing ring on chart annotations. */
+.note-ping {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: note-ping 1.8s ease-out infinite;
+}
+@keyframes note-ping {
+  from { transform: scale(1); opacity: 0.8; }
+  to { transform: scale(3.2); opacity: 0; }
+}
+/* Hero status card floats gently. */
+.hero-card {
+  animation: card-float 6s ease-in-out infinite;
+}
+@keyframes card-float {
+  50% { transform: translateY(-6px); }
+}
+
+/* ── Dashboard interaction ─────────────────────────────────────────── */
+.toast-in {
+  animation: toast-in 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+.toast-timer {
+  width: 100%;
+  animation: toast-timer linear forwards;
+}
+@keyframes toast-timer {
+  to { width: 0; }
+}
+.replay-bar {
+  animation: rise 0.5s 0.2s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+/* ── GPU chip (components/gpu/gpu-chip.tsx) ───────────────────────────── */
+.gpu-chip { --ember: #ff6a33; --ember-hot: #ffb38a; }
+.gpu-heat { background: radial-gradient(circle, rgba(255, 90, 31, 0.32), rgba(255, 90, 31, 0.08) 45%, transparent 68%); }
+.gpu-pin rect { fill: #6b5a33; opacity: 0.55; }
+.gpu-chip[data-phase="training"] .gpu-pin rect { fill: #b08a3e; opacity: 0.8; }
+.gpu-flow { stroke: var(--ember); stroke-dasharray: 3 9; animation: gpu-flow 1.1s linear infinite; opacity: 0.85; }
+@keyframes gpu-flow { to { stroke-dashoffset: -24; } }
+.gpu-mem rect:first-child { fill: #141414; stroke: #333; transition: fill 0.5s, stroke 0.5s; }
+.gpu-mem .gpu-mem-line { fill: #2a2a2a; }
+.gpu-mem.is-on rect:first-child { fill: #2a130a; stroke: #ff6a33; }
+.gpu-mem.is-on .gpu-mem-line { fill: var(--ember); }
+.gpu-sm { fill: #1e1e1e; stroke: #2b2b2b; stroke-width: 0.6; transition: fill 0.35s; }
+.gpu-sm.is-on { fill: var(--ember); stroke: var(--ember-hot); animation: gpu-sm 1.3s ease-in-out var(--d) infinite alternate; }
+@keyframes gpu-sm { from { opacity: 1; } to { opacity: 0.55; } }
+.gpu-chip[data-phase="idle"] .gpu-sm.is-on { animation-duration: 3s; }
+.gpu-chip[data-phase="suspect"] .gpu-sm.is-on { fill: #fab219; stroke: #fde68a; animation: gpu-stutter 0.5s steps(2) var(--d) infinite; }
+@keyframes gpu-stutter { 50% { opacity: 0.15; } }
+.gpu-chip[data-phase="recovering"] .gpu-sm.is-on { animation: gpu-boot 1.6s ease-out var(--b) both; }
+@keyframes gpu-boot { 0% { fill: #1e1e1e; } 40% { fill: #ffe2cf; } 100% { fill: var(--ember); } }
+.gpu-chip[data-phase="off"] svg { filter: grayscale(1) brightness(0.6); transition: filter 0.4s; }
+.gpu-chip[data-phase="off"] .gpu-die { stroke: #d03b3b; }
+.gpu-chip[data-oc="on"] { --ember: #ff2d55; --ember-hot: #ffd1dc; }
+.gpu-chip[data-oc="on"] .gpu-sm.is-on { animation-duration: 0.25s; }
+.gpu-chip[data-oc="on"] .gpu-flow { animation-duration: 0.3s; }
+@media (prefers-reduced-motion: reduce) {
+  .gpu-flow, .gpu-sm.is-on { animation: none !important; }
+}
+:root[data-motion="off"] .gpu-flow, :root[data-motion="off"] .gpu-sm.is-on { animation: none !important; }
+
+/* Dashboard backdrop: the landing's ember light, faint circuit grid. */
+.app-backdrop {
+  background:
+    radial-gradient(900px 420px at 50% -120px, rgba(255, 90, 31, 0.13), transparent 70%),
+    linear-gradient(var(--bg), var(--bg));
+}
+.app-backdrop::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(to bottom, black, transparent 520px);
+}
+:root[data-theme="light"] .app-backdrop::before {
+  background-image:
+    linear-gradient(rgba(15, 23, 42, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
+}
+.header-ember { box-shadow: 0 1px 0 0 rgba(255, 106, 51, 0.0); background-image: linear-gradient(90deg, transparent, rgba(255, 106, 51, 0.55), transparent); background-size: 100% 1px; background-position: bottom; background-repeat: no-repeat; }
+.chip-boot { animation: chip-boot 1.4s 0.3s cubic-bezier(0.2, 0.7, 0.2, 1) backwards; }
+@keyframes chip-boot { from { opacity: 0; transform: scale(0.9) translateY(14px); filter: brightness(2.2); } }
+@media (prefers-reduced-motion: reduce) { .chip-boot { animation: none; } }
+:root[data-overclock] .gpu-chip { --ember: #ff2d55; --ember-hot: #ffd1dc; }
+:root[data-overclock] .gpu-chip .gpu-sm.is-on { animation-duration: 0.25s; }
+:root[data-overclock] .gpu-chip .gpu-flow { animation-duration: 0.3s; }
+:root[data-overclock] .gpu-heat { background: radial-gradient(circle, rgba(255, 45, 85, 0.4), rgba(255, 45, 85, 0.1) 45%, transparent 68%); }
+
+/* ── Chip illustration and circuit field (components/gpu/chip-art.tsx) ── */
+.circuit-field { mask-image: radial-gradient(closest-side, black 35%, transparent 100%); }
+.cf-dots rect { fill: #24180f; }
+.cf-trace { stroke: #3a2416; stroke-width: 1.6; transition: stroke 0.6s; }
+.circuit-field[data-phase="training"] .cf-trace { stroke: rgba(255, 106, 51, 0.32); }
+.circuit-field[data-phase="off"] .cf-trace { stroke: #2a2a2a; }
+.cf-pulse { stroke: var(--ember); stroke-width: 2.4; stroke-dasharray: 7 93; animation: cf-pulse 2.8s linear infinite; filter: drop-shadow(0 0 3px var(--ember)); }
+@keyframes cf-pulse { from { stroke-dashoffset: 7; } to { stroke-dashoffset: -93; } }
+.circuit-field[data-phase="suspect"] .cf-pulse { stroke: #fab219; animation-duration: 5s; }
+.cf-pad { fill: #1c120b; stroke: #5a3a26; stroke-width: 1.2; }
+.circuit-field[data-phase="training"] .cf-pad { fill: #3a160a; stroke: var(--ember); }
+.chip-glow { background: radial-gradient(circle, rgba(255, 106, 51, 0.5), rgba(255, 90, 31, 0.12) 45%, transparent 70%); filter: blur(10px); transition: opacity 0.6s; }
+.chip-scene[data-phase="off"] .chip-glow { opacity: 0.05; }
+.chip-scene[data-phase="idle"] .chip-glow { opacity: 0.35; }
+.chip-scene[data-phase="recovering"] .chip-glow { opacity: 0.7; }
+.chip-tilt { transform: perspective(900px) rotateX(24deg); filter: drop-shadow(0 22px 26px rgba(0, 0, 0, 0.75)) drop-shadow(0 0 18px rgba(255, 106, 51, 0.35)); }
+.chip-scene[data-phase="off"] .chip-tilt { filter: drop-shadow(0 22px 26px rgba(0, 0, 0, 0.75)); }
+.ca-die-a { stop-color: #ff8a4c; }
+.ca-die-b { stop-color: #a8300a; }
+.gpu-chip[data-phase="idle"] .ca-die-a { stop-color: #7a2e10; }
+.gpu-chip[data-phase="idle"] .ca-die-b { stop-color: #2a0f05; }
+.gpu-chip[data-phase="suspect"] .ca-die-a { stop-color: #f2a516; }
+.gpu-chip[data-phase="suspect"] .ca-die-b { stop-color: #7a4a05; }
+.ca-etch { stroke: rgba(60, 12, 0, 0.45); }
+.chip-art .ca-sm { fill: rgba(70, 18, 4, 0.55); stroke: rgba(255, 200, 160, 0.22); stroke-width: 0.6; }
+.chip-art .gpu-sm.is-on { fill: #ffe1cf; stroke: #fff6ef; filter: drop-shadow(0 0 2.5px #ffb38a); }
+.gpu-chip[data-phase="recovering"] .chip-art .gpu-sm.is-on { animation: ca-boot 1.6s ease-out var(--b) both; }
+@keyframes ca-boot { 0% { fill: rgba(70, 18, 4, 0.55); } 45% { fill: #ffffff; } 100% { fill: #ffe1cf; } }
+.ca-mem { fill: rgba(60, 14, 2, 0.7); }
+.ca-mem.is-on { fill: #fff1e6; }
+.ca-label { font: 700 7.5px ui-monospace, "Cascadia Mono", Consolas, monospace; letter-spacing: 1.6px; fill: rgba(40, 8, 0, 0.7); }
+:root[data-overclock] .ca-die-a { stop-color: #ff4d6d; }
+:root[data-overclock] .ca-die-b { stop-color: #8a0a24; }
+@media (prefers-reduced-motion: reduce) { .cf-pulse { animation: none; opacity: 0; } }
+:root[data-motion="off"] .cf-pulse { animation: none; opacity: 0; }
+
+/* ── Landing: money flow, bento, live network ─────────────────────────── */
+.mf-beam { stroke-dasharray: 14 86; animation: mf-beam 2.6s linear infinite; filter: drop-shadow(0 0 4px currentColor); }
+@keyframes mf-beam { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
+.mf-ping { animation: mf-ping 1.8s ease-out infinite; transform-origin: center; transform-box: fill-box; }
+@keyframes mf-ping { from { opacity: 0.6; transform: scale(0.8); } to { opacity: 0; transform: scale(1.25); } }
+.bento-glow { position: absolute; inset: auto -20% -40% auto; width: 60%; height: 80%; border-radius: 9999px; background: radial-gradient(circle, rgba(190, 242, 100, 0.45), rgba(253, 224, 71, 0.2) 50%, transparent 72%); filter: blur(20px); transition: transform 0.6s; pointer-events: none; }
+.group:hover .bento-glow { transform: translate(-10%, -10%) scale(1.15); }
+.bento-draw { stroke-dasharray: 100; animation: bento-draw 3.2s ease-in-out infinite; }
+@keyframes bento-draw { 0% { stroke-dashoffset: 100; } 60%, 100% { stroke-dashoffset: 0; } }
+.bento-block { animation: bento-block 2.8s ease-in-out infinite; }
+@keyframes bento-block { 0%, 100% { background: var(--n-alt, #eef0f3); } 40% { background: #84cc16; } 60% { background: #d9f99d; } }
+@media (prefers-reduced-motion: reduce) { .mf-beam, .mf-ping, .bento-draw, .bento-block { animation: none; } .bento-draw { stroke-dashoffset: 0; } }
+:root[data-motion="off"] .mf-beam, :root[data-motion="off"] .mf-ping, :root[data-motion="off"] .bento-draw, :root[data-motion="off"] .bento-block { animation: none; }
+/* Blocks placed one by one (components/landing/stagger.tsx). Hidden only once JS has marked it ready. */
+.stagger[data-ready] > * { opacity: 0; transform: translateY(26px) scale(0.965); }
+.stagger[data-in] > * { animation: block-in 0.75s cubic-bezier(0.2, 0.8, 0.2, 1) both; animation-delay: calc(var(--i, 0) * var(--step, 110ms)); }
+@keyframes block-in { from { opacity: 0; transform: translateY(26px) scale(0.965); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .stagger[data-ready] > * { opacity: 1; transform: none; animation: none; } }
+:root[data-motion="off"] .stagger[data-ready] > * { opacity: 1; transform: none; animation: none; }
+
+/* ── Motion system ───────────────────────────────────────────────────── */
+/* Cards you can act on rise a little and warm at the edge; static panels don't move. */
+.lift { transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.25s, box-shadow 0.25s; }
+.lift:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); box-shadow: 0 18px 40px -24px color-mix(in srgb, var(--accent) 55%, transparent); }
+.lift-trust:hover { border-color: color-mix(in srgb, var(--trust) 50%, var(--border)); box-shadow: 0 18px 40px -24px color-mix(in srgb, var(--trust) 55%, transparent); }
+/* Verified money: a slow, calm glow, never a flash. */
+.trust-glow { text-shadow: 0 0 24px color-mix(in srgb, var(--trust) 35%, transparent); }
+/* Success burst (components/motion/celebrate.tsx). */
+.burst { position: absolute; left: 50%; top: 50%; width: 7px; height: 7px; border-radius: 2px; pointer-events: none; animation: burst 0.9s cubic-bezier(0.1, 0.7, 0.3, 1) forwards; }
+@keyframes burst { from { transform: translate(-50%, -50%) rotate(0); opacity: 1; } to { transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) rotate(var(--r)); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .lift:hover { transform: none; } .burst { display: none; } }
+:root[data-motion="off"] .lift:hover { transform: none; }
+:root[data-motion="off"] .burst { display: none; }
+.nav-pop { animation: nav-pop 0.18s cubic-bezier(0.2, 0.8, 0.2, 1); transform-origin: top left; }
+@keyframes nav-pop { from { opacity: 0; transform: translateY(-4px) scale(0.98); } }
+@media (prefers-reduced-motion: reduce) { .nav-pop { animation: none; } }
+
+/* ── Surfaces ────────────────────────────────────────────────────────── */
+/* A card: a faint light edge on top, as if lit from above, and a soft drop. */
+.panel {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 94%, white 6%) 0%, var(--surface) 38%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045), var(--shadow);
+}
+:root[data-theme="light"] .panel { background: var(--surface); box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05), 0 12px 32px -20px rgba(15, 23, 42, 0.18); }
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 60%, #ffc28a));
+  color: #1a0b04;
+  box-shadow: 0 10px 28px -14px var(--accent), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+.btn-primary:hover { filter: brightness(1.08); }
+:root[data-theme="light"] .btn-primary { color: #fff; }
+
+/* Every page's blocks arrive one after another, once, on navigation. */
+.page-enter > * > * { animation: rise 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.page-enter > * > *:nth-child(2) { animation-delay: 60ms; }
+.page-enter > * > *:nth-child(3) { animation-delay: 120ms; }
+.page-enter > * > *:nth-child(4) { animation-delay: 180ms; }
+.page-enter > * > *:nth-child(5) { animation-delay: 240ms; }
+.page-enter > * > *:nth-child(n + 6) { animation-delay: 300ms; }
+@media (prefers-reduced-motion: reduce) { .page-enter > * > * { animation: none; } }
+:root[data-motion="off"] .page-enter > * > * { animation: none; }
+::selection { background: color-mix(in srgb, var(--accent) 35%, transparent); }
+
+/* ── Daylight theme details ──────────────────────────────────────────── */
+:root[data-theme="light"] .btn-primary { background: #0f1729; color: #fff; box-shadow: 0 10px 24px -14px rgba(15, 23, 41, 0.6); }
+:root[data-theme="light"] .btn-primary:hover { background: #1f2a3d; filter: none; }
+/* The single accent: lime to yellow, as a fill, always with dark text on it. */
+.grad-lime { background: linear-gradient(135deg, #bef264 0%, #d9f99d 45%, #fde047 100%); color: #1a2e05; }
+.text-grad-lime { background: linear-gradient(135deg, #65a30d, #ca8a04); -webkit-background-clip: text; background-clip: text; color: transparent; }
+:root[data-theme="light"] .app-backdrop {
+  background:
+    radial-gradient(700px 360px at 8% -80px, rgba(190, 242, 100, 0.28), transparent 70%),
+    radial-gradient(600px 320px at 92% -60px, rgba(253, 224, 71, 0.22), transparent 70%),
+    var(--bg);
+}
+:root[data-theme="light"] .app-backdrop::before { display: none; }
+:root[data-theme="light"] .header-ember { background-image: linear-gradient(90deg, transparent, rgba(132, 204, 22, 0.55), transparent); }
+/* Active screen in daylight: a lime pill, not an underline. */
+:root[data-style="nexora"][data-theme="light"] .nav-link[aria-current="page"] {
+  background: linear-gradient(135deg, #d9f99d, #fef08a);
+  color: #1a2e05;
+  border-radius: 9999px;
+  box-shadow: inset 0 0 0 1px rgba(101, 163, 13, 0.25);
+}
+:root[data-theme="light"] .nav-link { border-radius: 9999px; }
+:root[data-theme="light"] .panel { border-radius: 1.5rem; }
+/* Live demos run on dark glass inside the daylight page, like a product on a stage. */
+.device {
+  background: radial-gradient(120% 90% at 50% 0%, #1a1f2b 0%, #0b0d12 60%);
+  color: #eceef2;
+  border-radius: 2rem;
+  box-shadow: 0 40px 80px -40px rgba(15, 23, 41, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* ── Daylight stage for the GPU chip (light theme only; dark keeps the ember chip) ── */
+:root[data-theme="light"] .stage-light {
+  background: radial-gradient(120% 90% at 50% 0%, #ffffff 0%, #f3f6ee 55%, #e9eee1 100%);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 2rem;
+  box-shadow: 0 40px 80px -48px rgba(15, 23, 41, 0.35), inset 0 1px 0 #ffffff;
+}
+:root[data-theme="light"] .chip-lime { --ember: #65a30d; --ember-hot: #ecfccb; }
+:root[data-theme="light"] .chip-lime .ca-die-a { stop-color: #d9f99d; }
+:root[data-theme="light"] .chip-lime .ca-die-b { stop-color: #65a30d; }
+:root[data-theme="light"] .chip-lime .gpu-chip[data-phase="idle"] .ca-die-a { stop-color: #ecfccb; }
+:root[data-theme="light"] .chip-lime .gpu-chip[data-phase="idle"] .ca-die-b { stop-color: #a3b88a; }
+:root[data-theme="light"] .chip-lime .chip-art .ca-sm { fill: rgba(26, 46, 5, 0.32); stroke: rgba(255, 255, 255, 0.35); }
+:root[data-theme="light"] .chip-lime .chip-art .gpu-sm.is-on { fill: #f7fee7; stroke: #ffffff; filter: drop-shadow(0 0 3px #bef264); }
+:root[data-theme="light"] .chip-lime .ca-etch { stroke: rgba(26, 46, 5, 0.28); }
+:root[data-theme="light"] .chip-lime .ca-label { fill: rgba(26, 46, 5, 0.6); }
+:root[data-theme="light"] .chip-lime .ca-mem { fill: rgba(26, 46, 5, 0.38); }
+:root[data-theme="light"] .chip-lime .ca-mem.is-on { fill: #f7fee7; }
+:root[data-theme="light"] .chip-lime .cf-dots rect { fill: #e1e6da; }
+:root[data-theme="light"] .chip-lime .cf-trace { stroke: #d6dccf; }
+:root[data-theme="light"] .chip-lime .circuit-field[data-phase="training"] .cf-trace { stroke: rgba(101, 163, 13, 0.35); }
+:root[data-theme="light"] .chip-lime .cf-pulse { stroke: #65a30d; filter: drop-shadow(0 0 3px #a3e635); }
+:root[data-theme="light"] .chip-lime .cf-pad { fill: #f7f8f5; stroke: #c9d1bf; }
+:root[data-theme="light"] .chip-lime .circuit-field[data-phase="training"] .cf-pad { fill: #ecfccb; stroke: #65a30d; }
+:root[data-theme="light"] .chip-lime .chip-glow { background: radial-gradient(circle, rgba(190, 242, 100, 0.65), rgba(253, 224, 71, 0.18) 45%, transparent 70%); }
+:root[data-theme="light"] .chip-lime .chip-tilt { filter: drop-shadow(0 24px 28px rgba(15, 23, 41, 0.22)) drop-shadow(0 0 18px rgba(190, 242, 100, 0.55)); }
+
+/* ── Pull the plug: flash, three seconds dark, flicker, boot ─────────── */
+.hero-chip[data-state="off"] .chip-art { animation: power-down 0.9s cubic-bezier(0.3, 0, 0.2, 1) forwards; }
+.hero-chip[data-state="off"] .circuit-field { animation: field-out 0.6s ease-out forwards; }
+.hero-chip[data-state="recovering"] .chip-art { animation: power-on 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+/* A band of light sweeps across the chip; the cores light up behind it. */
+.hero-chip[data-state="recovering"]::after {
+  content: ""; position: absolute; inset: 8% 12%; border-radius: 1.5rem; pointer-events: none;
+  background: linear-gradient(100deg, transparent 0%, rgba(217, 249, 157, 0) 35%, rgba(236, 252, 203, 0.95) 50%, rgba(217, 249, 157, 0) 65%, transparent 100%);
+  background-size: 260% 100%; mix-blend-mode: screen;
+  animation: scan 1.1s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+@keyframes power-on {
+  0% { filter: grayscale(1) brightness(0.55); }
+  45% { filter: grayscale(0.2) brightness(1.18); }
+  100% { filter: none; }
+}
+@keyframes scan { from { background-position: 130% 0; opacity: 1; } 85% { opacity: 1; } to { background-position: -30% 0; opacity: 0; } }
+.hero-chip[data-state="recovering"] .circuit-field { animation: field-in 1.2s ease-out; }
+@keyframes power-down {
+  0% { filter: brightness(1) saturate(1); }
+  10% { filter: brightness(2.6) saturate(1.6); }
+  28% { filter: brightness(0.35) saturate(0.4); }
+  40% { filter: brightness(0.9) saturate(0.6); }
+  100% { filter: grayscale(1) brightness(0.55); }
+}
+@keyframes field-out { to { opacity: 0.25; filter: grayscale(1); } }
+@keyframes field-in { from { opacity: 0.25; } }
+@keyframes stage-shake { 10%, 90% { transform: translateX(-1px); } 20%, 80% { transform: translateX(2px); } 30%, 50%, 70% { transform: translateX(-3px); } 40%, 60% { transform: translateX(3px); } }
+@media (prefers-reduced-motion: reduce) {
+  .hero-chip .chip-art, .hero-chip .circuit-field { animation: none !important; }
+}
+
+/* ── Site-wide motion ────────────────────────────────────────────────── */
+/* Cards rise into place as they scroll into view (components/motion/scroll-animator.tsx). */
+.anim-scroll [data-reveal]:not([data-shown]) { opacity: 0; transform: translateY(22px) scale(0.985); }
+.anim-scroll [data-reveal] { transition: opacity 0.7s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1); transition-delay: var(--reveal-delay, 0ms); }
+/* Slow-drifting colour behind the daylight pages. */
+:root[data-theme="light"] .app-backdrop::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: -1;
+  background:
+    radial-gradient(420px 260px at 20% 10%, rgba(190, 242, 100, 0.22), transparent 70%),
+    radial-gradient(380px 240px at 80% 18%, rgba(253, 224, 71, 0.18), transparent 70%);
+  animation: drift 22s ease-in-out infinite alternate;
+}
+@keyframes drift { to { transform: translate3d(4%, 3%, 0) scale(1.08); } }
+/* A light sweep across the primary button on hover. */
+.btn-primary { position: relative; overflow: hidden; }
+.btn-primary::after { content: ""; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%); transform: translateX(-120%); transition: transform 0.7s ease; }
+.btn-primary:hover::after { transform: translateX(120%); }
+/* The accent word glints now and then. */
+.shimmer-text { background-image: linear-gradient(110deg, #65a30d 0%, #ca8a04 40%, #d9f99d 50%, #ca8a04 60%, #65a30d 100%); background-size: 220% 100%; animation: shimmer 5s ease-in-out infinite; }
+@keyframes shimmer { 0%, 60% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .anim-scroll [data-reveal] { opacity: 1 !important; transform: none !important; transition: none; }
+  .app-backdrop::after, .shimmer-text { animation: none !important; }
+}
+:root[data-motion="off"] .anim-scroll [data-reveal] { opacity: 1 !important; transform: none !important; }
+
+/* ── Centred hero ────────────────────────────────────────────────────── */
+.hero-glow { transform: translate(-50%, -50%); background: radial-gradient(circle, rgba(190, 242, 100, 0.45), rgba(253, 224, 71, 0.16) 45%, transparent 68%); filter: blur(8px); transition: background 0.5s; animation: glow-breathe 4s ease-in-out infinite; }
+.hero-center[data-state="off"] .hero-glow { background: radial-gradient(circle, rgba(239, 68, 68, 0.32), rgba(239, 68, 68, 0.08) 45%, transparent 68%); animation: none; }
+.hero-center[data-state="recovering"] .hero-glow { background: radial-gradient(circle, rgba(245, 158, 11, 0.32), rgba(253, 224, 71, 0.12) 45%, transparent 68%); }
+@keyframes glow-breathe { 0%, 100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.08); } }
+.hero-center[data-state="off"] .hero-chip { animation: stage-shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+@media (prefers-reduced-motion: reduce) { .hero-glow { animation: none; } }
+
+/* ── Token scopes ────────────────────────────────────────────────────── */
+/* The landing's older variable names now come from the one token set. */
+:root {
+  --n-paper: var(--bg); --n-card: var(--surface); --n-alt: var(--surface-2); --n-ink: var(--text);
+  --n-ink-2: var(--text-2); --n-slate: var(--muted); --n-faint: var(--border-strong); --n-line: var(--border);
+  --n-line-2: var(--border-strong); --n-accent: var(--accent-text);
+}
+/* A dark island inside a light page (demo devices). Same tokens, dark values. */
+.theme-dark {
+  color-scheme: dark;
+  --bg: #0b0d12;
+  --surface: #11141a;
+  --surface-2: #171b23;
+  --surface-3: #20252f;
+  --border: rgba(255, 255, 255, 0.07);
+  --border-strong: #2a303b;
+  --text: #eceef2;
+  --text-2: #a7adb9;
+  --muted: #747b89;
+  --grid: #1c2029;
+  --ink-inverse: #0b0d12;
+
+  --accent-strong: #a3e635;
+  --accent-text: #bef264;
+  --accent-soft: rgba(190, 242, 100, 0.12);
+  --accent-ink: #1a2e05;
+  --action: #eceef2;
+  --action-hover: #ffffff;
+  --action-ink: #0b0d12;
+  --danger: #ef4444;
+  --danger-soft: rgba(239, 68, 68, 0.14);
+  --danger-ink: #fca5a5;
+  --success: #4ade80;
+  --warn: #fbbf24;
+  --n-paper: var(--bg); --n-card: var(--surface); --n-alt: var(--surface-2); --n-ink: var(--text);
+  --n-ink-2: var(--text-2); --n-slate: var(--muted); --n-faint: var(--border-strong); --n-line: var(--border);
+  --n-line-2: var(--border-strong); --n-accent: var(--accent-text);
+  color: var(--text);
+}
