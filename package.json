@@ -12,11 +12,11 @@
     "mock": "node replay/mock-coordinator.mts"
   },
   "dependencies": {
-    "lucide-react": "1.58.0",
+    "lucide-react": "1.70.0",
     "next": "16.4.5",
-    "react": "19.3.0",
-    "react-dom": "19.3.0",
-    "viem": "2.57.7"
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "viem": "2.57.16"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",
@@ -28,7 +28,7 @@
     "eslint-config-next": "16.4.5",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "vitest": "5.0.5",
-    "ws": "8.22.0"
+    "vitest": "5.1.0",
+    "ws": "8.22.1"
   }
 }
