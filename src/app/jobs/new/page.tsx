@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FundStep } from "@/components/jobs/fund-step";
 import { PageHeader } from "@/components/shell/page-header";
@@ -9,6 +9,8 @@ import { Panel } from "@/components/ui/panel";
 import { config } from "@/lib/config";
 import { useSourceControl } from "@/lib/events/source-context";
 import { checkRegisteredJob, prepareSignedRequest, type PreparedSignedRequest } from "@/lib/jobs/signed-request";
+import { readJobFile } from "@/lib/jobs/upload";
+import { loadToken, saveToken } from "@/lib/jobs/token-store";
 import { post } from "@/lib/live/api";
 
 export default function NewJobPage() {
@@ -21,6 +23,14 @@ export default function NewJobPage() {
   const [funded, setFunded] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  // Start by itself once the escrow is verified, so uploading the file is all that is left to do.
+  const [autoStart, setAutoStart] = useState(true);
+  const started = useRef(false);
+
+  // The token is kept for this tab only, so it is pasted once per visit.
+  useEffect(() => {
+    setToken(loadToken());
+  }, []);
 
   async function run(action: () => Promise<void>) {
     setBusy(true);
@@ -50,8 +60,29 @@ export default function NewJobPage() {
     const result = await post("/jobs", request.body, "signed-" + request.body.job_id, { token: token.trim() });
     if (!result.ok) throw new Error(result.error);
     checkRegisteredJob(request, result.data);
+    saveToken(token.trim());
     setRegistered(true);
   }
+
+  async function onFile(file: File | undefined) {
+    if (!file) return;
+    await run(async () => {
+      const contents = await readJobFile(file);
+      setText(contents);
+      const request = await prepareSignedRequest(contents, config.chainId, config.escrowAddress);
+      setPrepared(request);
+      started.current = false;
+      // With the token already known in this tab, uploading registers the job too.
+      if (token.trim()) await register(request);
+    });
+  }
+
+  useEffect(() => {
+    if (!autoStart || !funded || !prepared || started.current) return;
+    started.current = true;
+    void run(() => start(prepared));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoStart, funded, prepared]);
 
   async function start(request: PreparedSignedRequest) {
     const id = request.body.job_id;
@@ -90,6 +121,13 @@ export default function NewJobPage() {
               Keep wallet keys in your wallet or on your own machine.
             </p>
             <label className="block text-sm text-ink">
+              Upload the job file
+              <input type="file" accept="application/json,.json" disabled={busy}
+                className="mt-2 block w-full rounded-md border border-line bg-surface-2 p-2 text-sm"
+                onChange={(event) => { void onFile(event.target.files?.[0]); event.target.value = ""; }} />
+            </label>
+            <p className="text-xs text-ink-2">The file is checked here in your browser. Or paste its text below.</p>
+            <label className="block text-sm text-ink">
               Signed job request JSON
               <textarea className="mt-2 block min-h-36 w-full rounded-md border border-line bg-surface-2 p-3 font-mono"
                 value={text} maxLength={250000} disabled={busy} spellCheck={false}
@@ -107,6 +145,7 @@ export default function NewJobPage() {
                   <input type="password" autoComplete="off" className="mt-2 block w-full rounded-md border border-line bg-surface-2 p-2"
                     value={token} disabled={busy} onChange={(event) => setToken(event.target.value)} />
                 </label>
+                <p className="text-xs text-ink-2">Kept in this browser tab only, so you paste it once per visit.</p>
                 <Button disabled={busy || !token.trim()} onClick={() => void run(() => register(prepared))}>Register signed job</Button>
               </div>
             )}
@@ -120,6 +159,10 @@ export default function NewJobPage() {
       )}
       {funded && prepared && (
         <Panel title="3. Start training">
+          <label className="mb-3 flex items-center gap-2 text-sm text-ink">
+            <input type="checkbox" checked={autoStart} onChange={(event) => setAutoStart(event.target.checked)} />
+            Start by itself as soon as the escrow is verified
+          </label>
           <Button disabled={busy} onClick={() => void run(() => start(prepared))}>
             {busy ? "Starting…" : "Start and watch live"}
           </Button>
