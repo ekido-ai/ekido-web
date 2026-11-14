@@ -5,7 +5,10 @@ import Link from "next/link";
 import { parseAbi } from "viem";
 import { BASE_SEPOLIA, chainClients } from "@/lib/chain/read";
 import { usdc } from "@/lib/chain/ledger";
-import { config } from "@/lib/config";
+import { countConnected } from "@/lib/live/providers";
+import { useProviders } from "@/lib/live/use-providers";
+import { ProviderRoster } from "@/components/network/provider-roster";
+import type { RosterRow } from "@/lib/live/providers";
 import { Stagger } from "./stagger";
 
 /** Live numbers from Base Sepolia and the coordinator, read by the visitor's browser once the section is in view. */
@@ -19,13 +22,15 @@ interface Snapshot {
   block: bigint;
   held: bigint;
   owed: bigint;
-  providers: number | null;
 }
 
 export function LiveNetwork() {
   const ref = useRef<HTMLDivElement>(null);
   const [snap, setSnap] = useState<Snapshot | null>(null);
   const [down, setDown] = useState(false);
+  // Providers refresh on their own every 10 s; the chain numbers below refresh every 15 s while this is on screen.
+  const roster = useProviders<RosterRow>();
+  const providers = Array.isArray(roster) ? countConnected(roster) : null;
   const [tick, setTick] = useState(0);
 
   useEffect(() => {
@@ -42,13 +47,8 @@ export function LiveNetwork() {
           reads.readContract({ address: BASE_SEPOLIA.escrow, abi, functionName: "totalLocked" }),
           reads.readContract({ address: BASE_SEPOLIA.escrow, abi, functionName: "totalWithdrawable" }),
         ]);
-        let providers: number | null = null;
-        try {
-          const r = await fetch(`${config.coordinatorUrl}/providers`, { signal: AbortSignal.timeout(5000) });
-          if (r.ok) providers = ((await r.json()) as { status: string }[]).filter((p) => p.status !== "offline").length;
-        } catch {}
         if (!alive) return;
-        setSnap({ block, held, owed: locked + withdrawable, providers });
+        setSnap({ block, held, owed: locked + withdrawable });
         setDown(false);
         setTick((t) => t + 1);
       } catch {
@@ -74,7 +74,7 @@ export function LiveNetwork() {
     { k: "Latest block", v: snap ? `#${snap.block.toLocaleString("en-US")}` : "…", note: "Base Sepolia, read just now" },
     { k: "Held by the escrow", v: snap ? `${usdc(snap.held)} USDC` : "…", note: "Test USDC, on-chain" },
     { k: "Reserves cover", v: coverage === null ? "…" : `${Math.min(coverage, 100)}%`, note: "of everything it owes" },
-    { k: "Providers online", v: snap ? (snap.providers === null ? "–" : String(snap.providers)) : "…", note: "From the coordinator" },
+    { k: "Providers online", v: providers === null ? (roster === "down" ? "–" : "…") : String(providers), note: "From the coordinator" },
   ];
 
   return (
@@ -94,6 +94,9 @@ export function LiveNetwork() {
           </div>
         ))}
       </Stagger>
+      <div className="mt-4 rounded-3xl border border-[var(--n-line)] bg-[var(--n-card)] p-5">
+        <ProviderRoster rows={roster} />
+      </div>
       <p className="mt-3 text-xs text-[var(--n-slate)]">
         {down ? "Couldn't reach Base Sepolia just now. It retries every 15 seconds." : "Your browser reads these straight from the chain every 15 seconds."}{" "}
         <Link href="/chain" className="text-[var(--n-ink-2)] underline underline-offset-4 hover:text-[var(--n-ink)]">Open the full ledger</Link>

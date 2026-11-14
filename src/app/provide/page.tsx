@@ -4,6 +4,9 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Check, Copy, Cpu, Download, Lock, Power, ShieldCheck, Wallet } from "lucide-react";
 import { config } from "@/lib/config";
+import { countConnected } from "@/lib/live/providers";
+import { ProviderRoster } from "@/components/network/provider-roster";
+import { useProviders } from "@/lib/live/use-providers";
 import { Panel } from "@/components/ui/panel";
 import { buttonStyles } from "@/components/ui/button-styles";
 import { cx } from "@/components/ui/cx";
@@ -16,7 +19,7 @@ const MEASURED_3060_STEPS_PER_S = 12;
 const KIT = "/gpuchain-provider-kit.zip";
 
 type Os = "windows" | "unix";
-type Provider = { status: string; price_per_step?: string; name?: string };
+type Provider = { status: string; price_per_step?: string; name?: string; provider_id?: string; kind?: string; capacity_mib?: number | null };
 
 const NAME_OK = /^[a-zA-Z0-9 _.-]{1,60}$/;
 const PRICE_OK = /^(?:0|[1-9]\d*)(?:\.\d{1,6})?$/;
@@ -134,7 +137,8 @@ export default function ProvidePage() {
   const [rate, setRate] = useState(String(MEASURED_3060_STEPS_PER_S));
   const [hours, setHours] = useState(8);
   const [busy, setBusy] = useState(25);
-  const [network, setNetwork] = useState<Provider[] | null | "down">(null);
+  // The network list is kept fresh: it used to be read once, so a provider joining or leaving never showed.
+  const network = useProviders<Provider>();
   const [sha, setSha] = useState<string | null>(null);
   const [kitBytes, setKitBytes] = useState<number | null>(null);
   const [origin, setOrigin] = useState("https://gpuchain.duckdns.org");
@@ -142,10 +146,6 @@ export default function ProvidePage() {
   useEffect(() => {
     setOrigin(window.location.origin);
     if (/Mac|Linux|X11/.test(navigator.userAgent) && !/Windows/.test(navigator.userAgent)) setOs("unix");
-    fetch(`${config.coordinatorUrl}/providers`, { signal: AbortSignal.timeout(6000) })
-      .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
-      .then((rows: Provider[]) => setNetwork(rows))
-      .catch(() => setNetwork("down"));
     fetch("/gpuchain-provider-kit.sha256").then((r) => (r.ok ? r.text() : null)).then((t) => setSha(t?.split(/\s+/)[0] ?? null)).catch(() => {});
     fetch(KIT, { method: "HEAD" }).then((r) => setKitBytes(Number(r.headers.get("content-length")) || null)).catch(() => {});
   }, []);
@@ -182,7 +182,7 @@ export default function ProvidePage() {
   }, [step, hours, busy]);
 
   const rows = Array.isArray(network) ? network : [];
-  const online = rows.filter((p) => p.status !== "offline").length;
+  const online = countConnected(rows);
   const prices = rows.map((p) => Number(p.price_per_step)).filter((n) => n > 0);
   const mid = median(prices);
 
@@ -241,6 +241,11 @@ export default function ProvidePage() {
             <div className="mt-0.5 text-xs text-muted">{note}</div>
           </div>
         ))}
+      </section>
+
+      <section aria-label="Providers on the network" className="space-y-2">
+        <h2 className="text-lg font-semibold text-ink">Who is connected</h2>
+        <ProviderRoster rows={network} />
       </section>
 
       <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
