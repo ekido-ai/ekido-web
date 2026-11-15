@@ -311,7 +311,7 @@ export default function ProvidePage() {
                 </p>
               )}
               <p className="text-sm">
-                The first run creates your key in <code className="font-mono text-xs">~/.gpuchain/provider.key</code> and prints only your address. Never share that file.
+                The first run creates your key in <code className="font-mono text-xs">~/.ekido/provider.key</code> (a key an earlier version made at <code className="font-mono text-xs">~/.gpuchain/provider.key</code> keeps working) and prints only your address. Never share that file.
               </p>
             </Step>
             <Step n={4} title="Get paid">

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Cookie } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const KEY = "gpuchain.notice";
+const KEY = "ekido.notice";
 
 /**
  * An honest storage notice: there are no cookies or trackers, so there's nothing to accept or refuse.
