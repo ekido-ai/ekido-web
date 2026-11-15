@@ -61,7 +61,7 @@ Every screen reads one event source, chosen in `src/lib/events/source-context.ts
 
 ## Design
 
-Light and dark themes come from CSS tokens in `src/app/globals.css`, switched by the theme toggle. Animations are turned off when the system asks for reduced motion (`prefers-reduced-motion` in `globals.css` and the motion components). Status is never shown by color alone: each tone has its own icon and label (`src/components/ui/status.tsx`).
+Light and dark themes come from CSS tokens in `src/app/globals.css`, switched by the theme toggle. Animations always run: `<html data-motion="on">` in `src/app/layout.tsx` overrides the system's reduced-motion setting, by product decision (15 Nov 2026). The reduced-motion rules in `globals.css` and the motion components stay, so setting `data-motion` to `off`, or removing it, brings them back. Status is never shown by color alone: each tone has its own icon and label (`src/components/ui/status.tsx`).
 
 ## Verify
 
@@ -74,6 +74,6 @@ Checked on every page at 360 px wide, in light and dark, with a headless browser
 - No sideways scroll (`.app-backdrop` clips horizontal overflow in `src/app/globals.css`).
 - Body and muted text meet WCAG AA (4.5:1) against the page and panel backgrounds. The muted text colour and the light-theme danger button colour were adjusted for this.
 - Tab reaches every control and each one shows a focus ring (checked over the first 45 tab stops of each page).
-- Reduced motion: with `prefers-reduced-motion` on, no animation keeps running on `/`, `/dashboard` or `/provide`.
+- Reduced motion: not honoured today. Animations run even with `prefers-reduced-motion` on (see Design above). This is a known accessibility gap.
 
 Not covered: text on gradient backgrounds, disabled controls (exempt from the contrast rule), pages with live data (the checks ran without a coordinator), and a screen reader.

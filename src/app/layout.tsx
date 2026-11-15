@@ -22,7 +22,7 @@ const themeScript = `(function(){try{var q=new URLSearchParams(location.search),
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" data-theme="light" data-style="nexora" className={`h-full antialiased ${display.variable} ${body.variable} ${code.variable}`} suppressHydrationWarning>
+    <html lang="en" data-theme="light" data-style="nexora" data-motion="on" className={`h-full antialiased ${display.variable} ${body.variable} ${code.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
