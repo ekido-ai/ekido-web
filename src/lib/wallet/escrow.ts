@@ -91,15 +91,56 @@ export async function inspectFunding(eth: EIP1193Provider, prepared: PreparedSig
   ]);
   if (!isAddressEqual(token, config.usdcAddress)) throw new Error("The escrow uses a different token.");
   const amount = budgetUnits(prepared.body.budget_usdc);
-  if (job.state === 0) return { account, escrow, amount, funded: false };
-  if (!isAddressEqual(job.client, account) || job.specHash !== prepared.specHash ||
+  return { account, escrow, amount, funded: verifyOnchainJob(job, prepared, account, Math.floor(Date.now() / 1000)) };
+}
+
+export interface OnchainJob {
+  client: `0x${string}`;
+  state: number;
+  specHash: string;
+  policyHash: string;
+  budget: bigint;
+  disputeWindow: bigint | number;
+  deadline: bigint;
+}
+
+/**
+ * Whether the escrow already holds this job. false means it does not exist yet (fund it). true means it exists and is
+ * exactly the signed request: same client, spec, policy and budget, a valid dispute window, still in the funding
+ * stage and not past its deadline. Anything else throws, so a different job under the same id is never accepted.
+ */
+export function verifyOnchainJob(job: OnchainJob, prepared: PreparedSignedRequest, client: `0x${string}`, nowSeconds: number): boolean {
+  if (job.state === 0) return false;
+  const amount = budgetUnits(prepared.body.budget_usdc);
+  if (!isAddressEqual(job.client, client) || job.specHash !== prepared.specHash ||
       job.policyHash !== prepared.policyHash || job.budget !== amount ||
       !validDisputeWindow(Number(job.disputeWindow), config.localChain)) {
     throw new Error("The existing on-chain job differs from the signed request.");
   }
   if (job.state !== 1 && job.state !== 2) throw new Error("This job has already left the funding stage. Open it in the dashboard.");
-  if (job.deadline <= BigInt(Math.floor(Date.now() / 1000))) throw new Error("The existing escrow deadline has passed.");
-  return { account, escrow, amount, funded: true };
+  if (job.deadline <= BigInt(nowSeconds)) throw new Error("The existing escrow deadline has passed.");
+  return true;
+}
+
+/**
+ * Reads the escrow with no wallet, to see whether the job is already funded. Funding needs a wallet; checking that it
+ * has been funded does not. The client is the address in the signed request, and every check is the same as with a wallet.
+ */
+export async function inspectFundedEscrow(prepared: PreparedSignedRequest): Promise<boolean> {
+  const escrow = config.escrowAddress;
+  if (!escrow || config.chainId !== chain.id || !validDisputeWindow(config.disputeWindowS, config.localChain)) {
+    throw new Error("The escrow network or dispute window is not configured.");
+  }
+  const client = prepared.body.client_address as `0x${string}`;
+  checkFundingContext(prepared, client, config.chainId, escrow);
+  const pub = createPublicClient({ chain, transport: http(config.rpcUrl) });
+  if ((await pub.getChainId()) !== config.chainId) throw new Error("The escrow RPC is on a different chain.");
+  const [token, job] = await Promise.all([
+    pub.readContract({ address: escrow, abi: escrowAbi, functionName: "token" }),
+    pub.readContract({ address: escrow, abi: escrowAbi, functionName: "getJob", args: [prepared.onchainId] }),
+  ]);
+  if (!isAddressEqual(token, config.usdcAddress)) throw new Error("The escrow uses a different token.");
+  return verifyOnchainJob(job, prepared, client, Math.floor(Date.now() / 1000));
 }
 
 /** Approve exactly the budget (plan.md: "Exact approve per job"). Returns null if already enough. */

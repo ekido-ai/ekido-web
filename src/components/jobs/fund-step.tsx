@@ -13,6 +13,7 @@ import {
   explorerTx,
   friendlyError,
   injectedProvider,
+  inspectFundedEscrow,
   inspectFunding,
   waitForTx,
 } from "@/lib/wallet/escrow";
@@ -55,6 +56,26 @@ export function FundStep({ prepared, onFunded }: { prepared: PreparedSignedReque
   }, []);
 
   const patch = (k: StepKey, s: StepState) => setSteps((all) => ({ ...all, [k]: s }));
+
+  // A job that is already funded needs no wallet: read the escrow and, if it matches the signed request, carry on.
+  // If anything is off, or it is not funded yet, nothing changes and the wallet steps below work as before.
+  useEffect(() => {
+    let alive = true;
+    void inspectFundedEscrow(prepared)
+      .then((funded) => {
+        if (!alive || !funded) return;
+        patch("connect", { status: "done", note: "Not needed: the escrow already holds this job" });
+        patch("network", { status: "done" });
+        patch("approve", { status: "done" });
+        patch("create", { status: "done", note: "Existing escrow verified from the chain" });
+        onFunded();
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [prepared]);
 
   async function run(k: StepKey, fn: () => Promise<StepState | void>) {
     const previousTx = steps[k].tx;
