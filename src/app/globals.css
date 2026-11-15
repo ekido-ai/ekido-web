@@ -80,7 +80,7 @@
   --border-strong: #2a303b;
   --text: #eceef2;
   --text-2: #a7adb9;
-  --muted: #747b89;
+  --muted: #8a91a0;
   --grid: #1c2029;
   --ink-inverse: #0b0d12;
   --accent: #ff7a45;
@@ -109,7 +109,7 @@
   --border-strong: #dfe2e8;
   --text: #0f1729;
   --text-2: #4b5563;
-  --muted: #8a919e;
+  --muted: #5f6673;
   --grid: #eceef2;
   --ink-inverse: #ffffff;
   --accent: #65a30d;
@@ -122,7 +122,7 @@
   --action: #0f1729;
   --action-hover: #1f2a3d;
   --action-ink: #ffffff;
-  --danger: #ef4444;
+  --danger: #dc2626;
   --danger-soft: #fef2f2;
   --danger-ink: #b91c1c;
   --success: #16a34a;
@@ -531,6 +531,8 @@ body {
     linear-gradient(rgba(15, 23, 42, 0.04) 1px, transparent 1px),
     linear-gradient(90deg, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
 }
+/* Nothing may widen the page past the screen, even by a pixel. `clip` (not `hidden`) keeps the sticky header working. */
+.app-backdrop { overflow-x: clip; }
 .header-ember { box-shadow: 0 1px 0 0 rgba(255, 106, 51, 0.0); background-image: linear-gradient(90deg, transparent, rgba(255, 106, 51, 0.55), transparent); background-size: 100% 1px; background-position: bottom; background-repeat: no-repeat; }
 .chip-boot { animation: chip-boot 1.4s 0.3s cubic-bezier(0.2, 0.7, 0.2, 1) backwards; }
 @keyframes chip-boot { from { opacity: 0; transform: scale(0.9) translateY(14px); filter: brightness(2.2); } }
@@ -782,7 +784,7 @@ body {
   --border-strong: #2a303b;
   --text: #eceef2;
   --text-2: #a7adb9;
-  --muted: #747b89;
+  --muted: #8a91a0;
   --grid: #1c2029;
   --ink-inverse: #0b0d12;
 

@@ -7,6 +7,7 @@ import { useDashboard, usePlayerSnapshot, useSourceControl } from "@/lib/events/
 import { formatClock } from "@/lib/events/describe";
 import { config } from "@/lib/config";
 import { TruthBadge } from "@/components/ui/truth-badge";
+import { recordingTruth } from "@/lib/events/truth";
 import { buttonStyles } from "@/components/ui/button-styles";
 import { cx } from "@/components/ui/cx";
 import { ThemeToggle } from "./theme-toggle";
@@ -78,7 +79,7 @@ function SourceBar() {
     main = (
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 panel rounded-2xl border border-line px-4 py-2.5">
         <p className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink">
-          <TruthBadge truth={view.provenance === "sample" ? "SAMPLE" : "RECORDED"} />
+          <TruthBadge truth={recordingTruth(view.provenance) ?? "RECORDED"} />
           <span>
             <b className="font-semibold">You are watching a recording</b> of the 4 Nov run (RTX 3060, local chain). Nothing here is
             happening right now.

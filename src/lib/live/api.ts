@@ -41,7 +41,12 @@ export async function post<T>(
       const msg = data && typeof data === "object" && "detail" in data && typeof data.detail === "string"
         ? data.detail
         : data && typeof data === "object" && "error" in data ? String(data.error) : `HTTP ${res.status}`;
-      return { ok: false, status: res.status, error: `${msg} (POST ${path})` };
+      // The coordinator lists what is wrong with a spec as { error: "INVALID_JOB_SPEC", problems: [...] }.
+      const problems =
+        data && typeof data === "object" && "problems" in data && Array.isArray(data.problems)
+          ? data.problems.filter((x): x is string => typeof x === "string")
+          : [];
+      return { ok: false, status: res.status, error: `${msg}${problems.length ? `: ${problems.join("; ")}` : ""} (POST ${path})` };
     }
     return { ok: true, status: res.status, data: data as T };
   } catch (e) {

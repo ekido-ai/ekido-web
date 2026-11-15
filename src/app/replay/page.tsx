@@ -9,6 +9,7 @@ import { Panel } from "@/components/ui/panel";
 import { StatusPill } from "@/components/ui/status";
 import { Stat } from "@/components/ui/stat";
 import { TruthBadge } from "@/components/ui/truth-badge";
+import { recordingTruth } from "@/lib/events/truth";
 import { EmptyState } from "@/components/ui/states";
 import { PageHeader } from "@/components/shell/page-header";
 import { cx } from "@/components/ui/cx";
@@ -143,7 +144,7 @@ export default function SourcePage() {
       <PageHeader
         title="Data source"
         aside={
-          view.provenance !== "live" ? <TruthBadge truth={view.provenance === "sample" ? "SAMPLE" : "RECORDED"} /> : undefined
+          recordingTruth(view.provenance) ? <TruthBadge truth={recordingTruth(view.provenance)!} /> : undefined
         }
       >
         Every screen reads from one event stream. Replay plays recorded events, so UI work and the demo fallback never
