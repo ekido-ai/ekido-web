@@ -48,11 +48,11 @@ export default function PrivacyPage() {
       <Section id="cookies" title="Cookies and browser storage">
         <p>We set no cookies. Your browser keeps a few small settings, only on your device:</p>
         <ul>
-          <li><code>gpuchain.theme</code>: light or dark.</li>
-          <li><code>gpuchain.source</code>: whether the dashboard shows the live run or the recording.</li>
-          <li><code>gpuchain.session</code>, only if you sign in, and only in that tab: your wallet address and the sign-in message your wallet signed. Signing out or closing the tab removes it.</li>
-          <li><code>gpuchain.provider-progress</code>: which provider setup steps you ticked on the Providers page.</li>
-          <li><code>gpuchain.notice</code>: that you&apos;ve seen the storage notice, so it doesn&apos;t show again.</li>
+          <li><code>ekido.theme</code>: light or dark.</li>
+          <li><code>ekido.source</code>: whether the dashboard shows the live run or the recording.</li>
+          <li><code>ekido.session</code>, only if you sign in, and only in that tab: your wallet address and the sign-in message your wallet signed. Signing out or closing the tab removes it.</li>
+          <li><code>ekido.provider-progress</code>: which provider setup steps you ticked on the Providers page.</li>
+          <li><code>ekido.notice</code>: that you&apos;ve seen the storage notice, so it doesn&apos;t show again.</li>
         </ul>
         <p>Clearing your site data removes them. Nothing breaks without them.</p>
       </Section>

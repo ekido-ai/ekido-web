@@ -9,7 +9,7 @@ import { cx } from "@/components/ui/cx";
  * closer than starting. Ticks stay in this browser only.
  */
 
-const KEY = "gpuchain.provider-progress";
+const KEY = "ekido.provider-progress";
 const STEPS = [
   { id: "price", label: "Chose your GPU and rate", auto: true },
   { id: "kit", label: "Downloaded and checked the kit" },

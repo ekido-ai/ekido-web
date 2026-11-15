@@ -10,7 +10,7 @@ import { baseSepolia } from "viem/chains";
  * that moves money is signed by your wallet again, at that moment, so a stolen session can't spend.
  */
 
-export const SESSION_KEY = "gpuchain.session";
+export const SESSION_KEY = "ekido.session";
 export const SESSION_HOURS = 8;
 const STATEMENT = "Sign in to Ekido. This only proves you control this wallet. It costs nothing and allows no transaction.";
 

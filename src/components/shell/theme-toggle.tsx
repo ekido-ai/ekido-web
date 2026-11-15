@@ -24,7 +24,7 @@ export function ThemeToggle() {
       onClick={() => {
         document.documentElement.setAttribute("data-theme", next);
         try {
-          localStorage.setItem("gpuchain.theme", next);
+          localStorage.setItem("ekido.theme", next);
         } catch {
           /* storage blocked: applies for this visit only */
         }

@@ -38,7 +38,7 @@ interface Ctx {
 }
 
 const SourceContext = createContext<Ctx | null>(null);
-const STORAGE_KEY = "gpuchain.source";
+const STORAGE_KEY = "ekido.source";
 
 function readStoredMode(): SourceMode | null {
   try {

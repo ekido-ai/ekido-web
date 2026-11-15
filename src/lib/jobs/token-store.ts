@@ -2,7 +2,7 @@
  * Keeps the coordinator operator token for the life of this browser tab only (sessionStorage), so it is pasted once
  * per visit instead of once per job. It is never written to localStorage, and it goes away when the tab closes.
  */
-const KEY = "gpuchain.operatorToken";
+const KEY = "ekido.operatorToken";
 
 type Store = Pick<Storage, "getItem" | "setItem" | "removeItem">;
 
