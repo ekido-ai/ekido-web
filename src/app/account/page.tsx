@@ -115,7 +115,7 @@ function SignedIn({ address, expiresAt, demo }: { address: `0x${string}`; expire
     const url = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
     const a = document.createElement("a");
     a.href = url;
-    a.download = `gpuchain-statement-${short(address)}-block-${ledger.block}.csv`;
+    a.download = `ekido-statement-${short(address)}-block-${ledger.block}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   }

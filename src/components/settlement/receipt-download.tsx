@@ -20,7 +20,7 @@ export function ReceiptDownload({ state, source }: { state: DashboardState; sour
   const download = (format: "csv" | "json") => {
     const receipt = buildReceipt(state, new Date().toISOString(), source);
     if (!receipt) return;
-    const base = `gpuchain-receipt-${receipt.job_id ?? "job"}`;
+    const base = `ekido-receipt-${receipt.job_id ?? "job"}`;
     if (format === "csv") save(`${base}.csv`, "text/csv", receiptCsv(receipt));
     else save(`${base}.json`, "application/json", JSON.stringify(receipt, null, 2));
   };

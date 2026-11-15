@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { canonical, compareListings, metadataHash, priceMicros, providerMetadata } from "./registry";
 
-// Same vector as packages/gpuchain_core/tests/test_provider_meta.py.
+// Same vector as packages/ekido_core/tests/test_provider_meta.py.
 const VECTOR_JSON = '{"capacity_mib":8192,"kind":"gpuchain.provider_meta.v1","name":"Vaibhav RTX 4060","price_per_step_micros":4,"wallet":"0x00000000000000000000000000000000000000aa"}';
 const VECTOR_HASH = "0xdcc849bbc2c814ba36af7908f5819b6ce78a178de6fe82a02f0dcce1fc51ef11";
 const W = "0x00000000000000000000000000000000000000AA" as const;

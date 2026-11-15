@@ -12,7 +12,7 @@ import { baseSepolia } from "viem/chains";
 
 export const SESSION_KEY = "gpuchain.session";
 export const SESSION_HOURS = 8;
-const STATEMENT = "Sign in to GPUChain. This only proves you control this wallet. It costs nothing and allows no transaction.";
+const STATEMENT = "Sign in to Ekido. This only proves you control this wallet. It costs nothing and allows no transaction.";
 
 export interface Session {
   address: Address;

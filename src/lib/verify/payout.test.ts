@@ -4,7 +4,7 @@ import { expectedPayouts, lineageOf, lineageRoot, stepsBySigner, type Checkpoint
 const row = (hash: string, parent: string | null, step: number, signer: string): CheckpointRow => ({ manifest_hash: hash, parent_hash: parent, logical_step: step, signer });
 
 describe("lineageRoot", () => {
-  it("matches gpuchain_core.settlement.lineage_root byte for byte", () => {
+  it("matches ekido_core.settlement.lineage_root byte for byte", () => {
     expect(lineageRoot(["a".repeat(64), "b".repeat(64)])).toBe("0x6ad77461090b1815c3fe526647f27e76a16741cda358f04f492ecfd5ca887bd1");
     expect(lineageRoot(["1".repeat(64)])).toBe("0xf329e941dcdeba268c2bb37de9ac6a7db4855fddc715df9c387c724fc7a22553");
   });

@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Help", description: "How to rent out
 
 const faq: { q: string; a: React.ReactNode }[] = [
   {
-    q: "What is GPUChain, in one line?",
+    q: "What is Ekido, in one line?",
     a: "A network where a training job survives its GPU dying, bad results get refused, and an escrow contract pays each provider only for the work that made it into the final model.",
   },
   {
@@ -124,7 +124,7 @@ export default function HelpPage() {
         <ul>
           <li><strong>&quot;Coordinator offline&quot;:</strong> the scheduling server isn&apos;t reachable. Switch to the recorded run from the top bar, or check <Link href="/status">Status</Link>.</li>
           <li><strong>&quot;Chain unreachable&quot;:</strong> the public Base Sepolia RPC is limiting requests. Wait a few seconds and read again.</li>
-          <li><strong>A provider command fails:</strong> it needs Python 3.12 and the GPUChain agent installed. The page shows the exact command for this network.</li>
+          <li><strong>A provider command fails:</strong> it needs Python 3.12 and the Ekido agent installed. The page shows the exact command for this network.</li>
           <li><strong>Keyboard shortcuts:</strong> press <kbd>?</kbd> on the dashboard to see them.</li>
         </ul>
       </Section>

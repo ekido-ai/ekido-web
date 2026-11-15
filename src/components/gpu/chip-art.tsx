@@ -20,7 +20,7 @@ export function ChipArt({
   phase,
   util = null,
   vram = null,
-  label = "GPUCHAIN",
+  label = "EKIDO",
   className,
 }: {
   phase: ChipPhase;

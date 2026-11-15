@@ -39,6 +39,6 @@ export function Contact() {
   return config.contactEmail ? (
     <a href={`mailto:${config.contactEmail}`}>{config.contactEmail}</a>
   ) : (
-    <span>the GPUChain team</span>
+    <span>the Ekido team</span>
   );
 }

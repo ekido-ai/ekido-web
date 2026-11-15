@@ -40,7 +40,7 @@ const WORD = "nvidia-smi";
 const CHIP_ASCII = [
   "   ┌─┬─┬─┬─┬─┬─┐",
   "  ─┤ ▓▓▓▓▓▓▓▓▓ ├─",
-  "  ─┤ ▓ GPU ▓▓▓ ├─   GPUChain",
+  "  ─┤ ▓ GPU ▓▓▓ ├─   Ekido",
   "  ─┤ ▓▓▓▓▓▓▓▓▓ ├─   training that survives a dead GPU",
   "   └─┴─┴─┴─┴─┴─┘",
   "",
@@ -125,7 +125,7 @@ function SmiTerminal({ onClose }: { onClose: () => void }) {
   const text = [
     now.toString().slice(0, 24),
     "+-------------------------------------------------+",
-    "| GPUChain-SMI      readings from the dashboard   |",
+    "| Ekido-SMI      readings from the dashboard   |",
     `| source: ${pad(mode === "replay" ? "recording of the 4 Nov run" : "live coordinator", 39)} |`,
     "+-------------------------------------------------+",
     "| GPU Name                     Provider            |",
@@ -140,7 +140,7 @@ function SmiTerminal({ onClose }: { onClose: () => void }) {
     <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4 backdrop-blur-sm" onClick={onClose}>
       <div role="dialog" aria-label="nvidia-smi" className="w-full max-w-2xl overflow-hidden rounded-xl border border-white/10 bg-[#0a0a0a] shadow-[0_0_80px_rgba(255,106,51,0.25)]" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between border-b border-white/10 px-4 py-2 text-xs text-white/60">
-          <span className="font-mono">user@gpuchain:~$ nvidia-smi</span>
+          <span className="font-mono">user@ekido:~$ nvidia-smi</span>
           <button type="button" onClick={onClose} aria-label="Close terminal" className="rounded p-1 hover:bg-white/10 hover:text-white">
             <X className="size-4" aria-hidden />
           </button>

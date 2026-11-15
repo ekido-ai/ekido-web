@@ -1,4 +1,4 @@
-# GPUChain web app
+# Ekido web app
 
 Next.js 16 + TypeScript + Tailwind 4. The app has the shell, design system and landing page, on top of the data layer: event types, the reducer, derived views, replay, and the adapter that turns real coordinator events into the UI's format. The pages below are all in `main`.
 

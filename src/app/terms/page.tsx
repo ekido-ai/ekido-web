@@ -1,25 +1,25 @@
 import type { Metadata } from "next";
 import { Contact, Doc, Section } from "@/components/legal/doc";
 
-export const metadata: Metadata = { title: "Terms of use", description: "The rules for using the GPUChain prototype, as a client or as a GPU provider." };
+export const metadata: Metadata = { title: "Terms of use", description: "The rules for using the Ekido prototype, as a client or as a GPU provider." };
 
 export default function TermsPage() {
   return (
     <Doc
       title="Terms of use"
       updated="9 November 2026"
-      intro="By using GPUChain you agree to these terms. They're written for a testnet prototype, so read the first section before anything else."
+      intro="By using Ekido you agree to these terms. They're written for a testnet prototype, so read the first section before anything else."
     >
       <Section title="This is a prototype on a test network">
         <ul>
-          <li>GPUChain runs on Base Sepolia, a test network. Its USDC and ETH have <strong>no monetary value</strong>. Never send real funds to any address shown here.</li>
+          <li>Ekido runs on Base Sepolia, a test network. Its USDC and ETH have <strong>no monetary value</strong>. Never send real funds to any address shown here.</li>
           <li>The smart contracts have <strong>not been audited</strong>. They may contain bugs.</li>
           <li>The service can stop, reset or lose data at any time, without notice.</li>
           <li>Nothing here is financial, investment or legal advice.</li>
         </ul>
       </Section>
 
-      <Section title="What GPUChain does and doesn't promise">
+      <Section title="What Ekido does and doesn't promise">
         <p>
           The escrow contract enforces the payout rules written in its code: a job&apos;s budget is split only as a quorum of verifiers signed, and any part not
           earned goes back to the client. The Quality Guard tests results against a policy agreed before the job starts.
@@ -53,7 +53,7 @@ export default function TermsPage() {
 
       <Section title="Liability">
         <p>
-          The prototype is provided as it is, without warranties of any kind. To the extent the law allows, the GPUChain team isn&apos;t liable for losses from using
+          The prototype is provided as it is, without warranties of any kind. To the extent the law allows, the Ekido team isn&apos;t liable for losses from using
           it, including lost data, lost compute time or damage to hardware.
         </p>
       </Section>

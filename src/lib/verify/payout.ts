@@ -2,7 +2,7 @@ import { parseUnits, sha256, stringToHex } from "viem";
 
 /**
  * Lets anyone re-check a payout from public data, without trusting this dashboard's server.
- * Pure and tested against vectors from the Python code in gpuchain_core/settlement.py, which built the signed verdict.
+ * Pure and tested against vectors from the Python code in ekido_core/settlement.py, which built the signed verdict.
  */
 
 export interface CheckpointRow {
@@ -58,7 +58,7 @@ export interface ProviderTerms {
 
 /** What each wallet should receive in USDC base units, by steps times the rate. Stops at the budget, in the same order the coordinator does. */
 /**
- * Same rule as gpuchain_core/protocol_fee.py: providers are capped at budget × 10000 / (10000 + bps), then
+ * Same rule as ekido_core/protocol_fee.py: providers are capped at budget × 10000 / (10000 + bps), then
  * the fee is their total × bps / 10000, both rounded down to whole micro-USDC.
  */
 export function expectedPayouts(

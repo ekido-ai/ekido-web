@@ -16,7 +16,7 @@ export function SiteFooter() {
         <div>
           <Link href="/" className="flex items-center gap-2 text-lg font-bold tracking-tight text-ink">
             <LogoMark />
-            GPUChain
+            Ekido
           </Link>
           <p className="mt-3 max-w-xs text-sm text-ink-2">Training that survives a GPU dying, and money that moves only for accepted work.</p>
         </div>

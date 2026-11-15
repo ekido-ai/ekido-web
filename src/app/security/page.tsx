@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Contact, Doc, Section } from "@/components/legal/doc";
 
-export const metadata: Metadata = { title: "Security", description: "How to report a vulnerability in GPUChain, and the limits we already know about." };
+export const metadata: Metadata = { title: "Security", description: "How to report a vulnerability in Ekido, and the limits we already know about." };
 
 export default function SecurityPage() {
   return (

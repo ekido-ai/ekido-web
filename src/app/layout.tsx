@@ -10,7 +10,7 @@ const body = IBM_Plex_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "
 const code = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-code", display: "swap" });
 
 export const metadata: Metadata = {
-  title: { default: "GPUChain", template: "%s · GPUChain" },
+  title: { default: "Ekido", template: "%s · Ekido" },
   description: "Recover training across GPUs, refuse bad results, pay for accepted work.",
 };
 

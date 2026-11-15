@@ -3,7 +3,7 @@ import type { Hex } from "./ledger";
 
 /**
  * Provider listings committed by the providers' own wallets in ProviderRegistry, compared with what the
- * coordinator publishes. Mirrors packages/gpuchain_core/gpuchain_core/provider_meta.py byte for byte.
+ * coordinator publishes. Mirrors packages/ekido_core/ekido_core/provider_meta.py byte for byte.
  */
 
 export const REGISTRY_EVENTS = parseAbi([

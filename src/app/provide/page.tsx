@@ -16,7 +16,7 @@ import { GPU_CLASSES, PROPOSED_FEE_BPS, clientHourly, perStepPrice, suggestedHou
 
 /** Measured on our RTX 3060 Laptop, full memory: experiments/results/gpu_chain_story_20261105_001829.json (12.0 to 12.3 steps/s). */
 const MEASURED_3060_STEPS_PER_S = 12;
-const KIT = "/gpuchain-provider-kit.zip";
+const KIT = "/ekido-provider-kit.zip";
 
 type Os = "windows" | "unix";
 type Provider = { status: string; price_per_step?: string; name?: string; provider_id?: string; kind?: string; capacity_mib?: number | null };
@@ -146,7 +146,7 @@ export default function ProvidePage() {
   useEffect(() => {
     setOrigin(window.location.origin);
     if (/Mac|Linux|X11/.test(navigator.userAgent) && !/Windows/.test(navigator.userAgent)) setOs("unix");
-    fetch("/gpuchain-provider-kit.sha256").then((r) => (r.ok ? r.text() : null)).then((t) => setSha(t?.split(/\s+/)[0] ?? null)).catch(() => {});
+    fetch("/ekido-provider-kit.sha256").then((r) => (r.ok ? r.text() : null)).then((t) => setSha(t?.split(/\s+/)[0] ?? null)).catch(() => {});
     fetch(KIT, { method: "HEAD" }).then((r) => setKitBytes(Number(r.headers.get("content-length")) || null)).catch(() => {});
   }, []);
 
@@ -171,8 +171,8 @@ export default function ProvidePage() {
   const join = os === "windows" ? `powershell -ExecutionPolicy Bypass -File .\\join.ps1 ${args}` : `./join.sh ${args}`;
   const unzip =
     os === "windows"
-      ? `Invoke-WebRequest ${origin}${KIT} -OutFile gpuchain-provider-kit.zip\nGet-FileHash gpuchain-provider-kit.zip -Algorithm SHA256\nExpand-Archive gpuchain-provider-kit.zip .\ncd gpuchain-provider`
-      : `curl -LO ${origin}${KIT}\nshasum -a 256 gpuchain-provider-kit.zip\nunzip gpuchain-provider-kit.zip && cd gpuchain-provider`;
+      ? `Invoke-WebRequest ${origin}${KIT} -OutFile ekido-provider-kit.zip\nGet-FileHash ekido-provider-kit.zip -Algorithm SHA256\nExpand-Archive ekido-provider-kit.zip .\ncd ekido-provider`
+      : `curl -LO ${origin}${KIT}\nshasum -a 256 ekido-provider-kit.zip\nunzip ekido-provider-kit.zip && cd ekido-provider`;
 
   const est = useMemo(() => {
     if (!step) return null;

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>Ekido</title>
+  <defs><clipPath id="r"><rect width="64" height="64" rx="14"/></clipPath></defs>
+  <g clip-path="url(#r)">
+    <rect width="64" height="64" fill="#1f2a33"/>
+    <path d="M-6 14 L14 -6 L70 50 L50 70 Z" fill="#e8622c"/>
+    <path d="M-6 26 L2 18 L46 62 L38 70 Z" fill="#fbf8f3" opacity=".9"/>
+  </g>
+</svg>
