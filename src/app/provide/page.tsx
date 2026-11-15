@@ -141,7 +141,7 @@ export default function ProvidePage() {
   const network = useProviders<Provider>();
   const [sha, setSha] = useState<string | null>(null);
   const [kitBytes, setKitBytes] = useState<number | null>(null);
-  const [origin, setOrigin] = useState("https://gpuchain.duckdns.org");
+  const [origin, setOrigin] = useState("https://ekido.duckdns.org");
 
   useEffect(() => {
     setOrigin(window.location.origin);
@@ -307,7 +307,7 @@ export default function ProvidePage() {
               ) : (
                 <p className="rounded-lg border border-line bg-surface-2 p-3 text-sm text-ink">
                   This copy of the site runs the local demo network. To join the public test network, open this page on{" "}
-                  <a className="underline underline-offset-4" href="https://gpuchain.duckdns.org/provide">gpuchain.duckdns.org</a>.
+                  <a className="underline underline-offset-4" href="https://ekido.duckdns.org/provide">ekido.duckdns.org</a>.
                 </p>
               )}
               <p className="text-sm">
