@@ -43,7 +43,7 @@ export function LiveGpu({ state, stale }: { state: DashboardState; stale: boolea
         <span className="truncate text-sm text-ink-2">{id ? providerName(state, id) : "No provider yet"}</span>
       </div>
       <button type="button" onClick={chipPoke} aria-label="The GPU, drawn from its readings" className="device stage-light chip-lime relative mx-auto my-3 grid w-full flex-1 cursor-default place-items-center overflow-hidden !rounded-2xl py-6 outline-none focus-visible:ring-2 focus-visible:ring-accent">
-        <ChipScene phase={phase} util={t?.util_pct != null ? t.util_pct / 100 : null} vram={vram} size={150} fieldWidth={290} fieldHeight={250} perSide={6} className="mx-auto" label={p ? p.name.replace(/ \(.*\)$/, "").toUpperCase() : "GPUCHAIN"} />
+        <ChipScene phase={phase} util={t?.util_pct != null ? t.util_pct / 100 : null} vram={vram} size={150} fieldWidth={290} fieldHeight={250} perSide={6} className="mx-auto" label={p ? p.name.replace(/ \(.*\)$/, "").toUpperCase() : "EKIDO"} />
       </button>
       <p className="truncate text-center text-xs text-muted" title={p?.gpu.model}>
         {p ? `${p.gpu.model.replace(/^NVIDIA GeForce /, "")}${p.gpu.cap_mib ? `, capped at ${p.gpu.cap_mib} MiB` : ""}` : "Waiting for a provider"}

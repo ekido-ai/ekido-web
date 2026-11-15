@@ -1,5 +1,5 @@
 /**
- * RFC 8785 canonical JSON and the document hash, matching packages/gpuchain_core/gpuchain_core/canonical.py.
+ * RFC 8785 canonical JSON and the document hash, matching packages/ekido_core/ekido_core/canonical.py.
  * ECMAScript number formatting is what RFC 8785 specifies, so JSON.stringify is correct for numbers.
  */
 export function canonicalJson(value: unknown): string {

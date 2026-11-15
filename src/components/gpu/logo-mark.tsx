@@ -1,6 +1,6 @@
 import { cx } from "@/components/ui/cx";
 
-/** The GPUChain mark: a chip package with an ember die. Same on the landing page and the dashboard. */
+/** The Ekido mark: a chip package with an ember die. Same on the landing page and the dashboard. */
 export function LogoMark({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 32 32" className={cx("size-7 shrink-0", className)} aria-hidden>

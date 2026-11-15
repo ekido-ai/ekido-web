@@ -33,12 +33,12 @@ export function ScrollReveal({ text, className }: { text: string; className?: st
     raf = requestAnimationFrame(update);
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
-    window.addEventListener("gpuchain:motion", onScroll);
+    window.addEventListener("ekido:motion", onScroll);
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
-      window.removeEventListener("gpuchain:motion", onScroll);
+      window.removeEventListener("ekido:motion", onScroll);
     };
   }, [words.length]);
 

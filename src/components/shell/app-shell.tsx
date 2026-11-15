@@ -170,9 +170,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </a>
       <header className="header-ember sticky top-0 z-20 border-b border-line bg-bg/70 backdrop-blur-xl backdrop-saturate-150">
         <div className="mx-auto flex max-w-[1840px] flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2.5 sm:gap-x-5 sm:px-6">
-          <Link href="/" className="flex items-center gap-2 text-lg font-bold tracking-tight text-ink" title="About GPUChain">
+          <Link href="/" className="flex items-center gap-2 text-lg font-bold tracking-tight text-ink" title="About Ekido">
             <LogoMark />
-            GPUChain
+            Ekido
           </Link>
           <NavGroups path={path} />
           <div className="ml-auto flex items-center gap-1 2xl:ml-0">

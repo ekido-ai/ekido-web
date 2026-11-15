@@ -138,7 +138,7 @@ function LedgerView({ ledger }: { ledger: Ledger }) {
     const url = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
     const a = document.createElement("a");
     a.href = url;
-    a.download = `gpuchain-escrow-journal-block-${ledger.block}.csv`;
+    a.download = `ekido-escrow-journal-block-${ledger.block}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   }

@@ -16,7 +16,7 @@ import { buttonStyles } from "@/components/ui/button-styles";
 import { segments, ticker } from "@/lib/landing/run-story";
 
 export const metadata: Metadata = {
-  title: { absolute: "GPUChain · Training that survives failure" },
+  title: { absolute: "Ekido · Training that survives failure" },
   description: "Rent spare GPUs and still trust the result: runs that move when a GPU dies, junk that gets refused, pay only for accepted work.",
 };
 
@@ -50,7 +50,7 @@ const compare: { group: string; rows: { when: string; today: string; src?: [stri
   {
     group: "Paying on a blockchain",
     rows: [
-      { when: "Paid in a token that swings", today: "Many networks pay providers in their own token, which puts off hosts who just want dollars.", src: ["https://aethir.com/blog-posts/aethir-and-maitrix-launch-ausd-stability-for-decentralized-gpu-infrastructure", "Aethir"], ours: "Budgets and payouts are in USDC, a dollar stablecoin. There's no GPUChain token.", proof: ["/chain", "See the ledger"] },
+      { when: "Paid in a token that swings", today: "Many networks pay providers in their own token, which puts off hosts who just want dollars.", src: ["https://aethir.com/blog-posts/aethir-and-maitrix-launch-ausd-stability-for-decentralized-gpu-infrastructure", "Aethir"], ours: "Budgets and payouts are in USDC, a dollar stablecoin. There's no Ekido token.", proof: ["/chain", "See the ledger"] },
       { when: "Rewarded for showing up", today: "Token emissions pay nodes for existing, which invites fake ones.", src: ["https://www.tokenomics.net/guides/depin-tokenomics/", "Tokenomics.net"], ours: "Nothing is minted. Every payout comes out of a client's budget for accepted work, so a fake node earns zero.", proof: ["/chain#reserves", "See where money came from"] },
       { when: "The chain can't see the work", today: "Corrupted renders were returned on one network in 2025, with no on-chain way to catch them.", src: ["https://www.tradingview.com/news/cointelegraph:d08daf58e094b:0-decentralized-compute-has-failed-so-far/", "Cointelegraph"], ours: "A payout needs 2 of 3 verifier signatures over the result and a dispute window. Our team runs the verifiers today.", proof: ["/verify", "Check a payout yourself"] },
       { when: "Is the money really there?", today: "You take the platform's word for balances.", ours: "Proof of reserves, read from the chain by your own browser.", proof: ["/chain", "See it live"] },
@@ -156,7 +156,7 @@ export default function Landing() {
         <Reveal className="grid gap-6 lg:grid-cols-[1fr_1.4fr] lg:items-end">
           <H2>Cheap GPUs are cheap because nobody stands behind them.</H2>
           <p className="text-lg leading-relaxed text-ink-2">
-            A host can vanish an hour in, you pay for the time either way, and nothing tells you if the work is real. Crypto networks added tokens, not answers. Here&apos;s what goes wrong today, with sources, and what GPUChain does instead.
+            A host can vanish an hour in, you pay for the time either way, and nothing tells you if the work is real. Crypto networks added tokens, not answers. Here&apos;s what goes wrong today, with sources, and what Ekido does instead.
           </p>
         </Reveal>
         <div className="mt-12 space-y-10">

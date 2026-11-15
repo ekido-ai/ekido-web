@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import { Contact, Doc, Section } from "@/components/legal/doc";
 
-export const metadata: Metadata = { title: "Privacy", description: "What GPUChain collects, what the blockchain makes public, and what stays in your browser." };
+export const metadata: Metadata = { title: "Privacy", description: "What Ekido collects, what the blockchain makes public, and what stays in your browser." };
 
 export default function PrivacyPage() {
   return (
     <Doc
       title="Privacy"
       updated="9 November 2026"
-      intro="GPUChain is a prototype. We collect as little as we can, but a blockchain is public by design. This page explains both in plain words."
+      intro="Ekido is a prototype. We collect as little as we can, but a blockchain is public by design. This page explains both in plain words."
     >
       <Section title="The short version">
         <ul>
@@ -72,7 +72,7 @@ export default function PrivacyPage() {
       </Section>
 
       <Section title="Children">
-        <p>GPUChain is for developers and isn&apos;t meant for children.</p>
+        <p>Ekido is for developers and isn&apos;t meant for children.</p>
       </Section>
 
       <Section title="Changes">

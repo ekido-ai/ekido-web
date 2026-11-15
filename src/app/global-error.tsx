@@ -9,7 +9,7 @@ export default function GlobalError({ error, retry }: { error: unknown; retry: (
   return (
     <html lang="en">
       <body style={{ margin: 0, minHeight: "100vh", background: "#0d0d0d", color: "#f0efec", fontFamily: "system-ui, sans-serif" }}>
-        <title>GPUChain: error</title>
+        <title>Ekido: error</title>
         <main style={{ maxWidth: 560, margin: "0 auto", padding: "64px 16px" }}>
           <h1 style={{ fontSize: 24, margin: 0 }}>The dashboard failed to load</h1>
           <p style={{ color: "#c3c2b7", marginTop: 8 }}>{detail}</p>

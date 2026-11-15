@@ -8,7 +8,7 @@ import { buttonStyles } from "@/components/ui/button-styles";
 /** A screen crashed. The header, nav and data source keep running; only this page is replaced. */
 export default function ScreenError({ error, retry }: { error: unknown; retry: () => void }) {
   useEffect(() => {
-    console.error("[GPUChain] screen crashed", error);
+    console.error("[Ekido] screen crashed", error);
   }, [error]);
   const detail = error instanceof Error ? error.message : "An unexpected value was thrown";
   return (
