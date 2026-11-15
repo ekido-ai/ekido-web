@@ -23,8 +23,9 @@ export default function NewJobPage() {
   const [funded, setFunded] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  // Start by itself once the escrow is verified, so uploading the file is all that is left to do.
-  const [autoStart, setAutoStart] = useState(true);
+  // Off by default: training starts when the person presses Start training. Ticking the box starts it by itself
+  // as soon as the escrow is verified.
+  const [autoStart, setAutoStart] = useState(false);
   const started = useRef(false);
 
   // The token is kept for this tab only, so it is pasted once per visit.
@@ -161,10 +162,10 @@ export default function NewJobPage() {
         <Panel title="3. Start training">
           <label className="mb-3 flex items-center gap-2 text-sm text-ink">
             <input type="checkbox" checked={autoStart} onChange={(event) => setAutoStart(event.target.checked)} />
-            Start by itself as soon as the escrow is verified
+            Start by itself next time the escrow is verified
           </label>
           <Button disabled={busy} onClick={() => void run(() => start(prepared))}>
-            {busy ? "Starting…" : "Start and watch live"}
+            {busy ? "Starting…" : "Start training"}
           </Button>
         </Panel>
       )}
