@@ -9,6 +9,7 @@
     "lint": "eslint",
     "replay:generate": "node replay/generate-sample.mts",
     "test": "vitest run",
+    "e2e": "playwright test",
     "mock": "node replay/mock-coordinator.mts"
   },
   "dependencies": {
@@ -19,6 +20,7 @@
     "viem": "2.57.19"
   },
   "devDependencies": {
+    "@playwright/test": "1.64.1",
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^24.19.2",
     "@types/react": "^19",
