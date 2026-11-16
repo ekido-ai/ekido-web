@@ -71,3 +71,45 @@ describe("RealLiveSource after a coordinator restart", () => {
     source.stop();
   });
 });
+
+describe("RealLiveSource on a public server that keeps providers private", () => {
+  let providersStatus: number;
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.stubGlobal("WebSocket", DeadSocket);
+    providersStatus = 401;
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) => {
+        const path = new URL(url).pathname;
+        if (path === "/providers") return new Response(JSON.stringify({ error: "API_LOCKED" }), { status: providersStatus });
+        const body = path === "/jobs" ? [{ job_id: job }] : path.endsWith("/timeline") ? [event] : {};
+        return new Response(JSON.stringify(body), { status: 200 });
+      }),
+    );
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+  });
+
+  it("still follows the job when the provider list is refused", async () => {
+    const source = new RealLiveSource("http://127.0.0.1:8000");
+    source.start();
+    await vi.advanceTimersByTimeAsync(4500);
+    expect(source.getSnapshot().connection).not.toBe("offline");
+    expect(source.getSnapshot().connection).not.toBe("reconnecting");
+    expect(source.getSnapshot().state.jobId).toBe(job);
+    expect(source.getSnapshot().state.jobState).toBe("RUNNING");
+    source.stop();
+  });
+
+  it("still reports a real outage as unreachable", async () => {
+    providersStatus = 502;
+    const source = new RealLiveSource("http://127.0.0.1:8000");
+    source.start();
+    await vi.advanceTimersByTimeAsync(30000);
+    expect(["offline", "reconnecting"]).toContain(source.getSnapshot().connection);
+    source.stop();
+  });
+});

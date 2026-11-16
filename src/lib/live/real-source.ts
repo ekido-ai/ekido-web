@@ -93,7 +93,13 @@ export class RealLiveSource {
       const jobsRequest = selected
         ? this.json<{ job_id: string }>(`/jobs/${encodeURIComponent(selected)}`).then((job) => [job])
         : this.json<{ job_id: string }[]>("/jobs?limit=1");
-      const [providers, jobs] = await Promise.all([this.json<RealProvider[]>("/providers"), jobsRequest]);
+      // A public server keeps its provider list private (401/403): carry on with the jobs, which name providers
+      // only by label. Any other failure still counts as the coordinator being unreachable.
+      const providersRequest = this.json<RealProvider[]>("/providers").catch((error: unknown) => {
+        if (error instanceof Error && /^HTTP (401|403) /.test(error.message)) return [] as RealProvider[];
+        throw error;
+      });
+      const [providers, jobs] = await Promise.all([providersRequest, jobsRequest]);
       if (!this.running || selected !== this.selectedJob) return;
       this.providers = providers;
       const newest = jobs[0]?.job_id ?? null;
