@@ -31,7 +31,7 @@
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "5.1.0",
-    "ws": "8.22.2"
+    "ws": "8.23.0"
   },
   "overrides": {
     "minimatch@^10": "^11.0.1"
