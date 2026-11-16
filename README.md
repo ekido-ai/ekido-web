@@ -1,3 +1,19 @@
+# ekido-web
+
+The Ekido web app (Next.js, React, Tailwind, shadcn/ui), with Playwright browser tests in `e2e/` and the staging test checklist in `qa/`.
+
+Part of [Ekido](https://github.com/ekido-ai): your own small AI model, trained on spare devices and paid for only when it works. The shared library, the API contract and the evidence behind every number live in [ekido-core](https://github.com/ekido-ai/ekido-core).
+
+## Rules
+
+- Every change is a pull request with the full report (the PR template); the **Gate** check refuses it otherwise.
+- Testnet and test money only. Never commit keys, `.env` contents, wallet keys or customer data.
+- Every number we quote is measured and has its raw file.
+
+Licence: all rights reserved (see LICENSE).
+
+---
+
 # Ekido web app
 
 Next.js 16 + TypeScript + Tailwind 4. The app has the shell, design system and landing page, on top of the data layer: event types, the reducer, derived views, replay, and the adapter that turns real coordinator events into the UI's format. The pages below are all in `main`.
