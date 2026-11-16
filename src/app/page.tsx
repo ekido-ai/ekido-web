@@ -108,7 +108,7 @@ export default function Landing() {
             { v: "24.8%", l: "junk checkpoint, refused and unpaid" },
             { v: "0.90", l: "USDC paid for accepted steps. 4.10 went back", hi: true },
           ].map((s) => (
-            <div key={s.v} className={`${s.hi ? "grad-lime rounded-3xl shadow-[0_18px_40px_-22px_rgba(132,204,22,0.8)]" : card} p-6`}>
+            <div key={s.v} className={`${s.hi ? "grad-lime rounded-3xl shadow-[0_18px_40px_-22px_rgba(232,98,44,0.55)]" : card} p-6`}>
               <div className="font-serif text-4xl tabular">
                 <CountUp value={s.v} />
               </div>

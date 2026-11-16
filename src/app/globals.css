@@ -583,12 +583,12 @@ body {
 @keyframes mf-beam { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
 .mf-ping { animation: mf-ping 1.8s ease-out infinite; transform-origin: center; transform-box: fill-box; }
 @keyframes mf-ping { from { opacity: 0.6; transform: scale(0.8); } to { opacity: 0; transform: scale(1.25); } }
-.bento-glow { position: absolute; inset: auto -20% -40% auto; width: 60%; height: 80%; border-radius: 9999px; background: radial-gradient(circle, rgba(190, 242, 100, 0.45), rgba(253, 224, 71, 0.2) 50%, transparent 72%); filter: blur(20px); transition: transform 0.6s; pointer-events: none; }
+.bento-glow { position: absolute; inset: auto -20% -40% auto; width: 60%; height: 80%; border-radius: 9999px; background: radial-gradient(circle, rgba(232, 98, 44, 0.45), rgba(251, 199, 168, 0.2) 50%, transparent 72%); filter: blur(20px); transition: transform 0.6s; pointer-events: none; }
 .group:hover .bento-glow { transform: translate(-10%, -10%) scale(1.15); }
 .bento-draw { stroke-dasharray: 100; animation: bento-draw 3.2s ease-in-out infinite; }
 @keyframes bento-draw { 0% { stroke-dashoffset: 100; } 60%, 100% { stroke-dashoffset: 0; } }
 .bento-block { animation: bento-block 2.8s ease-in-out infinite; }
-@keyframes bento-block { 0%, 100% { background: var(--n-alt, #eef0f3); } 40% { background: #84cc16; } 60% { background: #d9f99d; } }
+@keyframes bento-block { 0%, 100% { background: var(--n-alt, #eef0f3); } 40% { background: #e8622c; } 60% { background: #fbd3bd; } }
 @media (prefers-reduced-motion: reduce) { .mf-beam, .mf-ping, .bento-draw, .bento-block { animation: none; } .bento-draw { stroke-dashoffset: 0; } }
 :root[data-motion="off"] .mf-beam, :root[data-motion="off"] .mf-ping, :root[data-motion="off"] .bento-draw, :root[data-motion="off"] .bento-block { animation: none; }
 /* Blocks placed one by one (components/landing/stagger.tsx). Hidden only once JS has marked it ready. */
@@ -642,63 +642,63 @@ body {
 ::selection { background: color-mix(in srgb, var(--accent) 35%, transparent); }
 
 /* ── Daylight theme details ──────────────────────────────────────────── */
-:root[data-theme="light"] .btn-primary { background: #0f1729; color: #fff; box-shadow: 0 10px 24px -14px rgba(15, 23, 41, 0.6); }
-:root[data-theme="light"] .btn-primary:hover { background: #1f2a3d; filter: none; }
-/* The single accent: lime to yellow, as a fill, always with dark text on it. */
-.grad-lime { background: linear-gradient(135deg, #bef264 0%, #d9f99d 45%, #fde047 100%); color: #1a2e05; }
-.text-grad-lime { background: linear-gradient(135deg, #65a30d, #ca8a04); -webkit-background-clip: text; background-clip: text; color: transparent; }
+:root[data-theme="light"] .btn-primary { background: #1f2a33; color: #fff; box-shadow: 0 10px 24px -14px rgba(31, 42, 51, 0.6); }
+:root[data-theme="light"] .btn-primary:hover { background: #2c3a46; filter: none; }
+/* The single accent: the sash, as a fill, always with ink text on it. (Class names keep "lime" for now.) */
+.grad-lime { background: linear-gradient(135deg, #f4895a 0%, #fbd3bd 45%, #fbc7a8 100%); color: #1f2a33; }
+.text-grad-lime { background: linear-gradient(135deg, #e8622c, #b5461a); -webkit-background-clip: text; background-clip: text; color: transparent; }
 :root[data-theme="light"] .app-backdrop {
   background:
-    radial-gradient(700px 360px at 8% -80px, rgba(190, 242, 100, 0.28), transparent 70%),
-    radial-gradient(600px 320px at 92% -60px, rgba(253, 224, 71, 0.22), transparent 70%),
+    radial-gradient(700px 360px at 8% -80px, rgba(232, 98, 44, 0.28), transparent 70%),
+    radial-gradient(600px 320px at 92% -60px, rgba(251, 199, 168, 0.22), transparent 70%),
     var(--bg);
 }
 :root[data-theme="light"] .app-backdrop::before { display: none; }
-:root[data-theme="light"] .header-ember { background-image: linear-gradient(90deg, transparent, rgba(132, 204, 22, 0.55), transparent); }
-/* Active screen in daylight: a lime pill, not an underline. */
+:root[data-theme="light"] .header-ember { background-image: linear-gradient(90deg, transparent, rgba(232, 98, 44, 0.55), transparent); }
+/* Active screen in daylight: a sash-tinted pill, not an underline. */
 :root[data-style="nexora"][data-theme="light"] .nav-link[aria-current="page"] {
-  background: linear-gradient(135deg, #d9f99d, #fef08a);
-  color: #1a2e05;
+  background: linear-gradient(135deg, #fbd3bd, #fde3d4);
+  color: #1f2a33;
   border-radius: 9999px;
-  box-shadow: inset 0 0 0 1px rgba(101, 163, 13, 0.25);
+  box-shadow: inset 0 0 0 1px rgba(232, 98, 44, 0.25);
 }
 :root[data-theme="light"] .nav-link { border-radius: 9999px; }
 :root[data-theme="light"] .panel { border-radius: 1.5rem; }
 /* Live demos run on dark glass inside the daylight page, like a product on a stage. */
 .device {
-  background: radial-gradient(120% 90% at 50% 0%, #1a1f2b 0%, #0b0d12 60%);
-  color: #eceef2;
+  background: radial-gradient(120% 90% at 50% 0%, #1f2a33 0%, #141b21 60%);
+  color: #f3efe8;
   border-radius: 2rem;
-  box-shadow: 0 40px 80px -40px rgba(15, 23, 41, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  box-shadow: 0 40px 80px -40px rgba(31, 42, 51, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 /* ── Daylight stage for the GPU chip (light theme only; dark keeps the ember chip) ── */
 :root[data-theme="light"] .stage-light {
-  background: radial-gradient(120% 90% at 50% 0%, #ffffff 0%, #f3f6ee 55%, #e9eee1 100%);
+  background: radial-gradient(120% 90% at 50% 0%, #ffffff 0%, #f8f3ec 55%, #efe7dc 100%);
   color: var(--text);
   border: 1px solid var(--border);
   border-radius: 2rem;
-  box-shadow: 0 40px 80px -48px rgba(15, 23, 41, 0.35), inset 0 1px 0 #ffffff;
+  box-shadow: 0 40px 80px -48px rgba(31, 42, 51, 0.35), inset 0 1px 0 #ffffff;
 }
-:root[data-theme="light"] .chip-lime { --ember: #65a30d; --ember-hot: #ecfccb; }
-:root[data-theme="light"] .chip-lime .ca-die-a { stop-color: #d9f99d; }
-:root[data-theme="light"] .chip-lime .ca-die-b { stop-color: #65a30d; }
-:root[data-theme="light"] .chip-lime .gpu-chip[data-phase="idle"] .ca-die-a { stop-color: #ecfccb; }
-:root[data-theme="light"] .chip-lime .gpu-chip[data-phase="idle"] .ca-die-b { stop-color: #a3b88a; }
-:root[data-theme="light"] .chip-lime .chip-art .ca-sm { fill: rgba(26, 46, 5, 0.32); stroke: rgba(255, 255, 255, 0.35); }
-:root[data-theme="light"] .chip-lime .chip-art .gpu-sm.is-on { fill: #f7fee7; stroke: #ffffff; filter: drop-shadow(0 0 3px #bef264); }
-:root[data-theme="light"] .chip-lime .ca-etch { stroke: rgba(26, 46, 5, 0.28); }
-:root[data-theme="light"] .chip-lime .ca-label { fill: rgba(26, 46, 5, 0.6); }
-:root[data-theme="light"] .chip-lime .ca-mem { fill: rgba(26, 46, 5, 0.38); }
-:root[data-theme="light"] .chip-lime .ca-mem.is-on { fill: #f7fee7; }
-:root[data-theme="light"] .chip-lime .cf-dots rect { fill: #e1e6da; }
-:root[data-theme="light"] .chip-lime .cf-trace { stroke: #d6dccf; }
-:root[data-theme="light"] .chip-lime .circuit-field[data-phase="training"] .cf-trace { stroke: rgba(101, 163, 13, 0.35); }
-:root[data-theme="light"] .chip-lime .cf-pulse { stroke: #65a30d; filter: drop-shadow(0 0 3px #a3e635); }
-:root[data-theme="light"] .chip-lime .cf-pad { fill: #f7f8f5; stroke: #c9d1bf; }
-:root[data-theme="light"] .chip-lime .circuit-field[data-phase="training"] .cf-pad { fill: #ecfccb; stroke: #65a30d; }
-:root[data-theme="light"] .chip-lime .chip-glow { background: radial-gradient(circle, rgba(190, 242, 100, 0.65), rgba(253, 224, 71, 0.18) 45%, transparent 70%); }
-:root[data-theme="light"] .chip-lime .chip-tilt { filter: drop-shadow(0 24px 28px rgba(15, 23, 41, 0.22)) drop-shadow(0 0 18px rgba(190, 242, 100, 0.55)); }
+:root[data-theme="light"] .chip-lime { --ember: #e8622c; --ember-hot: #fdebe1; }
+:root[data-theme="light"] .chip-lime .ca-die-a { stop-color: #fbd3bd; }
+:root[data-theme="light"] .chip-lime .ca-die-b { stop-color: #e8622c; }
+:root[data-theme="light"] .chip-lime .gpu-chip[data-phase="idle"] .ca-die-a { stop-color: #fdebe1; }
+:root[data-theme="light"] .chip-lime .gpu-chip[data-phase="idle"] .ca-die-b { stop-color: #c9b6a6; }
+:root[data-theme="light"] .chip-lime .chip-art .ca-sm { fill: rgba(31, 42, 51, 0.32); stroke: rgba(255, 255, 255, 0.35); }
+:root[data-theme="light"] .chip-lime .chip-art .gpu-sm.is-on { fill: #fff6f0; stroke: #ffffff; filter: drop-shadow(0 0 3px #f4895a); }
+:root[data-theme="light"] .chip-lime .ca-etch { stroke: rgba(31, 42, 51, 0.28); }
+:root[data-theme="light"] .chip-lime .ca-label { fill: rgba(31, 42, 51, 0.6); }
+:root[data-theme="light"] .chip-lime .ca-mem { fill: rgba(31, 42, 51, 0.38); }
+:root[data-theme="light"] .chip-lime .ca-mem.is-on { fill: #fff6f0; }
+:root[data-theme="light"] .chip-lime .cf-dots rect { fill: #ece4d8; }
+:root[data-theme="light"] .chip-lime .cf-trace { stroke: #e3d9cc; }
+:root[data-theme="light"] .chip-lime .circuit-field[data-phase="training"] .cf-trace { stroke: rgba(232, 98, 44, 0.35); }
+:root[data-theme="light"] .chip-lime .cf-pulse { stroke: #e8622c; filter: drop-shadow(0 0 3px #ea6a35); }
+:root[data-theme="light"] .chip-lime .cf-pad { fill: #faf6f0; stroke: #dccfc0; }
+:root[data-theme="light"] .chip-lime .circuit-field[data-phase="training"] .cf-pad { fill: #fdebe1; stroke: #e8622c; }
+:root[data-theme="light"] .chip-lime .chip-glow { background: radial-gradient(circle, rgba(232, 98, 44, 0.65), rgba(251, 199, 168, 0.18) 45%, transparent 70%); }
+:root[data-theme="light"] .chip-lime .chip-tilt { filter: drop-shadow(0 24px 28px rgba(31, 42, 51, 0.22)) drop-shadow(0 0 18px rgba(232, 98, 44, 0.55)); }
 
 /* ── Pull the plug: flash, three seconds dark, flicker, boot ─────────── */
 .hero-chip[data-state="off"] .chip-art { animation: power-down 0.9s cubic-bezier(0.3, 0, 0.2, 1) forwards; }
@@ -740,8 +740,8 @@ body {
 :root[data-theme="light"] .app-backdrop::after {
   content: ""; position: absolute; inset: 0; pointer-events: none; z-index: -1;
   background:
-    radial-gradient(420px 260px at 20% 10%, rgba(190, 242, 100, 0.22), transparent 70%),
-    radial-gradient(380px 240px at 80% 18%, rgba(253, 224, 71, 0.18), transparent 70%);
+    radial-gradient(420px 260px at 20% 10%, rgba(232, 98, 44, 0.22), transparent 70%),
+    radial-gradient(380px 240px at 80% 18%, rgba(251, 199, 168, 0.18), transparent 70%);
   animation: drift 22s ease-in-out infinite alternate;
 }
 @keyframes drift { to { transform: translate3d(4%, 3%, 0) scale(1.08); } }
@@ -750,7 +750,7 @@ body {
 .btn-primary::after { content: ""; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%); transform: translateX(-120%); transition: transform 0.7s ease; }
 .btn-primary:hover::after { transform: translateX(120%); }
 /* The accent word glints now and then. */
-.shimmer-text { background-image: linear-gradient(110deg, #65a30d 0%, #ca8a04 40%, #d9f99d 50%, #ca8a04 60%, #65a30d 100%); background-size: 220% 100%; animation: shimmer 5s ease-in-out infinite; }
+.shimmer-text { background-image: linear-gradient(110deg, #e8622c 0%, #b5461a 40%, #fbd3bd 50%, #b5461a 60%, #e8622c 100%); background-size: 220% 100%; animation: shimmer 5s ease-in-out infinite; }
 @keyframes shimmer { 0%, 60% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
 @media (prefers-reduced-motion: reduce) {
   .anim-scroll [data-reveal] { opacity: 1 !important; transform: none !important; transition: none; }
@@ -759,9 +759,9 @@ body {
 :root[data-motion="off"] .anim-scroll [data-reveal] { opacity: 1 !important; transform: none !important; }
 
 /* ── Centred hero ────────────────────────────────────────────────────── */
-.hero-glow { transform: translate(-50%, -50%); background: radial-gradient(circle, rgba(190, 242, 100, 0.45), rgba(253, 224, 71, 0.16) 45%, transparent 68%); filter: blur(8px); transition: background 0.5s; animation: glow-breathe 4s ease-in-out infinite; }
+.hero-glow { transform: translate(-50%, -50%); background: radial-gradient(circle, rgba(232, 98, 44, 0.45), rgba(251, 199, 168, 0.16) 45%, transparent 68%); filter: blur(8px); transition: background 0.5s; animation: glow-breathe 4s ease-in-out infinite; }
 .hero-center[data-state="off"] .hero-glow { background: radial-gradient(circle, rgba(239, 68, 68, 0.32), rgba(239, 68, 68, 0.08) 45%, transparent 68%); animation: none; }
-.hero-center[data-state="recovering"] .hero-glow { background: radial-gradient(circle, rgba(245, 158, 11, 0.32), rgba(253, 224, 71, 0.12) 45%, transparent 68%); }
+.hero-center[data-state="recovering"] .hero-glow { background: radial-gradient(circle, rgba(245, 158, 11, 0.32), rgba(251, 199, 168, 0.12) 45%, transparent 68%); }
 @keyframes glow-breathe { 0%, 100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.08); } }
 .hero-center[data-state="off"] .hero-chip { animation: stage-shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
 @media (prefers-reduced-motion: reduce) { .hero-glow { animation: none; } }
@@ -776,25 +776,25 @@ body {
 /* A dark island inside a light page (demo devices). Same tokens, dark values. */
 .theme-dark {
   color-scheme: dark;
-  --bg: #0b0d12;
-  --surface: #11141a;
-  --surface-2: #171b23;
-  --surface-3: #20252f;
+  --bg: #141b21;
+  --surface: #1a232b;
+  --surface-2: #212c35;
+  --surface-3: #2a3641;
   --border: rgba(255, 255, 255, 0.07);
-  --border-strong: #2a303b;
-  --text: #eceef2;
-  --text-2: #a7adb9;
-  --muted: #8a91a0;
-  --grid: #1c2029;
-  --ink-inverse: #0b0d12;
+  --border-strong: #33414d;
+  --text: #f3efe8;
+  --text-2: #b9c0c6;
+  --muted: #8d979f;
+  --grid: #222d36;
+  --ink-inverse: #141b21;
 
-  --accent-strong: #a3e635;
-  --accent-text: #bef264;
-  --accent-soft: rgba(190, 242, 100, 0.12);
-  --accent-ink: #1a2e05;
-  --action: #eceef2;
+  --accent-strong: #ea6a35;
+  --accent-text: #f4895a;
+  --accent-soft: rgba(232, 98, 44, 0.12);
+  --accent-ink: #1f2a33;
+  --action: #f3efe8;
   --action-hover: #ffffff;
-  --action-ink: #0b0d12;
+  --action-ink: #141b21;
   --danger: #ef4444;
   --danger-soft: rgba(239, 68, 68, 0.14);
   --danger-ink: #fca5a5;
