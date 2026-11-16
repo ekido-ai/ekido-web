@@ -52,7 +52,7 @@ export function StartHere() {
         <p className="mt-2 text-sm text-[var(--n-ink-2)]">Watch a real run survive a dead GPU, then pay only for what was accepted.</p>
         <svg viewBox="0 0 200 60" className="mt-5 w-full" aria-hidden>
           <path d="M0 8 C30 10 40 30 70 34 S120 30 130 44 S170 50 200 52" fill="none" stroke="#3a3c40" strokeWidth="2" />
-          <path d="M0 8 C30 10 40 30 70 34 S120 30 130 44 S170 50 200 52" fill="none" stroke="#65a30d" strokeWidth="2.5" pathLength={100} className="bento-draw" />
+          <path d="M0 8 C30 10 40 30 70 34 S120 30 130 44 S170 50 200 52" fill="none" stroke="var(--accent)" strokeWidth="2.5" pathLength={100} className="bento-draw" />
         </svg>
         <span className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-[var(--n-ink)]">Watch the run <ArrowUpRight className="nudge size-4" aria-hidden /></span>
       </Link>

@@ -71,28 +71,28 @@
   --display-font: var(--font-display), system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 :root[data-style="nexora"]:not([data-theme="light"]) {
-  /* Deep graphite with a hint of blue: softer on the eyes than black, still dark for projectors. */
-  --bg: #0b0d12;
-  --surface: #11141a;
-  --surface-2: #171b23;
-  --surface-3: #20252f;
-  --border: rgba(255, 255, 255, 0.07);
-  --border-strong: #2a303b;
-  --text: #eceef2;
-  --text-2: #a7adb9;
-  --muted: #8a91a0;
-  --grid: #1c2029;
-  --ink-inverse: #0b0d12;
-  --accent: #ff7a45;
+  /* Ekido brand, dark: deep ink with the sash orange. Status and provider colours keep their meaning. */
+  --bg: #141b21;
+  --surface: #1a232b;
+  --surface-2: #212c35;
+  --surface-3: #2a3641;
+  --border: rgba(243, 239, 232, 0.08);
+  --border-strong: #33414d;
+  --text: #f3efe8;
+  --text-2: #b9c0c6;
+  --muted: #8d979f;
+  --grid: #222d36;
+  --ink-inverse: #141b21;
+  --accent: #e8622c;
   --shadow: 0 24px 60px -36px rgba(0, 0, 0, 0.85);
 
-  --accent-strong: #a3e635;
-  --accent-text: #bef264;
-  --accent-soft: rgba(190, 242, 100, 0.12);
-  --accent-ink: #1a2e05;
-  --action: #eceef2;
+  --accent-strong: #ea6a35;
+  --accent-text: #f4895a;
+  --accent-soft: rgba(232, 98, 44, 0.14);
+  --accent-ink: #141b21;
+  --action: #f3efe8;
   --action-hover: #ffffff;
-  --action-ink: #0b0d12;
+  --action-ink: #141b21;
   --danger: #ef4444;
   --danger-soft: rgba(239, 68, 68, 0.14);
   --danger-ink: #fca5a5;
@@ -100,34 +100,34 @@
   --warn: #fbbf24;
 }
 :root[data-style="nexora"][data-theme="light"] {
-  /* Daylight: airy greys, white cards, ink text. Lime is the one accent, used sparingly. */
-  --bg: #f4f5f7;
+  /* Ekido brand, light: warm paper, ink text, sash orange as the one accent (logo, active tab, highlights). */
+  --bg: #fbf8f3;
   --surface: #ffffff;
-  --surface-2: #f7f8fa;
-  --surface-3: #eceef2;
-  --border: rgba(15, 23, 42, 0.07);
-  --border-strong: #dfe2e8;
-  --text: #0f1729;
-  --text-2: #4b5563;
-  --muted: #5f6673;
-  --grid: #eceef2;
+  --surface-2: #f6f1e9;
+  --surface-3: #ede6db;
+  --border: rgba(31, 42, 51, 0.09);
+  --border-strong: #ddd4c6;
+  --text: #1f2a33;
+  --text-2: #4a5661;
+  --muted: #66717b;
+  --grid: #ede6db;
   --ink-inverse: #ffffff;
-  --accent: #65a30d;
+  --accent: #e8622c;
 
   /* Semantic colours: name the job, not the hue. Components use these, never raw hex. */
-  --accent-strong: #65a30d;
-  --accent-text: #4d7c0f;
-  --accent-soft: #ecfccb;
-  --accent-ink: #1a2e05;
-  --action: #0f1729;
-  --action-hover: #1f2a3d;
-  --action-ink: #ffffff;
+  --accent-strong: #ea6a35;
+  --accent-text: #b5461a;
+  --accent-soft: #fdebe1;
+  --accent-ink: #1f2a33;
+  --action: #1f2a33;
+  --action-hover: #2c3a46;
+  --action-ink: #fbf8f3;
   --danger: #dc2626;
   --danger-soft: #fef2f2;
   --danger-ink: #b91c1c;
   --success: #16a34a;
   --warn: #f59e0b;
-  --shadow: 0 16px 40px -28px rgba(15, 23, 42, 0.3);
+  --shadow: 0 16px 40px -28px rgba(31, 42, 51, 0.28);
   --trust: #0f766e;
 }
 :root[data-style="nexora"] .font-serif {

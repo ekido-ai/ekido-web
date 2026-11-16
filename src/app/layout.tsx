@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { AppShell } from "@/components/shell/app-shell";
 import { EventSourceProvider } from "@/lib/events/source-context";
-import { Bricolage_Grotesque, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
+import { Fraunces, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import "./globals.css";
 import { themeScript } from "@/lib/theme-script";
 
 // Downloaded once at build time and served from this site, so nothing loads from Google on stage.
-const display = Bricolage_Grotesque({ subsets: ["latin"], variable: "--font-display", display: "swap" });
+// Brand type: Fraunces for headings, IBM Plex for text and code.
+const display = Fraunces({ subsets: ["latin"], variable: "--font-display", display: "swap" });
 const body = IBM_Plex_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-body", display: "swap" });
 const code = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-code", display: "swap" });
 
