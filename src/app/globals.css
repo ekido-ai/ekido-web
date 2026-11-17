@@ -805,3 +805,66 @@ body {
   --n-line-2: var(--border-strong); --n-accent: var(--accent-text);
   color: var(--text);
 }
+
+/* ── Ekido brand, as in the brand deck (17 Nov 2026) ─────────────────────
+ * Flat paper, flat ink, thin warm lines and one accent, the sash. No glows, gradients, drifting colour or shimmer:
+ * those were GPUChain's "ember" look. Palette: ink #1F2A33, ink-2 #44525D, muted #6B7882, sash #E8622C,
+ * sash deep #B5461A, sash tint #FBEADF, paper #FBF8F3, card #FFFFFF, line #E7E0D5. On ink: card #2A3843,
+ * line #3A4955, text #FBF8F3 / #D6DDE1, sash soft #FFB48F. Type: Fraunces (opsz 72, SOFT 0, WONK 0) and IBM Plex Sans.
+ * This block comes last so it wins; C21 (#50) rebuilds the components on these values. */
+:root[data-style="nexora"][data-theme="light"] {
+  --bg: #fbf8f3;
+  --surface: #ffffff;
+  --surface-2: #f6f1e9;
+  --surface-3: #ede6db;
+  --border: #e7e0d5;
+  --border-strong: #ddd4c6;
+  --text: #1f2a33;
+  --text-2: #44525d;
+  --muted: #6b7882;
+  --accent: #e8622c;
+  --accent-text: #b5461a;
+  --accent-soft: #fbeadf;
+  --shadow: none;
+}
+.theme-dark {
+  --bg: #1f2a33;
+  --surface: #2a3843;
+  --surface-2: #2f3f4b;
+  --surface-3: #3a4955;
+  --border: #3a4955;
+  --border-strong: #465764;
+  --text: #fbf8f3;
+  --text-2: #d6dde1;
+  --muted: #a3afb8;
+  --accent-text: #ffb48f;
+}
+h1, h2, h3, .font-serif {
+  font-variation-settings: "opsz" 72, "SOFT" 0, "WONK" 0;
+}
+:root[data-style="nexora"] .font-serif, h1, h2 { font-weight: 700; letter-spacing: -0.012em; }
+
+/* Pages: flat paper, no colour blobs, no grid. */
+:root[data-theme="light"] .app-backdrop { background: var(--bg); }
+:root[data-theme="light"] .app-backdrop::before,
+:root[data-theme="light"] .app-backdrop::after { display: none; animation: none; }
+:root[data-theme="light"] .header-ember { background-image: none; border-bottom: 1px solid var(--border); }
+
+/* Cards: white with a thin warm line; dark cards are flat ink, as on the deck's dark slides. */
+:root[data-theme="light"] .panel { background: var(--surface); box-shadow: none; }
+.device { background: #1f2a33; color: #fbf8f3; box-shadow: none; border-radius: 1.5rem; }
+:root[data-theme="light"] .stage-light { background: var(--surface); box-shadow: none; }
+.lift:hover { transform: translateY(-2px); box-shadow: none; border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); }
+
+/* Buttons and navigation: solid ink or solid sash, nothing shiny. */
+:root[data-theme="light"] .btn-primary { background: #1f2a33; color: #fbf8f3; box-shadow: none; }
+.btn-primary::after { display: none; }
+:root[data-style="nexora"][data-theme="light"] .nav-link[aria-current="page"] { background: #fbeadf; box-shadow: none; color: #1f2a33; }
+
+/* Old gradient helpers become the flat brand colours. */
+.grad-lime { background: #fbeadf; color: #1f2a33; }
+.text-grad-lime, .shimmer-text { background: none; -webkit-background-clip: border-box; background-clip: border-box; color: #e8622c; animation: none; }
+.hero-glow { display: none; }
+
+/* The deck's kicker: a small sash label above a heading. */
+.kicker { font-family: var(--font-sans); font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--accent-text); }
