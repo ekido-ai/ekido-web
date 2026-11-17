@@ -75,7 +75,7 @@ export default function Landing() {
       {/* ── Hero: the promise on the left, the relay on the right ── */}
       <section className="mx-auto grid max-w-[1200px] items-center gap-10 px-4 pb-16 pt-10 sm:px-8 lg:grid-cols-[1.05fr_1fr] lg:pt-16">
         <div>
-          <h1 className="font-serif text-[clamp(2.4rem,5vw,4.1rem)] leading-[1.02] text-ink">
+          <h1 className="font-serif text-[clamp(2.3rem,4.3vw,3.55rem)] leading-[1.02] text-ink">
             <span className="anim-line"><span style={d(150)}>Your own AI model.</span></span>
             <span className="anim-line"><span style={d(280)}>Built by devices people already have.</span></span>
           </h1>
