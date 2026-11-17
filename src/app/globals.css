@@ -979,3 +979,31 @@ h1, h2, h3, .font-serif { font-variation-settings: normal; }
 .dot-grid > * { position: relative; }
 /* Dark mode: artifact cards take the theme surface instead of fixed white. */
 .artifact { background: var(--surface); }
+
+/* ── Kesari Ink everywhere: the app screens and dark mode (17 Nov 2026) ── */
+:root[data-style="nexora"]:not([data-theme="light"]) {
+  --bg: #0e1720;
+  --surface: #131e29;
+  --surface-2: #1a2733;
+  --surface-3: #23313e;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: #2c3a47;
+  --text: #f5f6f7;
+  --text-2: #c3cad0;
+  --muted: #8f9aa4;
+  --grid: #1a2733;
+  --ink-inverse: #131e29;
+  --accent: #fe5000;
+  --accent-strong: #ff6a1f;
+  --accent-text: #ff8a50;
+  --accent-soft: rgba(254, 80, 0, 0.14);
+  --accent-ink: #131e29;
+  --action: #ffffff;
+  --action-hover: #e8ebee;
+  --action-ink: #131e29;
+}
+/* Headings are Satoshi on every screen, like the landing page; Zodiak stays for figures (large numbers). */
+h1, h2, h3, :is(h1, h2, h3).font-serif, :root[data-style="nexora"] :is(h1, h2, h3).font-serif {
+  font-family: var(--font-sans); font-variation-settings: normal; letter-spacing: -0.025em;
+}
+:root[data-style="nexora"] :is(h1, h2).font-serif, :root[data-style="nexora"] :is(h1, h2) { font-weight: 700; }
