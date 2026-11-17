@@ -9,6 +9,7 @@ import { RelayHero } from "@/components/landing/relay-hero";
 import { JobArtifacts } from "@/components/landing/job-artifacts";
 import { ProductPreview } from "@/components/landing/product-preview";
 import { FeatureBento } from "@/components/landing/feature-bento";
+import { DevelopersSection, PricingSection, ProductCatalog, RoadmapSection, TrustSection } from "@/components/landing/platform-sections";
 import { buttonStyles } from "@/components/ui/button-styles";
 
 export const metadata: Metadata = {
@@ -64,7 +65,7 @@ function SectionHead({ kicker, title, sub, center }: { kicker: string; title: Re
 
 export default function Landing() {
   return (
-    <div className="-mx-4 -mt-5 overflow-x-clip text-ink sm:-mx-6">
+    <div className="landing -mx-4 -mt-5 overflow-x-clip text-ink sm:-mx-6">
       {/* ── Hero: the statement, then the app itself, with the brand sash sweeping behind it ── */}
       <section className="relative overflow-hidden pb-20">
         <div className={`${wrap} pt-14 lg:pt-20`}>
@@ -118,11 +119,23 @@ export default function Landing() {
         </div>
       </div>
 
-      {/* ── Product: the bento ── */}
+      {/* ── The platform: one product family ── */}
+      <section id="products" className={`${wrap} scroll-mt-24 pt-28`}>
+        <SectionHead
+          kicker="The platform"
+          title="One platform, from a few examples to a model you own."
+          sub="Six parts that work together. Each says honestly whether it runs today on the public test network or is still being built."
+        />
+        <div className="mt-12">
+          <ProductCatalog />
+        </div>
+      </section>
+
+      {/* ── Why Ekido: the bento ── */}
       <section id="product" className={`${wrap} scroll-mt-24 pt-28`}>
         <SectionHead
           center
-          kicker="Product"
+          kicker="Why Ekido"
           title="Everything a small business needs to own its AI."
           sub="One job, one small model, trained for you, tested before you pay."
         />
@@ -153,7 +166,7 @@ export default function Landing() {
             </ul>
           </div>
           <div className="artifact relative overflow-hidden p-7">
-            <span aria-hidden className="absolute inset-x-0 top-0 h-1.5 bg-accent" />
+            <span aria-hidden className="edge-strip absolute inset-x-0 top-0 h-1.5 bg-accent" />
             <h3 className="flex items-center gap-2 font-semibold text-ink">
               <LogoMark className="size-5" /> Your own model with Ekido
             </h3>
@@ -231,7 +244,7 @@ export default function Landing() {
       {/* ── Use cases ── */}
       <section id="use-cases" className={`${wrap} scroll-mt-24 pt-28`}>
         <SectionHead
-          kicker="Use cases"
+          kicker="Solutions"
           title="Built for the work a shop, clinic or support desk does every day."
           sub="These five are the first jobs Ekido is built for. A model trained for one job does it well, offline if you like, at a fixed price."
         />
@@ -295,6 +308,38 @@ export default function Landing() {
             </pre>
             <figcaption className="border-t border-line px-5 py-3 text-xs text-muted">The command is the real one from the provider page; the output is an illustration.</figcaption>
           </figure>
+        </div>
+      </section>
+
+      {/* ── Developers ── */}
+      <section id="developers" className={`${wrap} scroll-mt-24 pt-28`}>
+        <SectionHead kicker="For developers" title="Build on Ekido with an API key." sub="Accounts, organisations and scoped keys are live on the test network. Running models over the API comes with Ekido Host." />
+        <div className="mt-12">
+          <DevelopersSection />
+        </div>
+      </section>
+
+      {/* ── Trust and privacy ── */}
+      <section id="trust" className={`${wrap} scroll-mt-24 pt-28`}>
+        <SectionHead kicker="Trust and privacy" title="Proof, not promises." sub="What protects your money and your data, and what is still on its way." />
+        <div className="mt-12">
+          <TrustSection />
+        </div>
+      </section>
+
+      {/* ── Pricing ── */}
+      <section id="pricing" className={`${wrap} scroll-mt-24 pt-28`}>
+        <SectionHead center kicker="Pricing" title="Pay for results, not compute." sub="Prices are set from measured costs and shown in every quote, before you commit. No token, no per-message bill." />
+        <div className="mt-12">
+          <PricingSection />
+        </div>
+      </section>
+
+      {/* ── Roadmap ── */}
+      <section id="roadmap" className={`${wrap} scroll-mt-24 pt-28`}>
+        <SectionHead kicker="Roadmap" title="Where Ekido is going." sub="Each step starts when the last one is proven." />
+        <div className="mt-14">
+          <RoadmapSection />
         </div>
       </section>
 

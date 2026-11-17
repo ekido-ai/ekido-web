@@ -113,8 +113,8 @@ function Result() {
         </div>
         <div className="rounded-2xl border border-line bg-surface p-3.5">
           <Sparkles className="size-4 text-ink-2" aria-hidden />
-          <div className="mt-2 font-semibold text-ink">Or use the API</div>
-          <div className="font-mono text-xs text-muted">POST /v1/models/…/run</div>
+          <div className="mt-2 font-semibold text-ink">Or call it over an API</div>
+          <div className="font-mono text-xs text-muted">with an ek_live_… key</div>
         </div>
       </div>
     </div>
