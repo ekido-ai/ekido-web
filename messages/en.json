@@ -1,0 +1,127 @@
+{
+  "nav": {
+    "products": "Products",
+    "solutions": "Solutions",
+    "developers": "Developers",
+    "pricing": "Pricing",
+    "roadmap": "Roadmap",
+    "wholePlatform": "See the whole platform →",
+    "byIndustry": "By industry",
+    "byRole": "By role",
+    "openApp": "Open the app"
+  },
+  "home": {
+    "live": "Live on a public test network",
+    "title": "Your own AI model,",
+    "titleMuted": "built by devices people already have.",
+    "lead": "Ekido trains a small model for one job in your business, in Hindi, Hinglish or English, on idle gaming PCs and laptops. You pay only if it passes your test.",
+    "ctaRun": "Watch a recorded run",
+    "ctaEarn": "Earn with your device",
+    "builtWith": "Built in the open with",
+    "rows": {
+      "assistant": {
+        "eyebrow": "Ekido Assistant",
+        "title": "Describe the job. Get a fixed quote.",
+        "body": "Tell the assistant what you need with a few examples. It turns that into a checked training job, with the quality bar and the price in plain words, before anything runs.",
+        "points": [
+          "Hindi, Hinglish or English",
+          "20 to 50 examples is enough",
+          "The bar and the price are fixed up front"
+        ],
+        "cta": "Explore Ekido Assistant"
+      },
+      "train": {
+        "eyebrow": "Ekido Train",
+        "title": "Training that carries on when a device drops out.",
+        "body": "Idle gaming PCs and laptops train your model. Each saves signed checkpoints, so when one stops, the next picks up from the last good one, like a relay.",
+        "points": [
+          "Small open models, fine-tuned for one job",
+          "Automatic recovery, no work paid twice",
+          "Phones join later, while they charge"
+        ],
+        "cta": "Explore Ekido Train"
+      },
+      "verify": {
+        "eyebrow": "Ekido Verify",
+        "title": "Good is not enough. It has to be better.",
+        "body": "Your model is scored on your own examples that it never trained on, and it must beat the same model before training. Miss either, and the refund is automatic.",
+        "points": [
+          "The test is fixed before training starts",
+          "Several verifiers must sign off",
+          "Device owners are paid only for work that passed"
+        ],
+        "cta": "Explore Ekido Verify"
+      }
+    },
+    "metricsTitle": "We stopped a training run halfway, on purpose.",
+    "metricsCta": "Watch the recording",
+    "metrics": [
+      {
+        "value": "0.6 s",
+        "label": "to notice a device had stopped"
+      },
+      {
+        "value": "65 s",
+        "label": "until training carried on elsewhere"
+      },
+      {
+        "value": "8 of 400",
+        "label": "training steps lost"
+      },
+      {
+        "value": "90.7%",
+        "label": "final accuracy on 2,000 test examples"
+      }
+    ],
+    "metricsNote": "Recorded on 4 Nov 2026: one run, one seed, on a local test network. A demonstration, not a benchmark.",
+    "platformEyebrow": "The platform",
+    "platformTitle": "Six products, one job: a model you own.",
+    "seePricing": "See pricing",
+    "rentTitle": "Renting a big AI model",
+    "rent": [
+      "A bill for every message, in dollars",
+      "English first; Indian languages often cost more",
+      "Your customers' messages go to someone else's servers",
+      "You pay whether the answers are good or not"
+    ],
+    "ownTitle": "Owning a model with Ekido",
+    "own": [
+      "One fixed price to train it",
+      "Trained on your examples, in your customers' language",
+      "Run it on your own machine if you want",
+      "Pay only if it passes your test"
+    ],
+    "faqEyebrow": "FAQ",
+    "faqTitle": "Questions people ask first.",
+    "faqMore": "More on",
+    "faqTrust": "trust and privacy",
+    "faqAnd": "and",
+    "faqPricing": "pricing",
+    "faqs": [
+      {
+        "q": "What is Ekido?",
+        "a": "A way for a small business to get its own small AI model for one job, like sorting support tickets or reading invoices. Idle gaming PCs and laptops do the training, and you pay only if the model passes your test."
+      },
+      {
+        "q": "How much data do I need?",
+        "a": "Between 20 and 50 examples of the right answer. Some are kept aside, unseen, to test the model before you pay."
+      },
+      {
+        "q": "Which languages?",
+        "a": "Hindi, Hinglish and English. Two of the first five jobs, support tickets and clinic questions, are built around Hinglish."
+      },
+      {
+        "q": "What if the model isn't good enough?",
+        "a": "Then you don't pay. It has to pass your test and beat the untrained model; if it misses either, the whole budget is refunded automatically."
+      },
+      {
+        "q": "Can I use it for my business today?",
+        "a": "Not yet for real money. Ekido runs on a public test network with test money until an independent audit."
+      }
+    ],
+    "closeTitle": "AI that belongs to the people who use it.",
+    "closeLead": "Follow the build, or put your idle device to work.",
+    "closeEarn": "Earn with your device",
+    "github": "GitHub"
+  }
+}

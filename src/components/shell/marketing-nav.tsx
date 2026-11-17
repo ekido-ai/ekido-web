@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { BadgeCheck, Boxes, ChevronDown, Coins, Cpu, Server, Sparkles } from "lucide-react";
 import { cx } from "@/components/ui/cx";
+import { useTranslations } from "next-intl";
 import { PRODUCTS, SOLUTIONS, STATUS_LABEL, type Status } from "@/lib/landing/products";
 
 /*
@@ -30,6 +31,7 @@ export function StatusBadge({ status }: { status: Status }) {
 type Menu = "products" | "solutions" | null;
 
 export function MarketingNav() {
+  const t = useTranslations("nav");
   const [open, setOpen] = useState<Menu>(null);
   const ref = useRef<HTMLElement>(null);
   const closing = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -77,11 +79,11 @@ export function MarketingNav() {
 
   return (
     <nav ref={ref} aria-label="Product" className="relative hidden items-center gap-0.5 lg:flex" onMouseLeave={closeSoon} onMouseEnter={() => keepOpen()}>
-      {trigger("products", "Products")}
-      {trigger("solutions", "Solutions")}
-      {plain("/developers", "Developers")}
-      {plain("/pricing", "Pricing")}
-      {plain("/roadmap", "Roadmap")}
+      {trigger("products", t("products"))}
+      {trigger("solutions", t("solutions"))}
+      {plain("/developers", t("developers"))}
+      {plain("/pricing", t("pricing"))}
+      {plain("/roadmap", t("roadmap"))}
 
       {open === "products" && (
         <div id="menu-products" className="absolute left-0 top-full z-50 pt-3">
@@ -105,7 +107,7 @@ export function MarketingNav() {
             })}
           </div>
           <Link href="/#products" onClick={() => setOpen(null)} className="mt-2 block rounded-2xl bg-surface-2 px-4 py-3 text-sm font-semibold text-ink hover:bg-surface-3">
-            See the whole platform →
+            {t("wholePlatform")}
           </Link>
           </div>
         </div>
@@ -114,7 +116,7 @@ export function MarketingNav() {
       {open === "solutions" && (
         <div id="menu-solutions" className="absolute left-16 top-full z-50 pt-3">
           <div className="nav-pop grid w-[38rem] grid-cols-2 gap-4 rounded-2xl border border-line bg-surface p-5 shadow-[0_24px_60px_-24px_rgba(31,42,51,0.4)]">
-          {([["By industry", SOLUTIONS.industries], ["By role", SOLUTIONS.roles]] as const).map(([title, items]) => (
+          {([[t("byIndustry"), SOLUTIONS.industries], [t("byRole"), SOLUTIONS.roles]] as const).map(([title, items]) => (
             <div key={title}>
               <p className="kicker mb-2 text-[0.7rem]">{title}</p>
               {items.map((s) => (

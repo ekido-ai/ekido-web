@@ -5,6 +5,8 @@ import { Fraunces, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import { themeScript } from "@/lib/theme-script";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale } from "next-intl/server";
 
 // Downloaded once at build time and served from this site, so nothing loads from Google on stage.
 // Brand type: Fraunces for headings, IBM Plex for text and code.
@@ -37,16 +39,19 @@ export const metadata: Metadata = {
 };
 
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const locale = await getLocale();
   return (
-    <html lang="en" data-theme="light" data-style="nexora" data-motion="on" className={`h-full antialiased ${display.variable} ${body.variable} ${code.variable} ${zodiak.variable} ${satoshi.variable}`} suppressHydrationWarning>
+    <html lang={locale} data-theme="light" data-style="nexora" data-motion="on" className={`h-full antialiased ${display.variable} ${body.variable} ${code.variable} ${zodiak.variable} ${satoshi.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body className="min-h-full">
-        <EventSourceProvider>
-          <AppShell>{children}</AppShell>
-        </EventSourceProvider>
+        <NextIntlClientProvider>
+          <EventSourceProvider>
+            <AppShell>{children}</AppShell>
+          </EventSourceProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
