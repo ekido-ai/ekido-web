@@ -3,7 +3,7 @@ import { LogoMark } from "@/components/gpu/logo-mark";
 
 const columns: { title: string; links: [string, string][] }[] = [
   { title: "Use it", links: [["/dashboard", "Mission control"], ["/provide", "Earn with your device"], ["/earnings", "Earnings"], ["/verify", "Verify a payout"]] },
-  { title: "On-chain", links: [["/chain", "Escrow ledger"], ["/chain#reserves", "Proof of reserves"], ["/settlement", "Settlement"], ["/status", "System status"], ["/admin", "Owner console"]] },
+  { title: "Proof", links: [["/chain", "Escrow ledger"], ["/chain#reserves", "Proof of reserves"], ["/settlement", "Settlement"], ["/status", "System status"], ["/admin", "Owner console"]] },
   { title: "Help", links: [["/help", "Questions and answers"], ["/#how", "How it works"], ["/help#badges", "What the badges mean"], ["/security", "Report a problem"]] },
   { title: "Legal", links: [["/privacy", "Privacy"], ["/privacy#cookies", "Cookies and storage"], ["/terms", "Terms of use"], ["/security", "Security"]] },
 ];
