@@ -17,7 +17,11 @@ export function countConnected(rows: readonly ProviderStatus[]): number {
   return rows.filter((row) => isConnected(row.status)).length;
 }
 
-export type ProviderState<T> = T[] | null | "down";
+/**
+ * null while loading; "down" when the coordinator cannot be read; "private" when it answers but keeps its provider
+ * list to itself (a public server refuses /providers with 401 or 403). Private is not an outage.
+ */
+export type ProviderState<T> = T[] | null | "down" | "private";
 
 /** The fields a roster shows. All of them come from GET /providers. */
 export interface RosterRow extends ProviderStatus {
@@ -63,7 +67,16 @@ export function sortRoster<T extends RosterRow>(rows: readonly T[]): T[] {
   return [...rows].sort((a, b) => Number(isConnected(b.status)) - Number(isConnected(a.status)) || (a.name ?? "").localeCompare(b.name ?? ""));
 }
 
-type Fetch = (input: string, init?: { signal?: AbortSignal }) => Promise<{ ok: boolean; json(): Promise<unknown> }>;
+type Fetch = (input: string, init?: { signal?: AbortSignal }) => Promise<{ ok: boolean; status?: number; headers?: { get(name: string): string | null }; json(): Promise<unknown> }>;
+
+/** How long a server that said "private" is left alone before asking again. */
+export const PRIVATE_RECHECK_MS = 5 * 60_000;
+
+/** Seconds from a Retry-After header, or a safe default when it is missing or unreadable. */
+export function retryAfterMs(value: string | null | undefined, fallbackMs = 30_000): number {
+  const seconds = Number(value);
+  return Number.isFinite(seconds) && seconds > 0 ? Math.min(seconds, 600) * 1000 : fallbackMs;
+}
 
 export interface WatchOptions {
   intervalMs?: number;
@@ -74,8 +87,10 @@ export interface WatchOptions {
 }
 
 /**
- * Reads `${baseUrl}/providers` now and then every `intervalMs`, and calls `onChange` with the rows, or "down" when the
- * coordinator cannot be read. Returns a function that stops it. A slow answer never overlaps the next request.
+ * Reads `${baseUrl}/providers` now and then every `intervalMs`, and calls `onChange` with the rows, "private" when the
+ * server keeps the list to itself, or "down" when the coordinator cannot be read. Returns a function that stops it.
+ * A slow answer never overlaps the next request. A private list is asked for again only every PRIVATE_RECHECK_MS, and
+ * a 429 keeps the last answer on screen and waits as long as the server's Retry-After says.
  */
 export function watchProviders<T extends ProviderStatus>(
   baseUrl: string,
@@ -88,13 +103,23 @@ export function watchProviders<T extends ProviderStatus>(
   const isHidden = options.isHidden ?? (() => typeof document !== "undefined" && document.hidden);
   let stopped = false;
   let inFlight = false;
+  let quietUntil = 0;
 
   const read = async () => {
-    if (stopped || inFlight || isHidden()) return;
+    if (stopped || inFlight || isHidden() || Date.now() < quietUntil) return;
     inFlight = true;
     try {
       const response = await fetchImpl(`${baseUrl}/providers`, { signal: AbortSignal.timeout(timeoutMs) });
-      if (!response.ok) throw new Error(`providers answered ${String((response as { status?: number }).status ?? "")}`);
+      if (response.status === 401 || response.status === 403) {
+        quietUntil = Date.now() + PRIVATE_RECHECK_MS;
+        if (!stopped) onChange("private");
+        return;
+      }
+      if (response.status === 429) {
+        quietUntil = Date.now() + retryAfterMs(response.headers?.get("retry-after"));
+        return;
+      }
+      if (!response.ok) throw new Error(`providers answered ${String(response.status ?? "")}`);
       const rows = await response.json();
       if (!stopped) onChange(Array.isArray(rows) ? (rows as T[]) : "down");
     } catch {

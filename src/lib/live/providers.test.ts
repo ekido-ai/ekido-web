@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { countConnected, isConnected, watchProviders, type ProviderState } from "./providers";
+import { countConnected, isConnected, PRIVATE_RECHECK_MS, watchProviders, type ProviderState } from "./providers";
 
 describe("isConnected", () => {
   it("reads the coordinator's capital-letter statuses", () => {
@@ -61,6 +61,37 @@ describe("watchProviders", () => {
     stop();
     expect(seen[0]).toBe("down");
     expect(seen[1]).toEqual([{ status: "ONLINE" }]);
+  });
+
+  it("reports a refused list as private, not down, and asks again only every five minutes", async () => {
+    const fetchImpl = vi.fn(async () => ({ ok: false, status: 401, json: async () => ({ error: "API_LOCKED" }) }));
+    const seen: ProviderState<{ status: string }>[] = [];
+    const stop = watchProviders("https://c.example", (s) => seen.push(s), { intervalMs: 10_000, fetchImpl, isHidden: () => false });
+    await vi.advanceTimersByTimeAsync(0);
+    await vi.advanceTimersByTimeAsync(60_000);
+    expect(seen).toEqual(["private"]);
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+    await vi.advanceTimersByTimeAsync(PRIVATE_RECHECK_MS);
+    stop();
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+  });
+
+  it("keeps the last answer on a 429 and waits as long as Retry-After says", async () => {
+    const fetchImpl = vi.fn();
+    fetchImpl.mockResolvedValueOnce({ ok: true, status: 200, json: async () => [{ status: "ONLINE" }] });
+    fetchImpl.mockResolvedValueOnce({ ok: false, status: 429, headers: { get: () => "40" }, json: async () => ({}) });
+    fetchImpl.mockResolvedValue({ ok: true, status: 200, json: async () => [{ status: "OFFLINE" }] });
+    const seen: ProviderState<{ status: string }>[] = [];
+    const stop = watchProviders("https://c.example", (s) => seen.push(s), { intervalMs: 10_000, fetchImpl, isHidden: () => false });
+    await vi.advanceTimersByTimeAsync(0);
+    await vi.advanceTimersByTimeAsync(10_000);
+    await vi.advanceTimersByTimeAsync(30_000);
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+    expect(seen).toEqual([[{ status: "ONLINE" }]]);
+    await vi.advanceTimersByTimeAsync(10_000); // 50 s: the 40 s wait that began at 10 s is over.
+    stop();
+    expect(fetchImpl).toHaveBeenCalledTimes(3);
+    expect(seen[1]).toEqual([{ status: "OFFLINE" }]);
   });
 
   it("treats a network error or a body that is not a list as down", async () => {
