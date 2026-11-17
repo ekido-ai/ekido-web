@@ -7,7 +7,8 @@ import { themeScript } from "@/lib/theme-script";
 
 // Downloaded once at build time and served from this site, so nothing loads from Google on stage.
 // Brand type: Fraunces for headings, IBM Plex for text and code.
-const display = Fraunces({ subsets: ["latin"], variable: "--font-display", display: "swap" });
+// The brand cut is opsz 72, SOFT 0, WONK 0 (set in globals.css), so those axes must be loaded.
+const display = Fraunces({ subsets: ["latin"], axes: ["opsz", "SOFT", "WONK"], variable: "--font-display", display: "swap" });
 const body = IBM_Plex_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-body", display: "swap" });
 const code = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-code", display: "swap" });
 

@@ -102,7 +102,7 @@ export default function Landing() {
       {/* ── The jobs: the five real recipes ── */}
       <section id="jobs" className="mx-auto max-w-[1200px] scroll-mt-24 px-4 pt-12 sm:px-8">
         <Reveal className="grid gap-4 lg:grid-cols-[1fr_1.3fr] lg:items-end">
-          <H2>Built for the work a shop, clinic or support desk does every day.</H2>
+          <div><p className="kicker mb-3">What it&apos;s for</p><H2>Built for the work a shop, clinic or support desk does every day.</H2></div>
           <p className="text-lg leading-relaxed text-ink-2">
             A small model trained for one job can do it well, offline if you like, at a fixed price instead of a per-message bill in dollars. These are the first jobs Ekido is built for.
           </p>
@@ -126,7 +126,7 @@ export default function Landing() {
       {/* ── How it works: five steps, each with who does it ── */}
       <section id="how" className="mx-auto max-w-[1200px] scroll-mt-24 px-4 pt-28 sm:px-8">
         <Reveal className="flex flex-wrap items-end justify-between gap-4">
-          <H2>Describe the job. Get your own model.</H2>
+          <div><p className="kicker mb-3">How it works</p><H2>Describe the job. Get your own model.</H2></div>
           <p className="max-w-md text-ink-2">Five steps, from a few examples to a model you own.</p>
         </Reveal>
         <Stagger step={90} className="mt-10 grid gap-3 md:grid-cols-5">
@@ -135,7 +135,7 @@ export default function Landing() {
               <span className="grid size-9 place-items-center rounded-full bg-accent font-semibold text-white">{i + 1}</span>
               <h3 className="mt-4 font-serif text-2xl text-ink">{s.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-ink-2">{s.body}</p>
-              <p className="mt-auto border-t border-line pt-3 text-xs font-medium text-accent-text">{s.who}</p>
+              <p className="kicker mt-auto border-t border-line pt-3 text-[0.72rem]">{s.who}</p>
             </div>
           ))}
         </Stagger>
@@ -145,7 +145,7 @@ export default function Landing() {
       <section id="relay" className="mx-auto max-w-[1200px] scroll-mt-24 px-4 pt-28 sm:px-8">
         <div className="theme-dark device p-6 sm:p-10">
           <Reveal className="grid gap-6 lg:grid-cols-[1fr_1.2fr] lg:items-end">
-            <H2 className="text-ink">A relay race for training.</H2>
+            <div><p className="kicker mb-3">The idea behind the name</p><H2 className="text-ink">A relay race for training.</H2></div>
             <p className="text-lg leading-relaxed text-ink-2">
               In an ekiden, a Japanese relay race, a sash passes from runner to runner. In Ekido the training job is the sash. Each device saves signed checkpoints as it trains, and when one stops, the next starts from the last good one. Each runner is paid for the leg it ran.
             </p>
@@ -179,7 +179,7 @@ export default function Landing() {
       {/* ── Quality: the rule that makes paying safe ── */}
       <section id="quality" className="mx-auto max-w-[1200px] scroll-mt-24 px-4 pt-28 sm:px-8">
         <Reveal className="grid gap-6 lg:grid-cols-[1fr_1.4fr] lg:items-end">
-          <H2>Good is not enough. It has to be better.</H2>
+          <div><p className="kicker mb-3">Quality you can trust</p><H2>Good is not enough. It has to be better.</H2></div>
           <p className="text-lg leading-relaxed text-ink-2">
             The test and the bar are fixed before training starts, and everyone can see them. Nobody can move the goalposts later.
           </p>
@@ -211,6 +211,7 @@ export default function Landing() {
       <section id="owners" className="mx-auto max-w-[1200px] scroll-mt-24 px-4 pt-28 sm:px-8">
         <Reveal className={`${card} grid gap-8 overflow-hidden p-6 sm:p-10 lg:grid-cols-[1.2fr_1fr] lg:items-center`}>
           <div>
+            <p className="kicker mb-3">For device owners</p>
             <H2>Your idle device can earn.</H2>
             <p className="mt-4 max-w-xl text-lg leading-relaxed text-ink-2">
               A gaming PC or laptop that sits idle most of the day can train models for nearby businesses. You choose the price and when it works, your key never leaves your machine, and you stop whenever you like.
@@ -245,6 +246,7 @@ export default function Landing() {
       {/* ── Where we are ── */}
       <section id="today" className="mx-auto max-w-[1200px] scroll-mt-24 px-4 pt-28 sm:px-8">
         <Reveal>
+          <p className="kicker mb-3">Honestly</p>
           <H2>Where we are today</H2>
           <p className="mt-3 max-w-2xl text-ink-2">We show what works and say plainly what doesn&apos;t yet.</p>
         </Reveal>
