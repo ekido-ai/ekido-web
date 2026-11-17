@@ -17,11 +17,11 @@ const NODES = [
 ] as const;
 
 const EDGES = [
-  { from: "client", to: "escrow", d: "M80 150 L300 150", tone: "#e8622c" },
+  { from: "client", to: "escrow", d: "M80 150 L300 150", tone: "#fe5000" },
   { from: "escrow", to: "gpu", d: "M300 150 C400 150 420 70 520 70", tone: "#ff8a4c" },
   { from: "gpu", to: "verify", d: "M520 70 C580 110 580 190 520 230", tone: "#fab219" },
   { from: "verify", to: "paid", d: "M520 230 C620 230 640 150 740 150", tone: "#4ade80" },
-  { from: "escrow", to: "paid", d: "M300 150 C420 300 620 300 740 150", tone: "#e8622c" },
+  { from: "escrow", to: "paid", d: "M300 150 C420 300 620 300 740 150", tone: "#fe5000" },
 ] as const;
 
 const STEPS: Record<string, string> = {
@@ -57,8 +57,8 @@ export function MoneyFlow() {
             const on = active === n.id;
             return (
               <g key={n.id} className="cursor-pointer" onMouseEnter={() => setActive(n.id)} onFocus={() => setActive(n.id)} onClick={() => setActive(n.id)} tabIndex={0} role="button" aria-label={`${n.label}: ${n.sub}`}>
-                <circle cx={n.x} cy={n.y} r={on ? 34 : 28} fill={on ? "#2a1308" : "#141416"} stroke={on ? "#e8622c" : "#3a3c40"} strokeWidth="2" className="transition-all duration-300" />
-                {on && <circle cx={n.x} cy={n.y} r="44" fill="none" stroke="#e8622c" strokeOpacity="0.35" className="mf-ping" />}
+                <circle cx={n.x} cy={n.y} r={on ? 34 : 28} fill={on ? "#2a1308" : "#141416"} stroke={on ? "#fe5000" : "#3a3c40"} strokeWidth="2" className="transition-all duration-300" />
+                {on && <circle cx={n.x} cy={n.y} r="44" fill="none" stroke="#fe5000" strokeOpacity="0.35" className="mf-ping" />}
                 <text x={n.x} y={n.y + 5} textAnchor="middle" className="fill-[#f2f2f0] text-[13px] font-semibold">{n.label}</text>
                 <text x={n.x} y={n.y + 56} textAnchor="middle" className="fill-[#7f838a] text-[11px]">{n.sub}</text>
               </g>

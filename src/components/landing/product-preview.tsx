@@ -18,7 +18,7 @@ const TABS = [
 ] as const;
 type Tab = (typeof TABS)[number]["key"];
 
-function Describe() {
+export function Describe() {
   return (
     <div className="space-y-3">
       <div className="max-w-[88%] rounded-2xl rounded-bl-md bg-surface-2 px-4 py-3 text-[15px] text-ink">
@@ -27,8 +27,8 @@ function Describe() {
           <Paperclip className="size-3.5" aria-hidden /> tickets.csv · 48 rows
         </div>
       </div>
-      <div className="ml-auto max-w-[88%] rounded-2xl rounded-br-md bg-ink px-4 py-3 text-[15px] text-[#fbf8f3]">
-        <span className="mb-1 flex items-center gap-1.5 text-xs font-semibold text-[#ffb48f]">
+      <div className="ml-auto max-w-[88%] rounded-2xl rounded-br-md bg-ink px-4 py-3 text-[15px] text-[#ffffff]">
+        <span className="mb-1 flex items-center gap-1.5 text-xs font-semibold text-[#ff9a66]">
           <Sparkles className="size-3.5" aria-hidden /> Ekido assistant
         </span>
         Got it: a Hinglish ticket sorter. I&apos;ll keep 20 of your examples aside, unseen, to test the model before you pay.
@@ -37,7 +37,7 @@ function Describe() {
   );
 }
 
-function Quote() {
+export function Quote() {
   const rows: [string, string][] = [
     ["Job", "Sort support tickets (Hinglish)"],
     ["Base model", "Qwen2.5 0.5B Instruct"],
@@ -57,13 +57,13 @@ function Quote() {
       </dl>
       <div className="flex items-center justify-between gap-3 border-t border-line px-4 py-3">
         <span className="text-xs text-muted">Prices are provisional on the test network</span>
-        <span className="rounded-full bg-ink px-4 py-1.5 text-sm font-semibold text-[#fbf8f3]">Approve and start</span>
+        <span className="rounded-full bg-ink px-4 py-1.5 text-sm font-semibold text-[#ffffff]">Approve and start</span>
       </div>
     </div>
   );
 }
 
-function Train() {
+export function Train() {
   const devices = [
     { name: "Gaming PC · Pune", note: "Dropped out at step 450, checkpoint saved", Icon: Gamepad2, state: "lost" },
     { name: "Laptop · Indore", note: "Picked up from step 450", Icon: Laptop, state: "active" },
@@ -95,7 +95,7 @@ function Train() {
   );
 }
 
-function Result() {
+export function Result() {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-3 rounded-2xl border border-success/40 bg-success/10 p-4">

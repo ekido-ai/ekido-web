@@ -162,7 +162,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   // The live/recorded controls and the coordinator banner belong to the screens that show a job.
   const dash = DASH_PATHS.some((p) => path.startsWith(p));
   // The home page is the product site: its own section links and one primary button, no chain status.
-  const landing = path === "/";
+  const landing = path === "/" || ["/products/", "/solutions", "/developers", "/pricing", "/trust", "/roadmap"].some((p) => path.startsWith(p));
   return (
     <div className="app-backdrop relative flex min-h-full flex-col">
       <a

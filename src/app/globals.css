@@ -83,11 +83,11 @@
   --muted: #8d979f;
   --grid: #222d36;
   --ink-inverse: #141b21;
-  --accent: #e8622c;
+  --accent: #fe5000;
   --shadow: 0 24px 60px -36px rgba(0, 0, 0, 0.85);
 
-  --accent-strong: #ea6a35;
-  --accent-text: #f4895a;
+  --accent-strong: #ff6a1f;
+  --accent-text: #ff7a3d;
   --accent-soft: rgba(232, 98, 44, 0.14);
   --accent-ink: #141b21;
   --action: #f3efe8;
@@ -101,27 +101,27 @@
 }
 :root[data-style="nexora"][data-theme="light"] {
   /* Ekido brand, light: warm paper, ink text, sash orange as the one accent (logo, active tab, highlights). */
-  --bg: #fbf8f3;
+  --bg: #ffffff;
   --surface: #ffffff;
   --surface-2: #f6f1e9;
   --surface-3: #ede6db;
   --border: rgba(31, 42, 51, 0.09);
   --border-strong: #ddd4c6;
-  --text: #1f2a33;
+  --text: #131e29;
   --text-2: #4a5661;
   --muted: #66717b;
   --grid: #ede6db;
   --ink-inverse: #ffffff;
-  --accent: #e8622c;
+  --accent: #fe5000;
 
   /* Semantic colours: name the job, not the hue. Components use these, never raw hex. */
-  --accent-strong: #ea6a35;
-  --accent-text: #b5461a;
-  --accent-soft: #fdebe1;
-  --accent-ink: #1f2a33;
-  --action: #1f2a33;
+  --accent-strong: #ff6a1f;
+  --accent-text: #b83a00;
+  --accent-soft: #ffede4;
+  --accent-ink: #131e29;
+  --action: #131e29;
   --action-hover: #2c3a46;
-  --action-ink: #fbf8f3;
+  --action-ink: #ffffff;
   --danger: #dc2626;
   --danger-soft: #fef2f2;
   --danger-ink: #b91c1c;
@@ -588,7 +588,7 @@ body {
 .bento-draw { stroke-dasharray: 100; animation: bento-draw 3.2s ease-in-out infinite; }
 @keyframes bento-draw { 0% { stroke-dashoffset: 100; } 60%, 100% { stroke-dashoffset: 0; } }
 .bento-block { animation: bento-block 2.8s ease-in-out infinite; }
-@keyframes bento-block { 0%, 100% { background: var(--n-alt, #eef0f3); } 40% { background: #e8622c; } 60% { background: #fbd3bd; } }
+@keyframes bento-block { 0%, 100% { background: var(--n-alt, #eef0f3); } 40% { background: #fe5000; } 60% { background: #fbd3bd; } }
 @media (prefers-reduced-motion: reduce) { .mf-beam, .mf-ping, .bento-draw, .bento-block { animation: none; } .bento-draw { stroke-dashoffset: 0; } }
 :root[data-motion="off"] .mf-beam, :root[data-motion="off"] .mf-ping, :root[data-motion="off"] .bento-draw, :root[data-motion="off"] .bento-block { animation: none; }
 /* Blocks placed one by one (components/landing/stagger.tsx). Hidden only once JS has marked it ready. */
@@ -642,11 +642,11 @@ body {
 ::selection { background: color-mix(in srgb, var(--accent) 35%, transparent); }
 
 /* ── Daylight theme details ──────────────────────────────────────────── */
-:root[data-theme="light"] .btn-primary { background: #1f2a33; color: #fff; box-shadow: 0 10px 24px -14px rgba(31, 42, 51, 0.6); }
+:root[data-theme="light"] .btn-primary { background: #131e29; color: #fff; box-shadow: 0 10px 24px -14px rgba(31, 42, 51, 0.6); }
 :root[data-theme="light"] .btn-primary:hover { background: #2c3a46; filter: none; }
 /* The single accent: the sash, as a fill, always with ink text on it. (Class names keep "lime" for now.) */
-.grad-lime { background: linear-gradient(135deg, #f4895a 0%, #fbd3bd 45%, #fbc7a8 100%); color: #1f2a33; }
-.text-grad-lime { background: linear-gradient(135deg, #e8622c, #b5461a); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.grad-lime { background: linear-gradient(135deg, #ff7a3d 0%, #fbd3bd 45%, #fbc7a8 100%); color: #131e29; }
+.text-grad-lime { background: linear-gradient(135deg, #fe5000, #b83a00); -webkit-background-clip: text; background-clip: text; color: transparent; }
 :root[data-theme="light"] .app-backdrop {
   background:
     radial-gradient(700px 360px at 8% -80px, rgba(232, 98, 44, 0.28), transparent 70%),
@@ -658,7 +658,7 @@ body {
 /* Active screen in daylight: a sash-tinted pill, not an underline. */
 :root[data-style="nexora"][data-theme="light"] .nav-link[aria-current="page"] {
   background: linear-gradient(135deg, #fbd3bd, #fde3d4);
-  color: #1f2a33;
+  color: #131e29;
   border-radius: 9999px;
   box-shadow: inset 0 0 0 1px rgba(232, 98, 44, 0.25);
 }
@@ -666,7 +666,7 @@ body {
 :root[data-theme="light"] .panel { border-radius: 1.5rem; }
 /* Live demos run on dark glass inside the daylight page, like a product on a stage. */
 .device {
-  background: radial-gradient(120% 90% at 50% 0%, #1f2a33 0%, #141b21 60%);
+  background: radial-gradient(120% 90% at 50% 0%, #131e29 0%, #141b21 60%);
   color: #f3efe8;
   border-radius: 2rem;
   box-shadow: 0 40px 80px -40px rgba(31, 42, 51, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
@@ -680,13 +680,13 @@ body {
   border-radius: 2rem;
   box-shadow: 0 40px 80px -48px rgba(31, 42, 51, 0.35), inset 0 1px 0 #ffffff;
 }
-:root[data-theme="light"] .chip-lime { --ember: #e8622c; --ember-hot: #fdebe1; }
+:root[data-theme="light"] .chip-lime { --ember: #fe5000; --ember-hot: #ffede4; }
 :root[data-theme="light"] .chip-lime .ca-die-a { stop-color: #fbd3bd; }
-:root[data-theme="light"] .chip-lime .ca-die-b { stop-color: #e8622c; }
-:root[data-theme="light"] .chip-lime .gpu-chip[data-phase="idle"] .ca-die-a { stop-color: #fdebe1; }
+:root[data-theme="light"] .chip-lime .ca-die-b { stop-color: #fe5000; }
+:root[data-theme="light"] .chip-lime .gpu-chip[data-phase="idle"] .ca-die-a { stop-color: #ffede4; }
 :root[data-theme="light"] .chip-lime .gpu-chip[data-phase="idle"] .ca-die-b { stop-color: #c9b6a6; }
 :root[data-theme="light"] .chip-lime .chip-art .ca-sm { fill: rgba(31, 42, 51, 0.32); stroke: rgba(255, 255, 255, 0.35); }
-:root[data-theme="light"] .chip-lime .chip-art .gpu-sm.is-on { fill: #fff6f0; stroke: #ffffff; filter: drop-shadow(0 0 3px #f4895a); }
+:root[data-theme="light"] .chip-lime .chip-art .gpu-sm.is-on { fill: #fff6f0; stroke: #ffffff; filter: drop-shadow(0 0 3px #ff7a3d); }
 :root[data-theme="light"] .chip-lime .ca-etch { stroke: rgba(31, 42, 51, 0.28); }
 :root[data-theme="light"] .chip-lime .ca-label { fill: rgba(31, 42, 51, 0.6); }
 :root[data-theme="light"] .chip-lime .ca-mem { fill: rgba(31, 42, 51, 0.38); }
@@ -694,9 +694,9 @@ body {
 :root[data-theme="light"] .chip-lime .cf-dots rect { fill: #ece4d8; }
 :root[data-theme="light"] .chip-lime .cf-trace { stroke: #e3d9cc; }
 :root[data-theme="light"] .chip-lime .circuit-field[data-phase="training"] .cf-trace { stroke: rgba(232, 98, 44, 0.35); }
-:root[data-theme="light"] .chip-lime .cf-pulse { stroke: #e8622c; filter: drop-shadow(0 0 3px #ea6a35); }
+:root[data-theme="light"] .chip-lime .cf-pulse { stroke: #fe5000; filter: drop-shadow(0 0 3px #ff6a1f); }
 :root[data-theme="light"] .chip-lime .cf-pad { fill: #faf6f0; stroke: #dccfc0; }
-:root[data-theme="light"] .chip-lime .circuit-field[data-phase="training"] .cf-pad { fill: #fdebe1; stroke: #e8622c; }
+:root[data-theme="light"] .chip-lime .circuit-field[data-phase="training"] .cf-pad { fill: #ffede4; stroke: #fe5000; }
 :root[data-theme="light"] .chip-lime .chip-glow { background: radial-gradient(circle, rgba(232, 98, 44, 0.65), rgba(251, 199, 168, 0.18) 45%, transparent 70%); }
 :root[data-theme="light"] .chip-lime .chip-tilt { filter: drop-shadow(0 24px 28px rgba(31, 42, 51, 0.22)) drop-shadow(0 0 18px rgba(232, 98, 44, 0.55)); }
 
@@ -750,7 +750,7 @@ body {
 .btn-primary::after { content: ""; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%); transform: translateX(-120%); transition: transform 0.7s ease; }
 .btn-primary:hover::after { transform: translateX(120%); }
 /* The accent word glints now and then. */
-.shimmer-text { background-image: linear-gradient(110deg, #e8622c 0%, #b5461a 40%, #fbd3bd 50%, #b5461a 60%, #e8622c 100%); background-size: 220% 100%; animation: shimmer 5s ease-in-out infinite; }
+.shimmer-text { background-image: linear-gradient(110deg, #fe5000 0%, #b83a00 40%, #fbd3bd 50%, #b83a00 60%, #fe5000 100%); background-size: 220% 100%; animation: shimmer 5s ease-in-out infinite; }
 @keyframes shimmer { 0%, 60% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
 @media (prefers-reduced-motion: reduce) {
   .anim-scroll [data-reveal] { opacity: 1 !important; transform: none !important; transition: none; }
@@ -788,10 +788,10 @@ body {
   --grid: #222d36;
   --ink-inverse: #141b21;
 
-  --accent-strong: #ea6a35;
-  --accent-text: #f4895a;
+  --accent-strong: #ff6a1f;
+  --accent-text: #ff7a3d;
   --accent-soft: rgba(232, 98, 44, 0.12);
-  --accent-ink: #1f2a33;
+  --accent-ink: #131e29;
   --action: #f3efe8;
   --action-hover: #ffffff;
   --action-ink: #141b21;
@@ -808,36 +808,36 @@ body {
 
 /* ── Ekido brand, as in the brand deck (17 Nov 2026) ─────────────────────
  * Flat paper, flat ink, thin warm lines and one accent, the sash. No glows, gradients, drifting colour or shimmer:
- * those were GPUChain's "ember" look. Palette: ink #1F2A33, ink-2 #44525D, muted #6B7882, sash #E8622C,
- * sash deep #B5461A, sash tint #FBEADF, paper #FBF8F3, card #FFFFFF, line #E7E0D5. On ink: card #2A3843,
- * line #3A4955, text #FBF8F3 / #D6DDE1, sash soft #FFB48F. Type: Fraunces (opsz 72, SOFT 0, WONK 0) and IBM Plex Sans.
+ * those were GPUChain's "ember" look. Palette: ink #131e29, ink-2 #44525D, muted #6B7882, sash #fe5000,
+ * sash deep #b83a00, sash tint #ffede4, paper #ffffff, card #FFFFFF, line #E7E0D5. On ink: card #1d2a37,
+ * line #2c3a47, text #ffffff / #d3d9de, sash soft #ff9a66. Type: Fraunces (opsz 72, SOFT 0, WONK 0) and IBM Plex Sans.
  * This block comes last so it wins; C21 (#50) rebuilds the components on these values. */
 :root[data-style="nexora"][data-theme="light"] {
-  --bg: #fbf8f3;
+  --bg: #ffffff;
   --surface: #ffffff;
   --surface-2: #f6f1e9;
   --surface-3: #ede6db;
   --border: #e7e0d5;
   --border-strong: #ddd4c6;
-  --text: #1f2a33;
+  --text: #131e29;
   --text-2: #44525d;
   --muted: #6b7882;
-  --accent: #e8622c;
-  --accent-text: #b5461a;
-  --accent-soft: #fbeadf;
+  --accent: #fe5000;
+  --accent-text: #b83a00;
+  --accent-soft: #ffede4;
   --shadow: none;
 }
 .theme-dark {
-  --bg: #1f2a33;
-  --surface: #2a3843;
+  --bg: #131e29;
+  --surface: #1d2a37;
   --surface-2: #2f3f4b;
-  --surface-3: #3a4955;
-  --border: #3a4955;
+  --surface-3: #2c3a47;
+  --border: #2c3a47;
   --border-strong: #465764;
-  --text: #fbf8f3;
-  --text-2: #d6dde1;
+  --text: #ffffff;
+  --text-2: #d3d9de;
   --muted: #a3afb8;
-  --accent-text: #ffb48f;
+  --accent-text: #ff9a66;
 }
 h1, h2, h3, .font-serif {
   font-variation-settings: "opsz" 72, "SOFT" 0, "WONK" 0;
@@ -853,18 +853,18 @@ h1, h2, h3, .font-serif {
 /* Cards: white with a thin warm line; dark cards are flat ink, as on the deck's dark slides. */
 /* Depth is back (DESIGN.md, "The Sash"): white cards cast a warm, soft shadow; ink cards sit a little deeper. */
 :root[data-theme="light"] .panel { background: var(--surface); box-shadow: 0 1px 0 rgba(31, 42, 51, 0.04), 0 22px 44px -30px rgba(31, 42, 51, 0.38); }
-.device { background: #1f2a33; color: #fbf8f3; border-radius: 1.5rem; box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 34px 70px -40px rgba(31, 42, 51, 0.7); }
+.device { background: #131e29; color: #ffffff; border-radius: 1.5rem; box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 34px 70px -40px rgba(31, 42, 51, 0.7); }
 :root[data-theme="light"] .stage-light { background: var(--surface); box-shadow: none; }
 .lift:hover { transform: translateY(-2px); box-shadow: none; border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); }
 
 /* Buttons and navigation: solid ink or solid sash, nothing shiny. */
-:root[data-theme="light"] .btn-primary { background: #1f2a33; color: #fbf8f3; box-shadow: none; }
+:root[data-theme="light"] .btn-primary { background: #131e29; color: #ffffff; box-shadow: none; }
 .btn-primary::after { display: none; }
-:root[data-style="nexora"][data-theme="light"] .nav-link[aria-current="page"] { background: #fbeadf; box-shadow: none; color: #1f2a33; }
+:root[data-style="nexora"][data-theme="light"] .nav-link[aria-current="page"] { background: #ffede4; box-shadow: none; color: #131e29; }
 
 /* Old gradient helpers become the flat brand colours. */
-.grad-lime { background: #fbeadf; color: #1f2a33; }
-.text-grad-lime, .shimmer-text { background: none; -webkit-background-clip: border-box; background-clip: border-box; color: #e8622c; animation: none; }
+.grad-lime { background: #ffede4; color: #131e29; }
+.text-grad-lime, .shimmer-text { background: none; -webkit-background-clip: border-box; background-clip: border-box; color: #fe5000; animation: none; }
 .hero-glow { display: none; }
 
 /* The deck's kicker: a small sash label above a heading. */
@@ -881,7 +881,7 @@ h1, h2, h3, .font-serif {
 .grain > * { position: relative; z-index: 1; }
 .ink-band.grain::after, .device.grain::after { opacity: 0.16; mix-blend-mode: soft-light; }
 /* A full-width ink leg: the deck's dark slide as a band across the page. */
-.ink-band { background: #1f2a33; color: #fbf8f3; }
+.ink-band { background: #131e29; color: #ffffff; }
 /* Race-bib numerals: huge, outlined Fraunces. */
 .bib {
   font-family: var(--display-font); font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 0; font-weight: 800;
@@ -898,7 +898,7 @@ h1, h2, h3, .font-serif {
    relay card and off the page. It sweeps in once on load; with reduced motion it is simply there. */
 .hero-sash {
   width: 260%; height: 196px; transform: translate(-50%, -50%) rotate(-45deg);
-  background: linear-gradient(to bottom, #e8622c 0 72%, transparent 72% 83%, #1f2a33 83% 100%);
+  background: linear-gradient(to bottom, #fe5000 0 72%, transparent 72% 83%, #131e29 83% 100%);
   animation: hero-sash-in 1.2s 0.15s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 @keyframes hero-sash-in { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
@@ -913,3 +913,67 @@ h1, h2, h3, .font-serif {
 .landing h3 { font-family: var(--font-sans); font-variation-settings: normal; font-weight: 600; letter-spacing: -0.01em; }
 /* Edge strips on grainy cards stay pinned to the edge (.grain > * would otherwise put them in the flow). */
 .grain > .edge-strip { position: absolute; }
+/* Headline weight: the serif at 500 reads refined rather than poster-like at large sizes. */
+.landing h1, .landing h2 { font-weight: 500; letter-spacing: -0.022em; }
+.landing h1 .lead-in { font-family: var(--font-sans); font-variation-settings: normal; font-weight: 600; letter-spacing: -0.035em; }
+/* Stronger than the site-wide `:root[data-style="nexora"] .font-serif` weight rule, so the home page's lighter
+   headline weight actually applies. */
+:root[data-style="nexora"] .landing :is(h1, h2), :root[data-style="nexora"] .landing :is(h1, h2).font-serif { font-weight: 500; }
+:root[data-style="nexora"] .landing h1 .lead-in { font-weight: 600; }
+
+/* ── Kesari Ink (chosen 17 Nov 2026) ───────────────────────────────────
+ * Crisp white paper, deep ink, one saffron accent. Nearest Pantone references: ink Pantone 7547 C (#131E29),
+ * kesari Pantone Orange 021 C (#FE5000), lines Pantone Cool Gray 1 C (#D9D9D6). Type from the Indian Type Foundry:
+ * Zodiak for display, Satoshi for text, loaded from Fontshare's CDN (no font files in this public repo).
+ * Text-sized orange uses #B83A00, because #FE5000 on white is below 4.5:1 for body text. */
+:root[data-style="nexora"][data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f6f6f4;
+  --surface-3: #ececea;
+  --border: #e4e4e1;
+  --border-strong: #d9d9d6;
+  --text: #131e29;
+  --text-2: #3d4954;
+  --muted: #5b6670;
+  --accent: #fe5000;
+  --accent-strong: #ff6a1f;
+  --accent-text: #b83a00;
+  --accent-soft: #ffede4;
+  --action: #131e29;
+  --action-hover: #22303d;
+  --action-ink: #ffffff;
+}
+.theme-dark { --bg: #131e29; --surface: #1d2a37; --surface-2: #233140; --surface-3: #2c3a47; --border: #2c3a47; --border-strong: #3b4a57; --text: #ffffff; --text-2: #d3d9de; --muted: #9aa6b0; --accent-text: #ff9a66; }
+:root {
+  --display-font: var(--font-zodiak), Georgia, serif;
+  --font-sans: var(--font-satoshi), system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+body { font-family: var(--font-sans); }
+h1, h2, h3, .font-serif { font-variation-settings: normal; }
+
+/* ── B2B, not flashy (17 Nov 2026) ─────────────────────────────────────
+ * A professional company's product site: calm, structured, the product doing the talking. Headings in Satoshi at
+ * moderate sizes, Zodiak kept for figures only, no textures, no ribbons, no entrance theatrics, quiet shadows. */
+.landing h1, .landing h2, .landing h3, :root[data-style="nexora"] .landing :is(h1, h2), :root[data-style="nexora"] .landing :is(h1, h2).font-serif {
+  font-family: var(--font-sans); font-variation-settings: normal; font-weight: 700; letter-spacing: -0.03em;
+}
+.landing h1 { font-size: clamp(2.4rem, 4.4vw, 3.6rem) !important; line-height: 1.05 !important; }
+.landing h2 { font-size: clamp(1.75rem, 2.7vw, 2.4rem) !important; line-height: 1.12 !important; }
+.landing h3 { font-weight: 600; letter-spacing: -0.015em; }
+.landing h1 .lead-in { font-weight: 700; letter-spacing: -0.03em; }
+.landing .figure { font-family: var(--display-font); font-weight: 600; }
+/* No textures, ribbons or theatrics. */
+.landing .grain::after, .grain::after { display: none; }
+.landing .hero-sash { display: none !important; }
+.landing .anim-line > span, .landing .anim-rise, .landing .anim-fade { animation: none !important; opacity: 1 !important; transform: none !important; }
+.landing .animate-ping, .landing .animate-pulse { animation: none !important; }
+/* Quieter surfaces: tighter corners, lighter shadows. */
+.landing .artifact { border-radius: 1rem; box-shadow: 0 1px 2px rgba(19, 30, 41, 0.05); }
+.landing .device { border-radius: 1rem; box-shadow: 0 1px 2px rgba(19, 30, 41, 0.08), 0 16px 36px -24px rgba(19, 30, 41, 0.45); }
+.landing .rounded-3xl { border-radius: 1rem; }
+.landing .kicker { color: var(--accent-text); letter-spacing: 0.05em; font-size: 0.75rem; }
+/* The hero's faint dot grid, fading out towards the bottom: structure, not decoration. */
+.dot-grid { background-image: radial-gradient(rgba(19, 30, 41, 0.09) 1px, transparent 1px); background-size: 22px 22px; background-position: center top; }
+.dot-grid::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(to bottom, transparent 40%, var(--bg)); }
+.dot-grid > * { position: relative; }

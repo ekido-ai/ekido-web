@@ -18,7 +18,7 @@ export function StatusBadge({ status }: { status: Status }) {
     <span
       className={cx(
         "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium",
-        status === "live" ? "bg-success/10 text-success" : status === "building" ? "bg-accent-soft text-accent-text" : "bg-surface-3 text-muted",
+        status === "live" ? "px-0 text-muted" : status === "building" ? "bg-accent-soft text-accent-text" : "bg-surface-3 text-muted",
       )}
     >
       {status === "live" && <span className="size-1.5 rounded-full bg-success" />}
@@ -32,6 +32,18 @@ type Menu = "products" | "solutions" | null;
 export function MarketingNav() {
   const [open, setOpen] = useState<Menu>(null);
   const ref = useRef<HTMLElement>(null);
+  const closing = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Moving the pointer from a trigger to its menu must never close it: closing waits a moment and is cancelled
+  // the instant the pointer is back over the nav or a menu.
+  const keepOpen = (menu?: Menu) => {
+    if (closing.current) clearTimeout(closing.current);
+    closing.current = null;
+    if (menu !== undefined) setOpen(menu);
+  };
+  const closeSoon = () => {
+    if (closing.current) clearTimeout(closing.current);
+    closing.current = setTimeout(() => setOpen(null), 180);
+  };
 
   useEffect(() => {
     const away = (e: MouseEvent) => ref.current && !ref.current.contains(e.target as Node) && setOpen(null);
@@ -50,7 +62,7 @@ export function MarketingNav() {
       aria-expanded={open === menu}
       aria-controls={`menu-${menu}`}
       onClick={() => setOpen(open === menu ? null : menu)}
-      onMouseEnter={() => setOpen(menu)}
+      onMouseEnter={() => keepOpen(menu)}
       className={cx("inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-medium", open === menu ? "bg-surface-2 text-ink" : "text-ink-2 hover:bg-surface-2 hover:text-ink")}
     >
       {label}
@@ -64,21 +76,22 @@ export function MarketingNav() {
   );
 
   return (
-    <nav ref={ref} aria-label="Product" className="relative hidden items-center gap-0.5 lg:flex" onMouseLeave={() => setOpen(null)}>
+    <nav ref={ref} aria-label="Product" className="relative hidden items-center gap-0.5 lg:flex" onMouseLeave={closeSoon} onMouseEnter={() => keepOpen()}>
       {trigger("products", "Products")}
       {trigger("solutions", "Solutions")}
-      {plain("/#developers", "Developers")}
-      {plain("/#pricing", "Pricing")}
-      {plain("/#roadmap", "Roadmap")}
+      {plain("/developers", "Developers")}
+      {plain("/pricing", "Pricing")}
+      {plain("/roadmap", "Roadmap")}
 
       {open === "products" && (
-        <div id="menu-products" className="nav-pop absolute left-0 top-full z-50 mt-2 w-[44rem] rounded-3xl border border-line bg-surface p-3 shadow-[0_30px_60px_-30px_rgba(31,42,51,0.45)]">
+        <div id="menu-products" className="absolute left-0 top-full z-50 pt-3">
+          <div className="nav-pop w-[44rem] rounded-2xl border border-line bg-surface p-3 shadow-[0_24px_60px_-24px_rgba(31,42,51,0.4)]">
           <div className="grid grid-cols-2 gap-1">
             {PRODUCTS.map((p) => {
               const Icon = ICONS[p.key] ?? Boxes;
               return (
                 <Link key={p.key} href={p.href} onClick={() => setOpen(null)} className="flex gap-3 rounded-2xl p-3 hover:bg-surface-2">
-                  <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-ink text-[#fbf8f3]">
+                  <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-ink text-[#ffffff]">
                     <Icon className="size-5" aria-hidden />
                   </span>
                   <span className="min-w-0">
@@ -94,11 +107,13 @@ export function MarketingNav() {
           <Link href="/#products" onClick={() => setOpen(null)} className="mt-2 block rounded-2xl bg-surface-2 px-4 py-3 text-sm font-semibold text-ink hover:bg-surface-3">
             See the whole platform →
           </Link>
+          </div>
         </div>
       )}
 
       {open === "solutions" && (
-        <div id="menu-solutions" className="nav-pop absolute left-16 top-full z-50 mt-2 grid w-[38rem] grid-cols-2 gap-4 rounded-3xl border border-line bg-surface p-5 shadow-[0_30px_60px_-30px_rgba(31,42,51,0.45)]">
+        <div id="menu-solutions" className="absolute left-16 top-full z-50 pt-3">
+          <div className="nav-pop grid w-[38rem] grid-cols-2 gap-4 rounded-2xl border border-line bg-surface p-5 shadow-[0_24px_60px_-24px_rgba(31,42,51,0.4)]">
           {([["By industry", SOLUTIONS.industries], ["By role", SOLUTIONS.roles]] as const).map(([title, items]) => (
             <div key={title}>
               <p className="kicker mb-2 text-[0.7rem]">{title}</p>
@@ -110,6 +125,7 @@ export function MarketingNav() {
               ))}
             </div>
           ))}
+          </div>
         </div>
       )}
     </nav>

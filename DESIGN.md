@@ -1,3 +1,20 @@
+# Kesari Ink (current, 17 Nov 2026)
+
+The live direction, decided with Piyush after several rounds. **A professional company's B2B SaaS, not flashy.** It replaces the "The Sash" drafts below, which are kept for their reasoning.
+
+- **Structure.** The landing page is only a landing page: a centred hero with the product window under it, a proof strip, three feature rows that each show a real piece of the product, a metrics band, the product grid, a comparison, a short FAQ and a call to action. Everything deeper has its own page: `/products/{assistant,train,verify,host,pay,devices}`, `/solutions`, `/developers`, `/pricing`, `/trust`, `/roadmap`. The header shows Products and Solutions menus.
+- **Colour.** Nearest Pantone references:
+  - white paper;
+  - ink Pantone 7547 C (#131E29);
+  - one accent, kesari (saffron) Pantone Orange 021 C (#FE5000), for actions and status only;
+  - lines Pantone Cool Gray 1 C (#D9D9D6).
+  - Text-sized orange is #B83A00, for contrast.
+- **Type.** Satoshi for everything, headings included, at moderate B2B sizes. Zodiak only for figures (metrics, prices). Both are by the Indian Type Foundry, self-hosted from the official files (`src/app/fonts`, ITF Free Font License, credited in the footer).
+- **Motion.** Only where it explains: the product window stepping through its screens, the relay hand-over, menus fading in, and small hover feedback. No reveals, count-ups, ribbons, textures, shimmer or pulsing. Reduced motion is respected.
+- **Honesty.** Every product carries a status: live on testnet, being built or planned. Example data is labelled.
+
+---
+
 # The Sash
 
 The design direction for ekido.duckdns.org, written before the 17 Nov 2026 redesign and revised the same day: the first draft (numbered legs, full-width bands, a scroll-drawn rail) read like scrolling through slides, so the page now works like a product site. When a design decision is hard, this page decides it; when it can't, add the missing sentence here first.

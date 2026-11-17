@@ -15,9 +15,9 @@ export function LogoMark({ className }: { className?: string }) {
         </clipPath>
       </defs>
       <g clipPath={`url(#${clip})`}>
-        <rect width="64" height="64" fill="#1f2a33" />
-        <path d="M-6 14 L14 -6 L70 50 L50 70 Z" fill="#e8622c" />
-        <path d="M-6 26 L2 18 L46 62 L38 70 Z" fill="#fbf8f3" opacity=".9" />
+        <rect width="64" height="64" fill="#131e29" />
+        <path d="M-6 14 L14 -6 L70 50 L50 70 Z" fill="#fe5000" />
+        <path d="M-6 26 L2 18 L46 62 L38 70 Z" fill="#ffffff" opacity=".9" />
       </g>
     </svg>
   );

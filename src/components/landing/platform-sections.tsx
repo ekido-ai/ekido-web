@@ -21,7 +21,7 @@ export function ProductCatalog() {
         return (
           <Link key={p.key} href={p.href} className="artifact lift group flex flex-col p-6">
             <div className="flex items-start justify-between gap-3">
-              <span className="grid size-11 place-items-center rounded-2xl bg-ink text-[#fbf8f3]">
+              <span className="grid size-11 place-items-center rounded-2xl bg-ink text-[#ffffff]">
                 <Icon className="size-5" aria-hidden />
               </span>
               <StatusBadge status={p.status} />
@@ -61,8 +61,8 @@ export function DevelopersSection() {
       </ul>
       <figure className="theme-dark device grain overflow-hidden">
         <div className="flex items-center gap-2 border-b border-line px-5 py-3">
-          <span className="size-3 rounded-full bg-[#3a4955]" />
-          <span className="size-3 rounded-full bg-[#3a4955]" />
+          <span className="size-3 rounded-full bg-[#2c3a47]" />
+          <span className="size-3 rounded-full bg-[#2c3a47]" />
           <span className="size-3 rounded-full bg-accent" />
           <span className="ml-3 font-mono text-xs text-muted">terminal</span>
         </div>
@@ -158,7 +158,7 @@ export function PricingSection() {
           {p.featured && <span aria-hidden className="edge-strip absolute inset-x-0 top-0 h-1.5 bg-accent" />}
           <p className="text-sm text-muted">{p.who}</p>
           <h3 className="mt-1 text-xl text-ink">{p.name}</h3>
-          <p className="mt-5 font-serif text-4xl text-ink">{p.price}</p>
+          <p className="figure mt-5 font-serif text-4xl text-ink">{p.price}</p>
           <p className="text-sm text-muted">{p.note}</p>
           <ul className="mb-8 mt-6 space-y-2.5 text-[15px] text-ink-2">
             {p.points.map((t) => (
