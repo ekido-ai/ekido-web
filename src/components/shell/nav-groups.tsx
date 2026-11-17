@@ -28,11 +28,11 @@ export const NAV: Group[] = [
     ],
   },
   {
-    label: "Money",
+    label: "Payments",
     icon: Coins,
     items: [
       { href: "/settlement", label: "Settlement", hint: "Who got paid, and why", icon: Coins },
-      { href: "/chain", label: "On-chain ledger", hint: "Reserves and every payment, live", icon: Blocks },
+      { href: "/chain", label: "Public ledger", hint: "Reserves and every payment, live", icon: Blocks },
       { href: "/verify", label: "Verify a payout", hint: "Re-check it yourself in the browser", icon: BadgeCheck },
       { href: "/earnings", label: "Earnings", hint: "What device owners made", icon: Wallet },
     ],

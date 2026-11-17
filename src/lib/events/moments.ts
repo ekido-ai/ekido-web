@@ -4,7 +4,7 @@ import { providerName } from "./derive";
 import type { Tone } from "@/components/ui/status";
 
 /*
- * "Key moments": the handful of events a viewer should not miss (a GPU lost, a result
+ * "Key moments": the handful of events a viewer should not miss (a device lost, a result
  * refused, training back, done, paid). Used for the replay bar's markers and for toasts.
  * Pure, so it is shared by replay and live.
  */
@@ -43,7 +43,7 @@ export function momentsOf(events: AnyGpuEvent[]): (Moment & { offsetMs: number }
 }
 
 export const momentLabel: Record<MomentKind, string> = {
-  lost: "GPU lost",
+  lost: "Device lost",
   refused: "Result refused",
   resumed: "Training resumed",
   done: "Final model accepted",
@@ -63,7 +63,7 @@ export function momentText(m: Moment, s: DashboardState): { title: string; detai
   const who = providerName(s, m.providerId);
   switch (m.kind) {
     case "lost":
-      return { title: `${who} went down`, detail: "Rolling back to the last good checkpoint and finding another GPU." };
+      return { title: `${who} went down`, detail: "Rolling back to the last good checkpoint and finding another device." };
     case "refused":
       return { title: `${who}'s result was refused`, detail: "It failed the quality test agreed before training, so it won't be paid." };
     case "resumed":

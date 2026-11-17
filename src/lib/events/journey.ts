@@ -4,7 +4,7 @@ import { momentsOf, type Moment } from "./moments";
 
 /*
  * The run as a story of six steps, so someone across the room can tell how far it has got:
- * training, a GPU lost, training resumed, bad work refused, final check, paid.
+ * training, a device lost, training resumed, bad work refused, final check, paid.
  * Pure: the same steps for replay and live, built only from events that really arrived.
  */
 
@@ -60,8 +60,8 @@ export function journey(s: DashboardState): JourneyStep[] {
   if (firstProgress && s.jobState === "RUNNING" && !times.lost) train.status = "active";
 
   const lost: JourneyStep = times.lost
-    ? { key: "lost", label: "GPU lost", status: "done", detail: who(times.lost.providerId), atMs: times.lost.offsetMs }
-    : { key: "lost", label: "GPU lost", status: finished ? "skipped" : "waiting", detail: finished ? "No failure this run" : "Press Kill to test", atMs: null };
+    ? { key: "lost", label: "Device lost", status: "done", detail: who(times.lost.providerId), atMs: times.lost.offsetMs }
+    : { key: "lost", label: "Device lost", status: finished ? "skipped" : "waiting", detail: finished ? "No failure this run" : "Press Kill to test", atMs: null };
 
   let resumed: JourneyStep;
   if (times.resumed) {
