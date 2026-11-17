@@ -908,3 +908,8 @@ h1, h2, h3, .font-serif {
 .preview-progress { animation: preview-progress 4.2s linear both; }
 @keyframes preview-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @media (prefers-reduced-motion: reduce) { .preview-progress { display: none; } }
+/* Home page type discipline: the display serif is for headlines (h1, h2) only; every card and list title is set in
+   IBM Plex Sans, like a product site, so the page reads as a platform rather than a poster. */
+.landing h3 { font-family: var(--font-sans); font-variation-settings: normal; font-weight: 600; letter-spacing: -0.01em; }
+/* Edge strips on grainy cards stay pinned to the edge (.grain > * would otherwise put them in the flow). */
+.grain > .edge-strip { position: absolute; }
