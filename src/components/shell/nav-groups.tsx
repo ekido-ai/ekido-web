@@ -22,8 +22,8 @@ export const NAV: Group[] = [
     label: "Training",
     icon: RotateCcw,
     items: [
-      { href: "/recovery", label: "Recovery", hint: "How a run moved when a GPU died", icon: RotateCcw },
-      { href: "/quality", label: "Quality", hint: "Why work was accepted or refused", icon: ShieldCheck },
+      { href: "/recovery", label: "Recovery", hint: "How a job carried on when a device dropped out", icon: RotateCcw },
+      { href: "/quality", label: "Quality", hint: "Why a model passed or was refused", icon: ShieldCheck },
       { href: "/jobs/new", label: "New job", hint: "Lock a budget and start training", icon: Plus, off: newJobOff },
     ],
   },
@@ -34,10 +34,10 @@ export const NAV: Group[] = [
       { href: "/settlement", label: "Settlement", hint: "Who got paid, and why", icon: Coins },
       { href: "/chain", label: "On-chain ledger", hint: "Reserves and every payment, live", icon: Blocks },
       { href: "/verify", label: "Verify a payout", hint: "Re-check it yourself in the browser", icon: BadgeCheck },
-      { href: "/earnings", label: "Earnings", hint: "What providers made", icon: Wallet },
+      { href: "/earnings", label: "Earnings", hint: "What device owners made", icon: Wallet },
     ],
   },
-  { label: "Providers", icon: Server, href: "/provide" },
+  { label: "Earn", icon: Server, href: "/provide" },
 ];
 
 export function NavGroups({ path }: { path: string }) {

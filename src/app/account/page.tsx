@@ -189,7 +189,7 @@ function SignedIn({ address, expiresAt, demo }: { address: `0x${string}`; expire
             </div>
           ) : (
             <p className="text-ink-2">
-              This wallet isn&apos;t a provider. <Link href="/provide" className="text-ink underline underline-offset-4">Rent out your GPU</Link> to start earning.
+              This wallet isn&apos;t a provider. <Link href="/provide" className="text-ink underline underline-offset-4">Join as a device owner</Link> to start earning.
             </p>
           )}
         </Panel>

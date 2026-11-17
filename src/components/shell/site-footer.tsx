@@ -2,7 +2,7 @@ import Link from "next/link";
 import { LogoMark } from "@/components/gpu/logo-mark";
 
 const columns: { title: string; links: [string, string][] }[] = [
-  { title: "Use it", links: [["/dashboard", "Mission control"], ["/provide", "Rent out your GPU"], ["/earnings", "Earnings"], ["/verify", "Verify a payout"]] },
+  { title: "Use it", links: [["/dashboard", "Mission control"], ["/provide", "Earn with your device"], ["/earnings", "Earnings"], ["/verify", "Verify a payout"]] },
   { title: "On-chain", links: [["/chain", "Escrow ledger"], ["/chain#reserves", "Proof of reserves"], ["/settlement", "Settlement"], ["/status", "System status"], ["/admin", "Owner console"]] },
   { title: "Help", links: [["/help", "Questions and answers"], ["/#how", "How it works"], ["/help#badges", "What the badges mean"], ["/security", "Report a problem"]] },
   { title: "Legal", links: [["/privacy", "Privacy"], ["/privacy#cookies", "Cookies and storage"], ["/terms", "Terms of use"], ["/security", "Security"]] },
@@ -18,7 +18,7 @@ export function SiteFooter() {
             <LogoMark />
             Ekido
           </Link>
-          <p className="mt-3 max-w-xs text-sm text-ink-2">Training that survives a GPU dying, and money that moves only for accepted work.</p>
+          <p className="mt-3 max-w-xs text-sm text-ink-2">Your own AI model, built by devices people already have. Paid for only when it passes your test.</p>
         </div>
         {columns.map((col) => (
           <nav key={col.title} aria-label={col.title} className="flex flex-col gap-2 text-sm">

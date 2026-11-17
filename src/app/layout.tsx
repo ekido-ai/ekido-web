@@ -13,7 +13,7 @@ const code = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500", "600"], 
 
 export const metadata: Metadata = {
   title: { default: "Ekido", template: "%s · Ekido" },
-  description: "Recover training across GPUs, refuse bad results, pay for accepted work.",
+  description: "Your own AI model, built by devices people already have. Small businesses get a model trained on idle devices, and pay only when it passes their test.",
 };
 
 
