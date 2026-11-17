@@ -4,10 +4,12 @@ import { connectedCapacityMib, countConnected, formatCapacity, isConnected, sort
 
 /**
  * Every provider the coordinator knows, with whether it is connected and how much memory it offers.
- * `rows` is the provider list from useProviders: null while loading, "down" when the coordinator cannot be read.
+ * `rows` is the provider list from useProviders: null while loading, "down" when the coordinator cannot be read,
+ * "private" when it answers but keeps the list to itself.
  */
 export function ProviderRoster({ rows }: { rows: ProviderState<RosterRow> }) {
   if (rows === null) return <p className="text-sm text-muted" role="status">Reading the provider list…</p>;
+  if (rows === "private") return <p className="text-sm text-muted" role="status">This network keeps its provider list private. Each job still shows which provider ran each step, by a label instead of a name.</p>;
   if (rows === "down") return <p className="text-sm text-muted" role="status">The coordinator did not answer, so the provider list is unavailable. It tries again every 10 seconds.</p>;
   if (rows.length === 0) return <p className="text-sm text-muted">No provider has joined yet.</p>;
 

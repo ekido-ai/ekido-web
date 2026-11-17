@@ -1,6 +1,7 @@
 import { reduceAll, emptyState } from "../events/reduce";
 import type { Connection, LiveSnapshot } from "./live-source";
 import { translate, type RealEvent, type RealProvider, type SettlementPreview } from "./translate";
+import { PRIVATE_RECHECK_MS, retryAfterMs } from "./providers";
 
 const POLL_MS = 3000;
 const FILL_MS = 4000;
@@ -14,6 +15,15 @@ export interface RealSnapshot extends LiveSnapshot {
 }
 
 type Listener = () => void;
+
+/** A non-2xx answer. The message keeps the "HTTP 401 from /path" shape that callers and tests match on. */
+class HttpError extends Error {
+  constructor(readonly status: number, path: string, readonly retryAfter: string | null) {
+    super(`HTTP ${status} from ${path}`);
+  }
+}
+
+const tabHidden = () => typeof document !== "undefined" && document.hidden;
 
 /**
  * Follows the selected job, or the newest job by default. Reconnects by itself, catches up from the last
@@ -35,6 +45,10 @@ export class RealLiveSource {
   private timers: ReturnType<typeof setInterval>[] = [];
   private retry: ReturnType<typeof setTimeout> | null = null;
   private rebuildTimer: ReturnType<typeof setTimeout> | null = null;
+  /** The server keeps its provider list private: don't ask again before this time. */
+  private providersQuietUntil = 0;
+  /** The server answered 429: send nothing before this time. */
+  private pausedUntil = 0;
 
   constructor(baseUrl: string) {
     this.base = baseUrl.replace(/\/$/, "");
@@ -83,11 +97,26 @@ export class RealLiveSource {
 
   private async json<T>(path: string): Promise<T> {
     const response = await fetch(this.base + path, { signal: AbortSignal.timeout(6000) });
-    if (!response.ok) throw new Error(`HTTP ${response.status} from ${path}`);
+    if (!response.ok) throw new HttpError(response.status, path, response.headers.get("retry-after"));
     return (await response.json()) as T;
   }
 
+  /** A 429 is the server asking for less, not an outage: wait as long as it says and keep the screen as it is. */
+  private slowDown(error: unknown): boolean {
+    if (!(error instanceof HttpError) || error.status !== 429) return false;
+    const wait = retryAfterMs(error.retryAfter);
+    this.pausedUntil = Date.now() + wait;
+    this.set({ error: `The coordinator asked this page to slow down. It resumes in ${Math.ceil(wait / 1000)} s.` });
+    return true;
+  }
+
+  /** Skip a round while the tab is in the background or the server asked us to wait. */
+  private resting(): boolean {
+    return tabHidden() || Date.now() < this.pausedUntil;
+  }
+
   private async poll(): Promise<void> {
+    if (this.resting()) return;
     const selected = this.selectedJob;
     try {
       const jobsRequest = selected
@@ -95,10 +124,16 @@ export class RealLiveSource {
         : this.json<{ job_id: string }[]>("/jobs?limit=1");
       // A public server keeps its provider list private (401/403): carry on with the jobs, which name providers
       // only by label. Any other failure still counts as the coordinator being unreachable.
-      const providersRequest = this.json<RealProvider[]>("/providers").catch((error: unknown) => {
-        if (error instanceof Error && /^HTTP (401|403) /.test(error.message)) return [] as RealProvider[];
-        throw error;
-      });
+      // It is asked again only every few minutes, so a private list costs one request, not one per poll.
+      const providersRequest = Date.now() < this.providersQuietUntil
+        ? Promise.resolve(this.providers)
+        : this.json<RealProvider[]>("/providers").catch((error: unknown) => {
+            if (error instanceof Error && /^HTTP (401|403) /.test(error.message)) {
+              this.providersQuietUntil = Date.now() + PRIVATE_RECHECK_MS;
+              return [] as RealProvider[];
+            }
+            throw error;
+          });
       const [providers, jobs] = await Promise.all([providersRequest, jobsRequest]);
       if (!this.running || selected !== this.selectedJob) return;
       this.providers = providers;
@@ -112,6 +147,7 @@ export class RealLiveSource {
       await this.refreshSettlement();
     } catch (error) {
       if (!this.running || selected !== this.selectedJob) return;
+      if (this.slowDown(error)) return;
       const failures = this.snap.failures + 1;
       const text = error instanceof Error ? error.message : "request failed";
       this.set({ failures, error: `Couldn't reach the coordinator at ${this.base} (${text})`, connection: this.connectionNow(failures) });
@@ -182,12 +218,12 @@ export class RealLiveSource {
 
   private async fill(): Promise<void> {
     const jobId = this.jobId;
-    if (!jobId) return;
+    if (!jobId || this.resting()) return;
     try {
       const events = await this.json<RealEvent[]>(`/jobs/${encodeURIComponent(jobId)}/timeline?after=${this.caughtUp}`);
       if (this.running && this.jobId === jobId) this.receive(events);
-    } catch {
-      /* poll() reports connection problems. */
+    } catch (error) {
+      this.slowDown(error); // Anything else: poll() reports connection problems.
     }
   }
 

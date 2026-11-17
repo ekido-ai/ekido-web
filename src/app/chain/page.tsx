@@ -397,11 +397,11 @@ function LedgerView({ ledger }: { ledger: Ledger }) {
 }
 
 function RegistryPanel({ ledger }: { ledger: Ledger }) {
-  const [coord, setCoord] = useState<CoordinatorProvider[] | null | "down">(null);
+  const [coord, setCoord] = useState<CoordinatorProvider[] | null | "down" | "private">(null);
   useEffect(() => {
     fetch(`${config.coordinatorUrl}/providers`, { signal: AbortSignal.timeout(8000) })
-      .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
-      .then((rows: CoordinatorProvider[]) => setCoord(rows))
+      .then((r) => (r.status === 401 || r.status === 403 ? "private" : r.ok ? r.json() : Promise.reject(r.status)))
+      .then((rows: CoordinatorProvider[] | "private") => setCoord(rows))
       .catch(() => setCoord("down"));
   }, []);
   const { listings, offChainOnly } = compareListings(ledger.registry, Array.isArray(coord) ? coord : null);
@@ -422,7 +422,7 @@ function RegistryPanel({ ledger }: { ledger: Ledger }) {
           {listings.map((l) => (
             <li key={l.wallet} className="flex flex-wrap items-center justify-between gap-3 py-2.5 first:pt-0 last:pb-0">
               <span className="flex min-w-0 items-center gap-2">
-                <StatusIcon tone={coord === "down" || coord === null ? "idle" : tone[l.status]} className="size-5 shrink-0" />
+                <StatusIcon tone={coord === "down" || coord === "private" || coord === null ? "idle" : tone[l.status]} className="size-5 shrink-0" />
                 <span className="min-w-0">
                   <span className="block font-medium text-ink">{l.coordinatorName ?? "Unknown name"}</span>
                   <span className="flex flex-wrap items-center gap-x-3 text-xs text-muted">
@@ -432,7 +432,7 @@ function RegistryPanel({ ledger }: { ledger: Ledger }) {
                   </span>
                 </span>
               </span>
-              <span className="text-sm text-ink-2">{coord === "down" ? "Coordinator unreachable, can't compare" : coord === null ? "Comparing…" : label[l.status]}</span>
+              <span className="text-sm text-ink-2">{coord === "down" ? "Coordinator unreachable, can't compare" : coord === "private" ? "This network keeps its provider list private, so there is nothing to compare" : coord === null ? "Comparing…" : label[l.status]}</span>
             </li>
           ))}
         </ul>

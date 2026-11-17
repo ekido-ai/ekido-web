@@ -74,7 +74,7 @@ export function LiveNetwork() {
     { k: "Latest block", v: snap ? `#${snap.block.toLocaleString("en-US")}` : "…", note: "Base Sepolia, read just now" },
     { k: "Held by the escrow", v: snap ? `${usdc(snap.held)} USDC` : "…", note: "Test USDC, on-chain" },
     { k: "Reserves cover", v: coverage === null ? "…" : `${Math.min(coverage, 100)}%`, note: "of everything it owes" },
-    { k: "Providers online", v: providers === null ? (roster === "down" ? "–" : "…") : String(providers), note: "From the coordinator" },
+    { k: "Providers online", v: providers === null ? (roster === "down" ? "–" : roster === "private" ? "Private" : "…") : String(providers), note: "From the coordinator" },
   ];
 
   return (

@@ -32,10 +32,12 @@ async function runChecks(): Promise<Check[]> {
   };
   return Promise.all([
     settle("Coordinator", "Schedules jobs and streams progress", async () => {
-      const [res, ms] = await timed(() => fetch(`${config.coordinatorUrl}/providers`, { signal: AbortSignal.timeout(6000) }));
-      if (!res.ok) throw new Error(`Answered ${res.status}`);
-      const providers = (await res.json()) as { status?: string }[];
-      return `${providers.length} providers registered, answered in ${ms} ms`;
+      // /readyz is public on every server; the provider list may be private, which is not a fault.
+      const [res, ms] = await timed(() => fetch(`${config.coordinatorUrl}/readyz`, { signal: AbortSignal.timeout(6000) }));
+      if (res.status === 429) return `Busy: it asked this page to slow down, answered in ${ms} ms`;
+      const body = (await res.json().catch(() => ({}))) as { status?: string };
+      if (!res.ok || body.status !== "ready") throw new Error(`Not ready (answered ${res.status})`);
+      return `Ready, answered in ${ms} ms`;
     }),
     settle(`${BASE_SEPOLIA.name} RPC`, "Reads balances and contract state", async () => {
       const [block, ms] = await timed(() => reads.getBlockNumber());

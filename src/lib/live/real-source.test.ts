@@ -113,3 +113,57 @@ describe("RealLiveSource on a public server that keeps providers private", () =>
     source.stop();
   });
 });
+
+describe("RealLiveSource when the coordinator asks it to slow down", () => {
+  let calls: string[];
+  let limited: boolean;
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.stubGlobal("WebSocket", DeadSocket);
+    calls = [];
+    limited = false;
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) => {
+        const path = new URL(url).pathname;
+        calls.push(path);
+        if (path === "/providers") return new Response(JSON.stringify({ error: "API_LOCKED" }), { status: 401 });
+        if (limited) return new Response(JSON.stringify({ error: "RATE_LIMITED" }), { status: 429, headers: { "Retry-After": "20" } });
+        const body = path === "/jobs" ? [{ job_id: job }] : path.endsWith("/timeline") ? [event] : {};
+        return new Response(JSON.stringify(body), { status: 200 });
+      }),
+    );
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+  });
+
+  it("asks for a private provider list once, not on every poll", async () => {
+    const source = new RealLiveSource("http://127.0.0.1:8000");
+    source.start();
+    await vi.advanceTimersByTimeAsync(30_000);
+    expect(calls.filter((c) => c === "/providers")).toHaveLength(1);
+    expect(source.getSnapshot().connection).not.toBe("offline");
+    source.stop();
+  });
+
+  it("treats a 429 as a pause, not a lost connection, and resumes after Retry-After", async () => {
+    const source = new RealLiveSource("http://127.0.0.1:8000");
+    source.start();
+    await vi.advanceTimersByTimeAsync(4500);
+    limited = true;
+    await vi.advanceTimersByTimeAsync(3100);
+    const during = calls.length;
+    await vi.advanceTimersByTimeAsync(15_000);
+    expect(calls.length).toBe(during);
+    expect(source.getSnapshot().connection).not.toBe("offline");
+    expect(source.getSnapshot().connection).not.toBe("reconnecting");
+    expect(source.getSnapshot().error).toMatch(/slow down/);
+    limited = false;
+    await vi.advanceTimersByTimeAsync(10_000);
+    expect(calls.length).toBeGreaterThan(during);
+    expect(source.getSnapshot().error).toBeNull();
+    source.stop();
+  });
+});

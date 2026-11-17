@@ -231,8 +231,8 @@ export default function ProvidePage() {
       {/* The network right now: social proof and price guidance. */}
       <section aria-label="The network now" className="grid gap-4 sm:grid-cols-3">
         {[
-          ["Providers connected", network === null ? "…" : network === "down" ? "unreachable" : String(online), network === "down" ? "The coordinator didn't answer from here" : `${rows.length} registered in total`],
-          ["Typical price", mid === null ? "–" : `${fmt(mid, 4)}`, mid === null ? "No prices published yet" : "Median USDC per step on this network"],
+          ["Providers connected", network === null ? "…" : network === "down" ? "unreachable" : network === "private" ? "Private" : String(online), network === "down" ? "The coordinator didn't answer from here" : network === "private" ? "This network keeps its provider list private" : `${rows.length} registered in total`],
+          ["Typical price", mid === null ? "–" : `${fmt(mid, 4)}`, network === "private" ? "Each job's quote shows its price" : mid === null ? "No prices published yet" : "Median USDC per step on this network"],
           ["Range", prices.length ? `${fmt(Math.min(...prices), 4)} to ${fmt(Math.max(...prices), 4)}` : "–", "Cheaper providers get picked first when they can finish in time"],
         ].map(([label, value, note]) => (
           <div key={label} className="panel rounded-2xl border border-line p-4">
