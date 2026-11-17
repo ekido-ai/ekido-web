@@ -46,9 +46,13 @@ export function RelayHero() {
   }, []);
 
   useEffect(() => {
-    play();
+    // Start on the next tick, not inside the effect itself (react-hooks/set-state-in-effect).
+    const first = setTimeout(play, 0);
     const pending = timers.current;
-    return () => pending.forEach(clearTimeout);
+    return () => {
+      clearTimeout(first);
+      pending.forEach(clearTimeout);
+    };
   }, [play]);
 
   const order: Phase[] = ["pc", "dropped", "laptop", "checking", "passed"];
@@ -65,7 +69,7 @@ export function RelayHero() {
 
   return (
     <figure className="relative" aria-label="How Ekido trains a model: an illustration">
-      <div className="theme-dark device relative overflow-hidden p-5 sm:p-7">
+      <div className="theme-dark device grain relative overflow-hidden p-5 sm:p-7">
         <div className="flex items-center justify-between gap-3 text-sm">
           <span className="font-medium text-ink">Your job: sort support tickets</span>
           <button

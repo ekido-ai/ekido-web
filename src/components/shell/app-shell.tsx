@@ -17,6 +17,7 @@ import { Shortcuts } from "./shortcuts";
 import { CoordinatorOffline } from "./coordinator-offline";
 import { ChainPulse } from "@/components/chain/chain-pulse";
 import { WalletButton } from "@/components/wallet/wallet-button";
+import { MarketingNav } from "./marketing-nav";
 import { NavGroups } from "./nav-groups";
 import { ScrollAnimator } from "@/components/motion/scroll-animator";
 import { SiteFooter } from "./site-footer";
@@ -160,6 +161,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const path = usePathname();
   // The live/recorded controls and the coordinator banner belong to the screens that show a job.
   const dash = DASH_PATHS.some((p) => path.startsWith(p));
+  // The home page is the product site: its own section links and one primary button, no chain status.
+  const landing = path === "/";
   return (
     <div className="app-backdrop relative flex min-h-full flex-col">
       <a
@@ -168,16 +171,21 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       >
         Skip to content
       </a>
-      <header className="header-ember sticky top-0 z-20 border-b border-line bg-bg/70 backdrop-blur-xl backdrop-saturate-150">
+      <header className="header-ember sticky top-0 z-20 border-b border-line bg-bg/95 backdrop-blur-md">
         <div className="mx-auto flex max-w-[1840px] flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2.5 sm:gap-x-5 sm:px-6">
           <Link href="/" className="flex items-center gap-2 text-lg font-bold tracking-tight text-ink" title="About Ekido">
             <LogoMark />
             Ekido
           </Link>
-          <NavGroups path={path} />
+          {landing ? <MarketingNav /> : <NavGroups path={path} />}
           <div className="ml-auto flex items-center gap-1 2xl:ml-0">
-            <ChainPulse />
+            {!landing && <ChainPulse />}
             <WalletButton />
+            {landing && (
+              <Link href="/dashboard" className="press ml-1 inline-flex h-9 items-center rounded-full bg-action px-4 text-sm font-semibold text-action-ink hover:bg-action-hover">
+                Open the app
+              </Link>
+            )}
             {dash && <ModeSwitch />}
             {dash && (
             <Link
@@ -202,7 +210,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       </header>
       {dash && <SourceBar />}
-      <main id="main" key={path} className="page-enter mx-auto w-full max-w-[1840px] flex-1 px-4 pb-16 pt-5 sm:px-6">
+      <main id="main" key={path} className={cx("page-enter mx-auto w-full max-w-[1840px] flex-1 px-4 pt-5 sm:px-6", landing ? "pb-0" : "pb-16")}>
         {children}
       </main>
       <SiteFooter />
