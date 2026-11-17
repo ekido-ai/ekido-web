@@ -192,14 +192,14 @@ export default function ProvidePage() {
       <section className="relative overflow-hidden panel rounded-2xl border border-line">
         <div className="grid items-center gap-6 p-6 sm:p-8 lg:grid-cols-[1.3fr_1fr]">
           <div>
-            <h1 className="font-serif text-4xl text-ink sm:text-5xl">Rent out your GPU</h1>
+            <h1 className="font-serif text-4xl text-ink sm:text-5xl">Earn with your idle device</h1>
             <p className="mt-3 max-w-xl text-lg text-ink-2">
-              Earn for every training step the network accepts. You set the price, your key never leaves your machine, and you can stop whenever you like.
+              Your gaming PC or laptop trains small AI models for businesses while you're not using it. You're paid for every training step that passes, you set the price, your key never leaves your machine, and you can stop whenever you like.
             </p>
             <ul className="mt-5 flex flex-wrap gap-2 text-sm">
               {[
-                [Wallet, "Paid in USDC, no token"],
-                [Lock, "Money held in escrow"],
+                [Wallet, "Test money for now, no token"],
+                [Lock, "Budget locked before work starts"],
                 [ShieldCheck, "Approved workloads only"],
                 [Power, "Stop with Ctrl+C"],
               ].map(([Icon, text]) => {
