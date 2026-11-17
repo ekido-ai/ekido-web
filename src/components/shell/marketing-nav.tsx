@@ -91,7 +91,7 @@ export function MarketingNav() {
               const Icon = ICONS[p.key] ?? Boxes;
               return (
                 <Link key={p.key} href={p.href} onClick={() => setOpen(null)} className="flex gap-3 rounded-2xl p-3 hover:bg-surface-2">
-                  <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-ink text-[#ffffff]">
+                  <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-action text-action-ink">
                     <Icon className="size-5" aria-hidden />
                   </span>
                   <span className="min-w-0">

@@ -27,7 +27,7 @@ export function Describe() {
           <Paperclip className="size-3.5" aria-hidden /> tickets.csv · 48 rows
         </div>
       </div>
-      <div className="ml-auto max-w-[88%] rounded-2xl rounded-br-md bg-ink px-4 py-3 text-[15px] text-[#ffffff]">
+      <div className="ml-auto max-w-[88%] rounded-2xl rounded-br-md bg-action px-4 py-3 text-[15px] text-action-ink">
         <span className="mb-1 flex items-center gap-1.5 text-xs font-semibold text-[#ff9a66]">
           <Sparkles className="size-3.5" aria-hidden /> Ekido assistant
         </span>
@@ -57,7 +57,7 @@ export function Quote() {
       </dl>
       <div className="flex items-center justify-between gap-3 border-t border-line px-4 py-3">
         <span className="text-xs text-muted">Prices are provisional on the test network</span>
-        <span className="rounded-full bg-ink px-4 py-1.5 text-sm font-semibold text-[#ffffff]">Approve and start</span>
+        <span className="rounded-full bg-action px-4 py-1.5 text-sm font-semibold text-action-ink">Approve and start</span>
       </div>
     </div>
   );

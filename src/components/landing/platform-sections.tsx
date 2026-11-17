@@ -21,7 +21,7 @@ export function ProductCatalog() {
         return (
           <Link key={p.key} href={p.href} className="artifact lift group flex flex-col p-6">
             <div className="flex items-start justify-between gap-3">
-              <span className="grid size-11 place-items-center rounded-2xl bg-ink text-[#ffffff]">
+              <span className="grid size-11 place-items-center rounded-2xl bg-action text-action-ink">
                 <Icon className="size-5" aria-hidden />
               </span>
               <StatusBadge status={p.status} />

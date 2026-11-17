@@ -977,3 +977,5 @@ h1, h2, h3, .font-serif { font-variation-settings: normal; }
 .dot-grid { background-image: radial-gradient(rgba(19, 30, 41, 0.09) 1px, transparent 1px); background-size: 22px 22px; background-position: center top; }
 .dot-grid::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(to bottom, transparent 40%, var(--bg)); }
 .dot-grid > * { position: relative; }
+/* Dark mode: artifact cards take the theme surface instead of fixed white. */
+.artifact { background: var(--surface); }
