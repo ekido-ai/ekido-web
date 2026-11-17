@@ -26,7 +26,7 @@ function Bubble({ children, side = "in" }: { children: ReactNode; side?: "in" | 
       className={
         side === "in"
           ? "max-w-[85%] rounded-2xl rounded-bl-md bg-surface-2 px-4 py-2.5 text-[15px] text-ink"
-          : "ml-auto max-w-[85%] rounded-2xl rounded-br-md bg-ink px-4 py-2.5 text-[15px] text-[#fbf8f3]"
+          : "ml-auto max-w-[85%] rounded-2xl rounded-br-md bg-action px-4 py-2.5 text-[15px] text-action-ink"
       }
     >
       {children}

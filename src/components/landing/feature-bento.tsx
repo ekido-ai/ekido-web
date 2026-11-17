@@ -52,7 +52,7 @@ export function FeatureBento() {
               {t as string}
             </li>
           ))}
-          <li className="flex items-center justify-between rounded-xl bg-ink px-3 py-2 font-semibold text-[#fbf8f3]">
+          <li className="flex items-center justify-between rounded-xl bg-action px-3 py-2 font-semibold text-action-ink">
             Result <span className="rounded-full bg-accent px-2 py-0.5 text-xs text-white">Paid</span>
           </li>
         </ul>
@@ -67,7 +67,7 @@ export function FeatureBento() {
 
       <Card className="md:col-span-2" title="Yours to keep" body="Download the model and run it offline, or call it as an API. No per-message bill.">
         <div className="flex items-center gap-3 rounded-2xl border border-line bg-surface-2 p-3.5">
-          <span className="grid size-9 place-items-center rounded-xl bg-ink text-[#fbf8f3]">
+          <span className="grid size-9 place-items-center rounded-xl bg-action text-action-ink">
             <Download className="size-4" aria-hidden />
           </span>
           <div className="min-w-0">

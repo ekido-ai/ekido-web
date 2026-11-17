@@ -33,7 +33,7 @@ export function SiteFooter() {
       </div>
       <div className="border-t border-line">
         <p className="mx-auto max-w-[1840px] px-4 pb-28 pt-4 text-xs text-muted sm:px-6">
-          Runs on the Base Sepolia test network with test USDC, which has no value. The contracts are unaudited. Nothing here is financial advice.
+          Runs on the Base Sepolia test network with test USDC, which has no value. The contracts are unaudited. Nothing here is financial advice. Type: Zodiak and Satoshi by the Indian Type Foundry, via Fontshare.
         </p>
       </div>
     </footer>
