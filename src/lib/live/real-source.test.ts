@@ -46,8 +46,8 @@ describe("RealLiveSource after a coordinator restart", () => {
     const source = new RealLiveSource("http://127.0.0.1:8000");
     source.start();
     await vi.advanceTimersByTimeAsync(4500);
-    // Following the job, but its socket never opened.
-    expect(source.getSnapshot().connection).toBe("connecting");
+    // Following the job, but its socket never opened: the polls answer, so the page is live without it.
+    expect(source.getSnapshot().connection).toBe("live");
     expect(source.getSnapshot().state.jobState).toBe("RUNNING");
 
     jobs = []; // restarted, empty database
@@ -164,6 +164,66 @@ describe("RealLiveSource when the coordinator asks it to slow down", () => {
     await vi.advanceTimersByTimeAsync(10_000);
     expect(calls.length).toBeGreaterThan(during);
     expect(source.getSnapshot().error).toBeNull();
+    source.stop();
+  });
+});
+
+/** A socket that a browser shield or network refuses: it closes straight away, every time. */
+class BlockedSocket {
+  static attempts = 0;
+  onopen: (() => void) | null = null;
+  onmessage: ((m: { data: unknown }) => void) | null = null;
+  onclose: (() => void) | null = null;
+  onerror: (() => void) | null = null;
+  constructor(public url: string) {
+    BlockedSocket.attempts += 1;
+    setTimeout(() => {
+      this.onerror?.();
+      this.onclose?.();
+    }, 50);
+  }
+  close() {}
+}
+
+describe("RealLiveSource when the browser blocks the WebSocket", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    BlockedSocket.attempts = 0;
+    vi.stubGlobal("WebSocket", BlockedSocket);
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) => {
+        const path = new URL(url).pathname;
+        if (path === "/providers") return new Response(JSON.stringify({ error: "API_LOCKED" }), { status: 401 });
+        const body = path === "/jobs" ? [{ job_id: job }] : path.endsWith("/timeline") ? [event] : {};
+        return new Response(JSON.stringify(body), { status: 200 });
+      }),
+    );
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+  });
+
+  it("stays live on polling instead of reporting a lost connection", async () => {
+    const source = new RealLiveSource("http://127.0.0.1:8000");
+    const seen = new Set<string>();
+    source.subscribe(() => seen.add(source.getSnapshot().connection));
+    source.start();
+    await vi.advanceTimersByTimeAsync(20_000);
+    expect(source.getSnapshot().connection).toBe("live");
+    expect(source.getSnapshot().state.jobState).toBe("RUNNING");
+    expect(seen.has("reconnecting")).toBe(false);
+    expect(seen.has("offline")).toBe(false);
+    source.stop();
+  });
+
+  it("backs off between socket attempts instead of retrying every 1.5 s", async () => {
+    const source = new RealLiveSource("http://127.0.0.1:8000");
+    source.start();
+    await vi.advanceTimersByTimeAsync(60_000);
+    expect(BlockedSocket.attempts).toBeLessThanOrEqual(8);
+    expect(BlockedSocket.attempts).toBeGreaterThanOrEqual(3);
     source.stop();
   });
 });

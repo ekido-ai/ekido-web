@@ -38,6 +38,11 @@ export class RealLiveSource {
   private selectedJob: string | null = null;
   private socket: WebSocket | null = null;
   private socketOpen = false;
+  /** A poll has answered: the page is live even if the socket never opens (a browser shield, proxy or network
+   *  can block WebSockets). The socket only makes updates arrive sooner. */
+  private polledOk = false;
+  /** Socket attempts that closed in a row, for backing off. */
+  private socketFailures = 0;
   private events = new Map<number, RealEvent>();
   private caughtUp = 0;
   private providers: RealProvider[] = [];
@@ -142,6 +147,7 @@ export class RealLiveSource {
       // The coordinator no longer lists the job we follow: it restarted with an empty database.
       // Holding on would wait forever for that job's socket and map its old events onto the new providers.
       else if (!newest && this.jobId) this.forget();
+      this.polledOk = true;
       this.set({ failures: 0, error: null, connection: this.connectionNow(0), lastMessageAt: Date.now(), hello: { kind: "hello", server: "coordinator", provenance: "live" } });
       this.scheduleRebuild();
       await this.refreshSettlement();
@@ -157,7 +163,7 @@ export class RealLiveSource {
   private connectionNow(failures: number): Connection {
     if (failures >= OFFLINE_AFTER) return "offline";
     if (failures > 0) return "reconnecting";
-    return !this.jobId || this.socketOpen ? "live" : "connecting";
+    return !this.jobId || this.socketOpen || this.polledOk ? "live" : "connecting";
   }
 
   private follow(jobId: string): void {
@@ -196,6 +202,7 @@ export class RealLiveSource {
     this.socket = socket;
     socket.onopen = () => {
       this.socketOpen = true;
+      this.socketFailures = 0;
       this.set({ connection: this.connectionNow(this.snap.failures) });
     };
     socket.onmessage = (message) => {
@@ -211,8 +218,10 @@ export class RealLiveSource {
       if (this.socket !== socket) return;
       this.socket = null;
       this.socketOpen = false;
-      this.set({ connection: this.snap.failures >= OFFLINE_AFTER ? "offline" : "reconnecting" });
-      this.retry = setTimeout(() => this.openSocket(), 1500);
+      // A closed socket alone is not a lost connection: the polls decide that. Retry it, more slowly each time.
+      this.socketFailures += 1;
+      this.set({ connection: this.connectionNow(this.snap.failures) });
+      this.retry = setTimeout(() => this.openSocket(), Math.min(1500 * 2 ** (this.socketFailures - 1), 30_000));
     };
   }
 
