@@ -9,6 +9,7 @@ import { providerName, rejectedProviders, resumePoint } from "@/lib/events/deriv
 import { settlementView } from "@/lib/events/views";
 import { PayoutStrip } from "@/components/mission/payout-strip";
 import { StartDemoJob } from "@/components/mission/start-demo-job";
+import { DownloadModel } from "@/components/mission/download-model";
 import { Panel } from "@/components/ui/panel";
 import { Stat } from "@/components/ui/stat";
 import { StatusPill } from "@/components/ui/status";
@@ -105,7 +106,10 @@ export default function MissionControl() {
           ) : signedJobs ? (
             !stale && canStart && <Link href="/jobs/new" className={buttonStyles("primary", "md")}>New signed job</Link>
           ) : !stale && canStart ? (
-            <StartDemoJob jobState={state.jobState} />
+            <div className="flex flex-wrap items-center gap-3">
+              <DownloadModel jobId={state.jobId} jobState={state.jobState} live={mode === "live"} />
+              <StartDemoJob jobState={state.jobState} />
+            </div>
           ) : (
             <KillControl state={state} mode={mode} provenance={provenance} connected={!stale} />
           )}
