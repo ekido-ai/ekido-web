@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { MarketingPage, PageHero, PageSection } from "@/components/landing/page-hero";
 import { JobArtifacts } from "@/components/landing/job-artifacts";
-import { SOLUTIONS } from "@/lib/landing/products";
+import { getSolutions } from "@/lib/landing/products-server";
 
 export const metadata: Metadata = { title: "Solutions", description: "Small AI models for retail, clinics, customer support and accounting, in Hindi, Hinglish and English." };
 
-export default function SolutionsPage() {
+export default async function SolutionsPage() {
+  const SOLUTIONS = await getSolutions();
   return (
     <MarketingPage>
       <PageHero kicker="Solutions" title="Built for the work small businesses do every day." sub="One job, one small model, trained on your own examples. These are the first jobs Ekido is built for." />

@@ -5,23 +5,25 @@ import { ArrowUpRight, Check, CircleDashed } from "lucide-react";
 import { MarketingPage, PageHero, PageSection } from "@/components/landing/page-hero";
 import { StatusBadge } from "@/components/shell/marketing-nav";
 import { buttonStyles } from "@/components/ui/button-styles";
-import { PRODUCTS } from "@/lib/landing/products";
+import { PRODUCT_META } from "@/lib/landing/products";
+import { getProducts } from "@/lib/landing/products-server";
 
 export function generateStaticParams() {
-  return PRODUCTS.map((p) => ({ slug: p.key }));
+  return PRODUCT_META.map((p) => ({ slug: p.key }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const p = PRODUCTS.find((x) => x.key === slug);
+  const p = (await getProducts()).find((x) => x.key === slug);
   return p ? { title: p.name, description: p.line } : {};
 }
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const p = PRODUCTS.find((x) => x.key === slug);
+  const products = await getProducts();
+  const p = products.find((x) => x.key === slug);
   if (!p) notFound();
-  const others = PRODUCTS.filter((x) => x.key !== p.key);
+  const others = products.filter((x) => x.key !== p.key);
   return (
     <MarketingPage>
       <PageHero kicker={p.name} title={p.headline} sub={p.line}>

@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { ArrowUpRight, BadgeCheck, Boxes, Check, Coins, Cpu, EyeOff, FileLock2, KeyRound, Landmark, Layers, Lock, Scale, Server, ShieldCheck, Sparkles } from "lucide-react";
 import { StatusBadge } from "@/components/shell/marketing-nav";
-import { PRODUCTS, type Status } from "@/lib/landing/products";
+import { type Status } from "@/lib/landing/products";
+import { getProducts } from "@/lib/landing/products-server";
 import { cx } from "@/components/ui/cx";
 
 /*
@@ -13,7 +14,8 @@ import { cx } from "@/components/ui/cx";
 
 const ICONS: Record<string, typeof Boxes> = { assistant: Sparkles, train: Boxes, verify: BadgeCheck, host: Server, pay: Coins, devices: Cpu };
 
-export function ProductCatalog() {
+export async function ProductCatalog() {
+  const PRODUCTS = await getProducts();
   return (
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {PRODUCTS.map((p) => {

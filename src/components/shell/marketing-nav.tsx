@@ -5,7 +5,8 @@ import Link from "next/link";
 import { BadgeCheck, Boxes, ChevronDown, Coins, Cpu, Server, Sparkles } from "lucide-react";
 import { cx } from "@/components/ui/cx";
 import { useTranslations } from "next-intl";
-import { PRODUCTS, SOLUTIONS, STATUS_LABEL, type Status } from "@/lib/landing/products";
+import { type Status } from "@/lib/landing/products";
+import { useProducts, useSolutions } from "@/lib/landing/products-client";
 
 /*
  * The home page's header, like a platform site: Products and Solutions open menus, then Developers, Pricing and
@@ -15,6 +16,7 @@ import { PRODUCTS, SOLUTIONS, STATUS_LABEL, type Status } from "@/lib/landing/pr
 const ICONS: Record<string, typeof Boxes> = { assistant: Sparkles, train: Boxes, verify: BadgeCheck, host: Server, pay: Coins, devices: Cpu };
 
 export function StatusBadge({ status }: { status: Status }) {
+  const t = useTranslations("status");
   return (
     <span
       className={cx(
@@ -23,7 +25,7 @@ export function StatusBadge({ status }: { status: Status }) {
       )}
     >
       {status === "live" && <span className="size-1.5 rounded-full bg-success" />}
-      {STATUS_LABEL[status]}
+      {t(status)}
     </span>
   );
 }
@@ -32,6 +34,8 @@ type Menu = "products" | "solutions" | null;
 
 export function MarketingNav() {
   const t = useTranslations("nav");
+  const PRODUCTS = useProducts();
+  const SOLUTIONS = useSolutions();
   const [open, setOpen] = useState<Menu>(null);
   const ref = useRef<HTMLElement>(null);
   const closing = useRef<ReturnType<typeof setTimeout> | null>(null);
