@@ -7,21 +7,22 @@ export default function PrivacyPage() {
   return (
     <Doc
       title="Privacy"
-      updated="9 November 2026"
-      intro="Ekido is a prototype. We collect as little as we can, but a blockchain is public by design. This page explains both in plain words."
+      updated="18 November 2026"
+      intro="Ekido runs on a public test network. We collect as little as we can, but a blockchain is public by design. This page explains both in plain words. It is a draft, pending legal review."
     >
       <Section title="The short version">
         <ul>
-          <li>No accounts, no passwords, no ads, no analytics and no tracking cookies.</li>
+          <li>No passwords, no ads, no analytics and no tracking cookies.</li>
           <li>Anything sent to the blockchain, like a wallet address or a payment, is public and permanent. Nobody can delete it, us included.</li>
-          <li>A GPU provider can see the data of a job it runs. Only public datasets are used today.</li>
+          <li>A device that trains a job can read that job&apos;s data while it trains. Today, only public and sample datasets are used.</li>
+          <li>We don&apos;t publish who runs the devices. Job pages name each device only by a label.</li>
         </ul>
       </Section>
 
       <Section title="What reaches our coordinator">
         <p>The coordinator is the server that schedules jobs. It receives:</p>
         <ul>
-          <li><strong>If you rent out a GPU:</strong> the name, wallet address, price, device type and memory you send with the join command, a key that signs your work, and your IP address. The IP is used for rate limiting.</li>
+          <li><strong>If you run a device:</strong> the name, wallet address, price, device type and memory you send with the join command, a key that signs your work, and your IP address. The IP is used for rate limiting.</li>
           <li><strong>If you submit a job:</strong> the job settings, the quality policy and the client wallet address.</li>
           <li><strong>While a job runs:</strong> training progress, checkpoints and GPU readings such as utilization, memory and temperature.</li>
         </ul>
@@ -55,6 +56,14 @@ export default function PrivacyPage() {
           <li><code>ekido.notice</code>: that you&apos;ve seen the storage notice, so it doesn&apos;t show again.</li>
         </ul>
         <p>Clearing your site data removes them. Nothing breaks without them.</p>
+      </Section>
+
+      <Section title="Your rights under Indian law">
+        <p>
+          India&apos;s Digital Personal Data Protection Act, 2023 gives you the right to know what personal data we hold about you, to have it corrected or
+          erased, and to have a complaint heard. Ask us at <Contact /> and we&apos;ll answer. When business accounts launch, these requests will also be
+          available from your account, and erasing a job will destroy the key that its stored data is encrypted with.
+        </p>
       </Section>
 
       <Section title="How long we keep things">

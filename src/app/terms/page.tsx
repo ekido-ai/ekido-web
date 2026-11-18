@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import { Contact, Doc, Section } from "@/components/legal/doc";
 
-export const metadata: Metadata = { title: "Terms of use", description: "The rules for using the Ekido prototype, as a client or as a GPU provider." };
+export const metadata: Metadata = { title: "Terms of use", description: "The rules for using Ekido on its public test network, as a business, a developer or a device owner." };
 
 export default function TermsPage() {
   return (
     <Doc
       title="Terms of use"
-      updated="9 November 2026"
-      intro="By using Ekido you agree to these terms. They're written for a testnet prototype, so read the first section before anything else."
+      updated="18 November 2026"
+      intro="By using Ekido you agree to these terms. They're written for a public test network, so read the first section before anything else. This is a draft, pending legal review."
     >
       <Section title="This is a prototype on a test network">
         <ul>
@@ -25,7 +25,7 @@ export default function TermsPage() {
           earned goes back to the client. The Quality Guard tests results against a policy agreed before the job starts.
         </p>
         <p>
-          We don&apos;t promise that a job finishes, that a result is correct beyond that test, or that any GPU works with any workload. Verifiers, the arbiter and the
+          We don&apos;t promise that a job finishes, that a result is correct beyond that test, or that every device works with every job. Verifiers, the arbiter and the
           coordinator are run by our team, so the system is permissioned, not trustless.
         </p>
       </Section>
@@ -38,7 +38,7 @@ export default function TermsPage() {
         </ul>
       </Section>
 
-      <Section title="If you rent out a GPU">
+      <Section title="If you run a device">
         <ul>
           <li>Only connect hardware you own or are allowed to use.</li>
           <li>You run approved workloads on your own machine at your own risk, including its electricity, heat and wear.</li>
@@ -48,7 +48,7 @@ export default function TermsPage() {
       </Section>
 
       <Section title="Acceptable use">
-        <p>Don&apos;t attack the service or other users, submit malicious code or checkpoints, fake telemetry or results, or try to get paid for work you didn&apos;t do.</p>
+        <p>Don&apos;t attack the service or other users, submit malicious code or checkpoints, fake telemetry or results, or try to get paid for work you didn&apos;t do. The full rules are in the <a href="/acceptable-use">acceptable use policy</a>.</p>
       </Section>
 
       <Section title="Liability">

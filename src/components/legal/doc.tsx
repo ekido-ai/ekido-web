@@ -14,6 +14,7 @@ export function Doc({ title, updated, intro, children }: { title: string; update
           ["/status", "Status"],
           ["/privacy", "Privacy"],
           ["/terms", "Terms"],
+          ["/acceptable-use", "Acceptable use"],
           ["/security", "Security"],
         ].map(([href, label]) => (
           <Link key={href} href={href} className="text-ink-2 underline decoration-line-strong underline-offset-4 hover:text-ink">

@@ -5,7 +5,7 @@ const columns: { title: string; links: [string, string][] }[] = [
   { title: "Use it", links: [["/dashboard", "Mission control"], ["/provide", "Earn with your device"], ["/earnings", "Earnings"], ["/verify", "Verify a payout"]] },
   { title: "Proof", links: [["/chain", "Escrow ledger"], ["/chain#reserves", "Proof of reserves"], ["/settlement", "Settlement"], ["/status", "System status"], ["/admin", "Owner console"]] },
   { title: "Help", links: [["/help", "Questions and answers"], ["/#how", "How it works"], ["/help#badges", "What the badges mean"], ["/security", "Report a problem"]] },
-  { title: "Legal", links: [["/privacy", "Privacy"], ["/privacy#cookies", "Cookies and storage"], ["/terms", "Terms of use"], ["/security", "Security"]] },
+  { title: "Legal", links: [["/privacy", "Privacy"], ["/privacy#cookies", "Cookies and storage"], ["/terms", "Terms of use"], ["/acceptable-use", "Acceptable use"], ["/security", "Security"]] },
 ];
 
 /** Shared footer for every dashboard screen. The landing page has its own dark version with the same links. */
