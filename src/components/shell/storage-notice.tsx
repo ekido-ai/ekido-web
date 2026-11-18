@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { Cookie } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,22 +12,28 @@ const KEY = "ekido.notice";
  * An honest storage notice: there are no cookies or trackers, so there's nothing to accept or refuse.
  * It says what is kept and goes away for good after one click.
  */
+const noSubscribe = () => () => {};
+
+function wantsNotice() {
+  try {
+    return !localStorage.getItem(KEY) && !new URLSearchParams(location.search).has("at");
+  } catch {
+    // Storage blocked: showing the notice every visit would nag, so skip it.
+    return false;
+  }
+}
+
 export function StorageNotice() {
   const t = useTranslations("shell.storage");
-  const [show, setShow] = useState(false);
-  useEffect(() => {
-    try {
-      if (!localStorage.getItem(KEY) && !new URLSearchParams(location.search).has("at")) setShow(true);
-    } catch {
-      // Storage blocked: showing the notice every visit would nag, so skip it.
-    }
-  }, []);
-  if (!show) return null;
+  // Read from this browser's storage once on the client; the server render never shows the notice.
+  const wanted = useSyncExternalStore(noSubscribe, wantsNotice, () => false);
+  const [closed, setClosed] = useState(false);
+  if (!wanted || closed) return null;
   const close = () => {
     try {
       localStorage.setItem(KEY, "1");
     } catch {}
-    setShow(false);
+    setClosed(true);
   };
   return (
     <div role="region" aria-label={t("aria")} className="fixed bottom-4 left-4 right-4 z-40 sm:right-auto sm:max-w-sm">

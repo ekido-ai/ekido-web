@@ -56,7 +56,12 @@ export function NavGroups({ path }: { path: string }) {
       document.removeEventListener("keydown", esc);
     };
   }, []);
-  useEffect(() => setOpen(null), [path]);
+  // A new page closes any open menu (adjusting state during render, not in an effect).
+  const [shownPath, setShownPath] = useState(path);
+  if (shownPath !== path) {
+    setShownPath(path);
+    setOpen(null);
+  }
 
   return (
     <nav
