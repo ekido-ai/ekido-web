@@ -3,15 +3,17 @@ import Link from "next/link";
 import { MarketingPage, PageHero, PageSection } from "@/components/landing/page-hero";
 import { JobArtifacts } from "@/components/landing/job-artifacts";
 import { getSolutions } from "@/lib/landing/products-server";
+import { getTranslations } from "next-intl/server";
 
 export const metadata: Metadata = { title: "Solutions", description: "Small AI models for retail, clinics, customer support and accounting, in Hindi, Hinglish and English." };
 
 export default async function SolutionsPage() {
   const SOLUTIONS = await getSolutions();
+  const t = await getTranslations("pages.solutions");
   return (
     <MarketingPage>
-      <PageHero kicker="Solutions" title="Built for the work small businesses do every day." sub="One job, one small model, trained on your own examples. These are the first jobs Ekido is built for." />
-      <PageSection title="By industry">
+      <PageHero kicker={t("kicker")} title={t("title")} sub={t("sub")} />
+      <PageSection title={t("byIndustry")}>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {SOLUTIONS.industries.map((s) => (
             <div key={s.name} className="artifact p-5">
@@ -21,10 +23,10 @@ export default async function SolutionsPage() {
           ))}
         </div>
       </PageSection>
-      <PageSection title="See the jobs" sub="Example inputs, written for this page, with what each model returns.">
+      <PageSection title={t("jobsTitle")} sub={t("jobsSub")}>
         <JobArtifacts />
       </PageSection>
-      <PageSection title="By role">
+      <PageSection title={t("byRole")}>
         <div className="grid gap-3 md:grid-cols-3">
           {SOLUTIONS.roles.map((s) => (
             <Link key={s.name} href={s.href} className="artifact lift p-5">

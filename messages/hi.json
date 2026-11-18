@@ -283,5 +283,193 @@
     "live": "Live on testnet",
     "building": "Being built",
     "planned": "Planned"
+  },
+  "platform": {
+    "learnMore": "Learn more",
+    "developers": {
+      "items": [
+        {
+          "title": "API keys with test and live modes",
+          "body": "Keys start ek_test_ or ek_live_, so a test key can never touch real money."
+        },
+        {
+          "title": "Scoped access",
+          "body": "Give a key only what it needs: jobs, models.read or models.predict."
+        },
+        {
+          "title": "A savings report you can audit",
+          "body": "Every number in it links to the raw evidence it came from."
+        },
+        {
+          "title": "Open SDK and CLI",
+          "body": "Planned, under an open licence, with a playground and test keys."
+        }
+      ],
+      "terminal": "terminal",
+      "caption": "Real endpoints of the Platform API. Running a model over the API is being built."
+    },
+    "trust": {
+      "items": [
+        {
+          "title": "The bar is set before work starts",
+          "body": "Your test and the pass mark are fixed in the quote, so nobody can move the goalposts."
+        },
+        {
+          "title": "Several verifiers sign off",
+          "body": "A payout needs signatures from more than one verifier; one bad actor can't approve work alone."
+        },
+        {
+          "title": "Payouts on a public ledger",
+          "body": "Terms, verdict and payout split are recorded where you can check them yourself."
+        },
+        {
+          "title": "No public list of devices",
+          "body": "Who trains your model isn't published; jobs name devices only by a label."
+        },
+        {
+          "title": "Encrypted in storage and in transit",
+          "body": "With our own keys, rotated. Encryption from your browser is next."
+        },
+        {
+          "title": "Personal data stripped in your browser",
+          "body": "Names and numbers removed before your examples ever upload."
+        },
+        {
+          "title": "Private pools for sensitive data",
+          "body": "Train only on devices you trust, or your own."
+        },
+        {
+          "title": "Model passport",
+          "body": "A record of how your model was trained and tested, that travels with it."
+        }
+      ],
+      "limit": "The honest limit: a device training your model has to read your examples while it trains. That's why jobs run only approved training code, and why private pools come before anything sensitive.",
+      "check": "Check a payout yourself"
+    },
+    "pricing": {
+      "plans": [
+        {
+          "name": "Pay per model",
+          "who": "For a small business",
+          "price": "Fixed quote",
+          "note": "Shown before you start",
+          "points": [
+            "One price to train a model for one job",
+            "Full refund if it misses your bar",
+            "Hosting billed per use, or run it yourself",
+            "Rupees by UPI or card, with GST invoices (coming)"
+          ],
+          "cta": "Watch a recorded run"
+        },
+        {
+          "name": "Business",
+          "who": "For teams and agencies",
+          "price": "Planned",
+          "note": "Monthly plan",
+          "points": [
+            "Team accounts and roles",
+            "Several models and API keys",
+            "Private pools for sensitive data",
+            "Priority support"
+          ],
+          "cta": "Follow the build"
+        },
+        {
+          "name": "Device owners",
+          "who": "For gaming PCs and laptops",
+          "price": "Free to join",
+          "note": "You set your own price",
+          "points": [
+            "Paid for every training step that passes",
+            "Approved jobs only, stop anytime",
+            "Your key never leaves your machine",
+            "Windows app and phones next"
+          ],
+          "cta": "Join as a device owner"
+        }
+      ]
+    },
+    "roadmap": {
+      "steps": [
+        {
+          "when": "Now",
+          "title": "The foundation",
+          "items": [
+            "Relay training and the quality gate",
+            "Payouts and refunds by rule",
+            "Five business recipes",
+            "Accounts, teams and API keys"
+          ]
+        },
+        {
+          "when": "Next",
+          "title": "Prove the value",
+          "items": [
+            "Describe a job to the assistant",
+            "Rupee payments with UPI",
+            "Hosting and export",
+            "First small businesses"
+          ]
+        },
+        {
+          "when": "Then",
+          "title": "The network grows",
+          "items": [
+            "A Windows app for device owners",
+            "Android phones while they charge",
+            "Private pools",
+            "Open SDK and playground"
+          ]
+        },
+        {
+          "when": "Later",
+          "title": "A model economy",
+          "items": [
+            "Marketplace with royalties",
+            "Model passports",
+            "Outside verifiers",
+            "India, then South-East Asia"
+          ]
+        }
+      ]
+    }
+  },
+  "productPage": {
+    "does": "What it does",
+    "stands": "Where it stands",
+    "today": "Working today, on the public test network",
+    "next": "Coming next",
+    "rest": "The rest of the platform"
+  },
+  "pages": {
+    "solutions": {
+      "kicker": "Solutions",
+      "title": "Built for the work small businesses do every day.",
+      "sub": "One job, one small model, trained on your own examples. These are the first jobs Ekido is built for.",
+      "byIndustry": "By industry",
+      "jobsTitle": "See the jobs",
+      "jobsSub": "Example inputs, written for this page, with what each model returns.",
+      "byRole": "By role"
+    },
+    "developers": {
+      "kicker": "Developers",
+      "title": "Build on Ekido with an API key.",
+      "sub": "Accounts, organisations and scoped keys are live on the public test network. Running models over the API comes with Ekido Host."
+    },
+    "pricing": {
+      "kicker": "Pricing",
+      "title": "Pay for results, not compute.",
+      "sub": "Prices are set from measured costs and shown in every quote, before you commit. No token, no per-message bill."
+    },
+    "trust": {
+      "kicker": "Trust and privacy",
+      "title": "Proof, not promises.",
+      "sub": "What protects your money and your data, and what is still on its way."
+    },
+    "roadmap": {
+      "kicker": "Roadmap",
+      "title": "Where Ekido is going.",
+      "sub": "Each step starts when the last one is proven."
+    }
   }
 }

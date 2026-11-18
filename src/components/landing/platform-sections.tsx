@@ -4,6 +4,7 @@ import { StatusBadge } from "@/components/shell/marketing-nav";
 import { type Status } from "@/lib/landing/products";
 import { getProducts } from "@/lib/landing/products-server";
 import { cx } from "@/components/ui/cx";
+import { getTranslations } from "next-intl/server";
 
 /*
  * The platform parts of the home page: the product catalogue, developers, trust and privacy, pricing and the roadmap.
@@ -16,6 +17,7 @@ const ICONS: Record<string, typeof Boxes> = { assistant: Sparkles, train: Boxes,
 
 export async function ProductCatalog() {
   const PRODUCTS = await getProducts();
+  const t = await getTranslations("platform");
   return (
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {PRODUCTS.map((p) => {
@@ -31,7 +33,7 @@ export async function ProductCatalog() {
             <h3 className="mt-5 font-serif text-xl text-ink">{p.name}</h3>
             <p className="mt-1.5 text-[15px] leading-relaxed text-ink-2">{p.line}</p>
             <span className="mt-auto inline-flex items-center gap-1 pt-5 text-sm font-semibold text-accent-text">
-              Learn more <ArrowUpRight className="nudge size-4" aria-hidden />
+              {t("learnMore")} <ArrowUpRight className="nudge size-4" aria-hidden />
             </span>
           </Link>
         );
@@ -40,16 +42,13 @@ export async function ProductCatalog() {
   );
 }
 
-export function DevelopersSection() {
+export async function DevelopersSection() {
+  const t = await getTranslations("platform.developers");
+  const items = t.raw("items") as { title: string; body: string }[];
   return (
     <div className="grid items-start gap-10 lg:grid-cols-[1fr_1.15fr]">
       <ul className="space-y-5">
-        {[
-          { Icon: KeyRound, title: "API keys with test and live modes", body: "Keys start ek_test_ or ek_live_, so a test key can never touch real money." },
-          { Icon: ShieldCheck, title: "Scoped access", body: "Give a key only what it needs: jobs, models.read or models.predict." },
-          { Icon: Scale, title: "A savings report you can audit", body: "Every number in it links to the raw evidence it came from." },
-          { Icon: Layers, title: "Open SDK and CLI", body: "Planned, under an open licence, with a playground and test keys." },
-        ].map(({ Icon, title, body }) => (
+        {[KeyRound, ShieldCheck, Scale, Layers].map((Icon, i) => ({ Icon, ...items[i] })).map(({ Icon, title, body }) => (
           <li key={title} className="flex gap-4">
             <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent-text">
               <Icon className="size-5" aria-hidden />
@@ -66,7 +65,7 @@ export function DevelopersSection() {
           <span className="size-3 rounded-full bg-[#2c3a47]" />
           <span className="size-3 rounded-full bg-[#2c3a47]" />
           <span className="size-3 rounded-full bg-accent" />
-          <span className="ml-3 font-mono text-xs text-muted">terminal</span>
+          <span className="ml-3 font-mono text-xs text-muted">{t("terminal")}</span>
         </div>
         <pre className="overflow-x-auto p-5 font-mono text-[12.5px] leading-6 text-ink-2 sm:p-6">
           <span className="text-muted"># Create a test key in your organisation&apos;s settings, then:</span>
@@ -85,24 +84,27 @@ export function DevelopersSection() {
           {"\n"}
           <span className="text-ink">{"  "}-H &quot;Authorization: Bearer $EKIDO_KEY&quot;</span>
         </pre>
-        <figcaption className="border-t border-line px-5 py-3 text-xs text-muted">Real endpoints of the Platform API. Running a model over the API is being built.</figcaption>
+        <figcaption className="border-t border-line px-5 py-3 text-xs text-muted">{t("caption")}</figcaption>
       </figure>
     </div>
   );
 }
 
-const trust: { Icon: typeof Lock; title: string; body: string; status: Status }[] = [
-  { Icon: Scale, title: "The bar is set before work starts", body: "Your test and the pass mark are fixed in the quote, so nobody can move the goalposts.", status: "live" },
-  { Icon: BadgeCheck, title: "Several verifiers sign off", body: "A payout needs signatures from more than one verifier; one bad actor can't approve work alone.", status: "live" },
-  { Icon: Landmark, title: "Payouts on a public ledger", body: "Terms, verdict and payout split are recorded where you can check them yourself.", status: "live" },
-  { Icon: EyeOff, title: "No public list of devices", body: "Who trains your model isn't published; jobs name devices only by a label.", status: "live" },
-  { Icon: Lock, title: "Encrypted in storage and in transit", body: "With our own keys, rotated. Encryption from your browser is next.", status: "live" },
-  { Icon: FileLock2, title: "Personal data stripped in your browser", body: "Names and numbers removed before your examples ever upload.", status: "building" },
-  { Icon: Layers, title: "Private pools for sensitive data", body: "Train only on devices you trust, or your own.", status: "planned" },
-  { Icon: ShieldCheck, title: "Model passport", body: "A record of how your model was trained and tested, that travels with it.", status: "planned" },
+const TRUST: { Icon: typeof Lock; status: Status }[] = [
+  { Icon: Scale, status: "live" },
+  { Icon: BadgeCheck, status: "live" },
+  { Icon: Landmark, status: "live" },
+  { Icon: EyeOff, status: "live" },
+  { Icon: Lock, status: "live" },
+  { Icon: FileLock2, status: "building" },
+  { Icon: Layers, status: "planned" },
+  { Icon: ShieldCheck, status: "planned" },
 ];
 
-export function TrustSection() {
+export async function TrustSection() {
+  const t = await getTranslations("platform.trust");
+  const text = t.raw("items") as { title: string; body: string }[];
+  const trust = TRUST.map((x, i) => ({ ...x, ...text[i] }));
   return (
     <>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -118,41 +120,18 @@ export function TrustSection() {
         ))}
       </div>
       <p className="mt-5 max-w-3xl text-sm text-muted">
-        The honest limit: a device training your model has to read your examples while it trains. That&apos;s why jobs run only approved training code, and why private pools come before anything sensitive.{" "}
-        <Link href="/verify" className="font-semibold text-ink underline-offset-4 hover:underline">Check a payout yourself</Link>
+        {t("limit")}{" "}
+        <Link href="/verify" className="font-semibold text-ink underline-offset-4 hover:underline">{t("check")}</Link>
       </p>
     </>
   );
 }
 
-export function PricingSection() {
-  const plans = [
-    {
-      name: "Pay per model",
-      who: "For a small business",
-      price: "Fixed quote",
-      note: "Shown before you start",
-      points: ["One price to train a model for one job", "Full refund if it misses your bar", "Hosting billed per use, or run it yourself", "Rupees by UPI or card, with GST invoices (coming)"],
-      cta: ["Watch a recorded run", "/dashboard?at=0&play=1"],
-      featured: true,
-    },
-    {
-      name: "Business",
-      who: "For teams and agencies",
-      price: "Planned",
-      note: "Monthly plan",
-      points: ["Team accounts and roles", "Several models and API keys", "Private pools for sensitive data", "Priority support"],
-      cta: ["Follow the build", "https://github.com/ekido-ai"],
-    },
-    {
-      name: "Device owners",
-      who: "For gaming PCs and laptops",
-      price: "Free to join",
-      note: "You set your own price",
-      points: ["Paid for every training step that passes", "Approved jobs only, stop anytime", "Your key never leaves your machine", "Windows app and phones next"],
-      cta: ["Join as a device owner", "/provide"],
-    },
-  ];
+export async function PricingSection() {
+  const t = await getTranslations("platform.pricing");
+  const text = t.raw("plans") as { name: string; who: string; price: string; note: string; points: string[]; cta: string }[];
+  const links: { href: string; featured?: boolean }[] = [{ href: "/dashboard?at=0&play=1", featured: true }, { href: "https://github.com/ekido-ai" }, { href: "/provide" }];
+  const plans = text.map((p, i) => ({ ...p, cta: [p.cta, links[i].href] as const, featured: links[i].featured }));
   return (
     <div className="grid gap-4 lg:grid-cols-3">
       {plans.map((p) => (
@@ -185,13 +164,9 @@ export function PricingSection() {
   );
 }
 
-export function RoadmapSection() {
-  const road = [
-    { when: "Now", title: "The foundation", items: ["Relay training and the quality gate", "Payouts and refunds by rule", "Five business recipes", "Accounts, teams and API keys"] },
-    { when: "Next", title: "Prove the value", items: ["Describe a job to the assistant", "Rupee payments with UPI", "Hosting and export", "First small businesses"] },
-    { when: "Then", title: "The network grows", items: ["A Windows app for device owners", "Android phones while they charge", "Private pools", "Open SDK and playground"] },
-    { when: "Later", title: "A model economy", items: ["Marketplace with royalties", "Model passports", "Outside verifiers", "India, then South-East Asia"] },
-  ];
+export async function RoadmapSection() {
+  const t = await getTranslations("platform.roadmap");
+  const road = t.raw("steps") as { when: string; title: string; items: string[] }[];
   return (
     <ol className="relative grid gap-6 md:grid-cols-4">
       <span aria-hidden className="absolute left-0 right-0 top-[18px] hidden h-1 rounded-full bg-surface-3 md:block" />
