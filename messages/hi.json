@@ -471,5 +471,97 @@
       "title": "Where Ekido is going.",
       "sub": "Each step starts when the last one is proven."
     }
+  },
+  "shell": {
+    "nav": {
+      "aria": "Screens",
+      "groups": {
+        "mission": "Mission control",
+        "missionShort": "Mission",
+        "training": "Training",
+        "payments": "Payments",
+        "earn": "Earn"
+      },
+      "items": {
+        "recovery": {
+          "label": "Recovery",
+          "hint": "How a job carried on when a device dropped out"
+        },
+        "quality": {
+          "label": "Quality",
+          "hint": "Why a model passed or was refused"
+        },
+        "newJob": {
+          "label": "New job",
+          "hint": "Lock a budget and start training"
+        },
+        "settlement": {
+          "label": "Settlement",
+          "hint": "Who got paid, and why"
+        },
+        "ledger": {
+          "label": "Public ledger",
+          "hint": "Reserves and every payment, live"
+        },
+        "verify": {
+          "label": "Verify a payout",
+          "hint": "Re-check it yourself in the browser"
+        },
+        "earnings": {
+          "label": "Earnings",
+          "hint": "What device owners made"
+        }
+      }
+    },
+    "footer": {
+      "tagline": "Your own AI model, built by devices people already have. Paid for only when it passes your test.",
+      "bottom": "Runs on the Base Sepolia test network with test USDC, which has no value. The contracts are unaudited. Nothing here is financial advice. Type: Zodiak and Satoshi by the Indian Type Foundry, via Fontshare.",
+      "columns": [
+        {
+          "title": "Use it",
+          "links": [
+            "Mission control",
+            "Earn with your device",
+            "Earnings",
+            "Verify a payout"
+          ]
+        },
+        {
+          "title": "Proof",
+          "links": [
+            "Escrow ledger",
+            "Proof of reserves",
+            "Settlement",
+            "System status",
+            "Owner console"
+          ]
+        },
+        {
+          "title": "Help",
+          "links": [
+            "Questions and answers",
+            "How it works",
+            "What the badges mean",
+            "Report a problem"
+          ]
+        },
+        {
+          "title": "Legal",
+          "links": [
+            "Privacy",
+            "Cookies and storage",
+            "Terms of use",
+            "Acceptable use",
+            "Security"
+          ]
+        }
+      ]
+    },
+    "storage": {
+      "aria": "Storage notice",
+      "text": "No cookies, no tracking. We only remember your theme and view in this browser.",
+      "link": "What we store",
+      "ok": "Got it"
+    }
   }
 }

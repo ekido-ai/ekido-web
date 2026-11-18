@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Cookie } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslations } from "next-intl";
 
 const KEY = "ekido.notice";
 
@@ -12,6 +13,7 @@ const KEY = "ekido.notice";
  * It says what is kept and goes away for good after one click.
  */
 export function StorageNotice() {
+  const t = useTranslations("shell.storage");
   const [show, setShow] = useState(false);
   useEffect(() => {
     try {
@@ -28,20 +30,20 @@ export function StorageNotice() {
     setShow(false);
   };
   return (
-    <div role="region" aria-label="Storage notice" className="fixed bottom-4 left-4 right-4 z-40 sm:right-auto sm:max-w-sm">
+    <div role="region" aria-label={t("aria")} className="fixed bottom-4 left-4 right-4 z-40 sm:right-auto sm:max-w-sm">
       <div className="rounded-xl border border-line-strong bg-surface p-4 shadow-soft">
         <p className="flex items-start gap-2 text-sm text-ink">
           <Cookie className="mt-0.5 size-4 shrink-0 text-ink-2" aria-hidden />
           <span>
-            No cookies, no tracking. We only remember your theme and view in this browser.{" "}
+            {t("text")}{" "}
             <Link href="/privacy#cookies" className="underline underline-offset-4" onClick={close}>
-              What we store
+              {t("link")}
             </Link>
           </span>
         </p>
         <div className="mt-3 flex justify-end">
           <Button size="sm" variant="primary" onClick={close}>
-            Got it
+            {t("ok")}
           </Button>
         </div>
       </div>

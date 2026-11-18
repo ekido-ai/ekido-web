@@ -5,42 +5,44 @@ import Link from "next/link";
 import { BadgeCheck, Blocks, ChevronDown, Coins, Gauge, Plus, RotateCcw, Server, ShieldCheck, Wallet } from "lucide-react";
 import { config } from "@/lib/config";
 import { cx } from "@/components/ui/cx";
+import { useTranslations } from "next-intl";
 
 /*
  * Four choices instead of ten (Hick's law): the screens are grouped by what a person came to do.
  * Each item says in a few words what it's for, so nobody has to open a page to find out.
  */
 
-type Item = { href: string; label: string; hint: string; icon: typeof Gauge; off?: boolean };
-type Group = { label: string; icon: typeof Gauge; href?: string; items?: Item[] };
+type Item = { href: string; key: string; icon: typeof Gauge; off?: boolean };
+type Group = { key: string; icon: typeof Gauge; href?: string; items?: Item[] };
 
 const newJobOff = !config.signedJobs || config.chainId !== 84532 || !config.escrowAddress;
 
 export const NAV: Group[] = [
-  { label: "Mission control", icon: Gauge, href: "/dashboard" },
+  { key: "mission", icon: Gauge, href: "/dashboard" },
   {
-    label: "Training",
+    key: "training",
     icon: RotateCcw,
     items: [
-      { href: "/recovery", label: "Recovery", hint: "How a job carried on when a device dropped out", icon: RotateCcw },
-      { href: "/quality", label: "Quality", hint: "Why a model passed or was refused", icon: ShieldCheck },
-      { href: "/jobs/new", label: "New job", hint: "Lock a budget and start training", icon: Plus, off: newJobOff },
+      { href: "/recovery", key: "recovery", icon: RotateCcw },
+      { href: "/quality", key: "quality", icon: ShieldCheck },
+      { href: "/jobs/new", key: "newJob", icon: Plus, off: newJobOff },
     ],
   },
   {
-    label: "Payments",
+    key: "payments",
     icon: Coins,
     items: [
-      { href: "/settlement", label: "Settlement", hint: "Who got paid, and why", icon: Coins },
-      { href: "/chain", label: "Public ledger", hint: "Reserves and every payment, live", icon: Blocks },
-      { href: "/verify", label: "Verify a payout", hint: "Re-check it yourself in the browser", icon: BadgeCheck },
-      { href: "/earnings", label: "Earnings", hint: "What device owners made", icon: Wallet },
+      { href: "/settlement", key: "settlement", icon: Coins },
+      { href: "/chain", key: "ledger", icon: Blocks },
+      { href: "/verify", key: "verify", icon: BadgeCheck },
+      { href: "/earnings", key: "earnings", icon: Wallet },
     ],
   },
-  { label: "Earn", icon: Server, href: "/provide" },
+  { key: "earn", icon: Server, href: "/provide" },
 ];
 
 export function NavGroups({ path }: { path: string }) {
+  const t = useTranslations("shell.nav");
   const [open, setOpen] = useState<string | null>(null);
   const ref = useRef<HTMLElement>(null);
 
@@ -59,7 +61,7 @@ export function NavGroups({ path }: { path: string }) {
   return (
     <nav
       ref={ref}
-      aria-label="Screens"
+      aria-label={t("aria")}
       className="order-last -mx-1 grid min-w-0 basis-full grid-cols-4 gap-1 sm:flex 2xl:order-none 2xl:mx-0 2xl:basis-auto 2xl:flex-1"
     >
       {NAV.map((g) => {
@@ -71,18 +73,18 @@ export function NavGroups({ path }: { path: string }) {
         );
         if (g.href) {
           return (
-            <Link key={g.label} href={g.href} aria-current={active ? "page" : undefined} className={base}>
+            <Link key={g.key} href={g.href} aria-current={active ? "page" : undefined} className={base}>
               <Icon className="hidden size-4 shrink-0 sm:block" aria-hidden />
-              <span className="truncate">{g.label === "Mission control" ? <><span className="sm:hidden">Mission</span><span className="hidden sm:inline">Mission control</span></> : g.label}</span>
+              <span className="truncate">{g.key === "mission" ? <><span className="sm:hidden">{t("groups.missionShort")}</span><span className="hidden sm:inline">{t("groups.mission")}</span></> : t(`groups.${g.key}`)}</span>
             </Link>
           );
         }
-        const isOpen = open === g.label;
+        const isOpen = open === g.key;
         return (
-          <div key={g.label} className="relative" onMouseEnter={() => setOpen(g.label)} onMouseLeave={() => setOpen((o) => (o === g.label ? null : o))}>
-            <button type="button" aria-expanded={isOpen} aria-haspopup="menu" aria-current={active ? "page" : undefined} onClick={() => setOpen(isOpen ? null : g.label)} className={cx(base, "w-full")}>
+          <div key={g.key} className="relative" onMouseEnter={() => setOpen(g.key)} onMouseLeave={() => setOpen((o) => (o === g.key ? null : o))}>
+            <button type="button" aria-expanded={isOpen} aria-haspopup="menu" aria-current={active ? "page" : undefined} onClick={() => setOpen(isOpen ? null : g.key)} className={cx(base, "w-full")}>
               <Icon className="hidden size-4 shrink-0 sm:block" aria-hidden />
-              <span className="truncate">{g.label}</span>
+              <span className="truncate">{t(`groups.${g.key}`)}</span>
               <ChevronDown className={cx("size-3.5 shrink-0 transition-transform duration-200", isOpen && "rotate-180")} aria-hidden />
             </button>
             {isOpen && (
@@ -104,10 +106,10 @@ export function NavGroups({ path }: { path: string }) {
                         </span>
                         <span className="min-w-0">
                           <span className="flex items-center gap-2 text-sm font-medium text-ink">
-                            {i.label}
+                            {t(`items.${i.key}.label`)}
                             {i.off && <span className="rounded border border-line-strong px-1 text-[10px] font-semibold leading-4 text-muted">Off</span>}
                           </span>
-                          <span className="block text-xs text-ink-2">{i.hint}</span>
+                          <span className="block text-xs text-ink-2">{t(`items.${i.key}.hint`)}</span>
                         </span>
                       </Link>
                     );
