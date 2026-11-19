@@ -56,3 +56,6 @@ node_modules/
 /playwright-report/
 /test-results/
 /blob-report/
+
+# Rust build output for pii/
+/pii/target
