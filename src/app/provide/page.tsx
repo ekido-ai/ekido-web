@@ -4,9 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Check, Copy, Cpu, Download, Lock, Power, ShieldCheck, Wallet } from "lucide-react";
 import { config } from "@/lib/config";
-import { countConnected } from "@/lib/live/providers";
-import { ProviderRoster } from "@/components/network/provider-roster";
-import { useProviders } from "@/lib/live/use-providers";
 import { Panel } from "@/components/ui/panel";
 import { buttonStyles } from "@/components/ui/button-styles";
 import { cx } from "@/components/ui/cx";
@@ -19,17 +16,10 @@ const MEASURED_3060_STEPS_PER_S = 12;
 const KIT = "/ekido-provider-kit.zip";
 
 type Os = "windows" | "unix";
-type Provider = { status: string; price_per_step?: string; name?: string; provider_id?: string; kind?: string; capacity_mib?: number | null };
 
 const NAME_OK = /^[a-zA-Z0-9 _.-]{1,60}$/;
 const PRICE_OK = /^(?:0|[1-9]\d*)(?:\.\d{1,6})?$/;
 
-function median(values: number[]): number | null {
-  if (!values.length) return null;
-  const s = [...values].sort((a, b) => a - b);
-  const m = Math.floor(s.length / 2);
-  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
-}
 
 function fmt(n: number, digits = 2) {
   return n.toLocaleString("en-US", { minimumFractionDigits: digits, maximumFractionDigits: digits });
@@ -137,8 +127,6 @@ export default function ProvidePage() {
   const [rate, setRate] = useState(String(MEASURED_3060_STEPS_PER_S));
   const [hours, setHours] = useState(8);
   const [busy, setBusy] = useState(25);
-  // The network list is kept fresh: it used to be read once, so a provider joining or leaving never showed.
-  const network = useProviders<Provider>();
   const [sha, setSha] = useState<string | null>(null);
   const [kitBytes, setKitBytes] = useState<number | null>(null);
   const [origin, setOrigin] = useState("https://ekido.duckdns.org");
@@ -181,10 +169,6 @@ export default function ProvidePage() {
     return { perHour, perDay, perMonth: perDay * 30 };
   }, [step, hours, busy]);
 
-  const rows = Array.isArray(network) ? network : [];
-  const online = countConnected(rows);
-  const prices = rows.map((p) => Number(p.price_per_step)).filter((n) => n > 0);
-  const mid = median(prices);
 
   return (
     <div className="space-y-8">
@@ -226,26 +210,6 @@ export default function ProvidePage() {
             <ChipScene phase="training" util={0.8} vram={0.5} size={190} fieldWidth={520} fieldHeight={320} perSide={7} label="YOUR GPU" />
           </div>
         </div>
-      </section>
-
-      {/* The network right now: social proof and price guidance. */}
-      <section aria-label="The network now" className="grid gap-4 sm:grid-cols-3">
-        {[
-          ["Providers connected", network === null ? "…" : network === "down" ? "unreachable" : network === "private" ? "Private" : String(online), network === "down" ? "The coordinator didn't answer from here" : network === "private" ? "This network keeps its provider list private" : `${rows.length} registered in total`],
-          ["Typical price", mid === null ? "–" : `${fmt(mid, 4)}`, network === "private" ? "Each job's quote shows its price" : mid === null ? "No prices published yet" : "Median USDC per step on this network"],
-          ["Range", prices.length ? `${fmt(Math.min(...prices), 4)} to ${fmt(Math.max(...prices), 4)}` : "–", "Cheaper providers get picked first when they can finish in time"],
-        ].map(([label, value, note]) => (
-          <div key={label} className="panel rounded-2xl border border-line p-4">
-            <div className="text-sm text-ink-2">{label}</div>
-            <div className="mt-1 text-2xl font-semibold text-ink tabular">{value}</div>
-            <div className="mt-0.5 text-xs text-muted">{note}</div>
-          </div>
-        ))}
-      </section>
-
-      <section aria-label="Providers on the network" className="space-y-2">
-        <h2 className="text-lg font-semibold text-ink">Who is connected</h2>
-        <ProviderRoster rows={network} />
       </section>
 
       <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
@@ -301,7 +265,6 @@ export default function ProvidePage() {
               </div>
               {!nameOk && <p className="text-sm text-critical">Use letters, numbers, spaces, dots, hyphens or underscores.</p>}
               <PriceBox gpu={gpu} hourly={hourly} setHourly={setHourly} rate={rate} setRate={setRate} step={step} />
-              {mid !== null && priceOk && priceNum > mid * 1.5 && <p className="text-sm text-warning">That&apos;s well above the typical price here, so you may get picked less often.</p>}
               {publicNet ? (
                 nameOk && priceOk && <CopyBlock text={join} label="Copy join command" />
               ) : (
