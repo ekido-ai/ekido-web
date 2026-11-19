@@ -1,0 +1,40 @@
+{"text": "Bhai mera number 98765 43210 hai, kal subah call kar lena", "spans": [{"start": 17, "end": 28, "type": "PHONE"}]}
+{"text": "Hi, this is Rahul Verma from Pune, my mail is RAHUL.VERMA@Example.COM", "spans": [{"start": 12, "end": 23, "type": "NAME"}, {"start": 46, "end": 69, "type": "EMAIL"}]}
+{"text": "Order Aarav Khanna placed, deliver to Plot 14, Vasant Vihar, New Delhi 110057 before Friday", "spans": [{"start": 6, "end": 18, "type": "NAME"}, {"start": 38, "end": 77, "type": "ADDRESS"}]}
+{"text": "Please update my KYC. Aadhaar: 2345 6789 0124 PAN: BQPPK4521L", "spans": [{"start": 31, "end": 45, "type": "AADHAAR"}, {"start": 51, "end": 61, "type": "PAN"}]}
+{"text": "payment kiya tha priya.nair@okhdfcbank se, abhi tak refund nahi aaya", "spans": [{"start": 17, "end": 38, "type": "UPI_ID"}]}
+{"text": "Our company GSTIN is 29AABCT1332L1ZA, please issue the invoice on this", "spans": [{"start": 21, "end": 36, "type": "GSTIN"}]}
+{"text": "Contact the manager, Sunil Kapoor, on (+91) 98123-45678", "spans": [{"start": 21, "end": 33, "type": "NAME"}, {"start": 38, "end": 55, "type": "PHONE"}]}
+{"text": "Meri shipping: House No. 7, Lajpat Nagar, Delhi 110024 aur phone 9811122233", "spans": [{"start": 15, "end": 54, "type": "ADDRESS"}, {"start": 65, "end": 75, "type": "PHONE"}]}
+{"text": "Customer Zoya Siddiqui wants a refund for the blue kurta", "spans": [{"start": 9, "end": 22, "type": "NAME"}]}
+{"text": "Thanks, regards, Nikhil Joshi", "spans": [{"start": 17, "end": 29, "type": "NAME"}]}
+{"text": "Mr. Kapoor called twice today about the delivery", "spans": [{"start": 4, "end": 10, "type": "NAME"}]}
+{"text": "Ship it to 12/3 MG Road near the old temple, Bengaluru", "spans": []}
+{"text": "My landline is 080-2345-6789 and the shop closes at 8 pm", "spans": []}
+{"text": "Tracking id 7012345678 for the parcel, still not delivered", "spans": []}
+{"text": "Is my order ORD458231 packed? It was 2 days ago", "spans": []}
+{"text": "Refund of Rs 1,299 aa gaya, thanks", "spans": []}
+{"text": "Kya 3 piece ka set milega 899 mein?", "spans": []}
+{"text": "Coupon FLAT50OFF lagaya par discount nahi mila", "spans": []}
+{"text": "Rate kya hai 100 piece ka? 5kg ka packet chahiye", "spans": []}
+{"text": "Meri biwi Sunita Sharma ka bill alag se banana", "spans": [{"start": 10, "end": 23, "type": "NAME"}]}
+{"text": "Invoice INV-2026-00231 ka total Rs 4,500 hai, GST alag se", "spans": []}
+{"text": "Priyanka Chopra ne review diya: bahut accha product", "spans": [{"start": 0, "end": 15, "type": "NAME"}]}
+{"text": "Order Devanshu Trivedi ka cancel kar do", "spans": [{"start": 6, "end": 22, "type": "NAME"}]}
+{"text": "+91 90000 11122 pe WhatsApp karo", "spans": [{"start": 0, "end": 15, "type": "PHONE"}]}
+{"text": "Mere dost Vikas Gupta ka PAN AKTPG7712C hai, uska ITR bharna hai", "spans": [{"start": 10, "end": 21, "type": "NAME"}, {"start": 29, "end": 39, "type": "PAN"}]}
+{"text": "Send the parts to Shop 22, Industrial Area, Phase 2, Mohali 160055", "spans": [{"start": 18, "end": 66, "type": "ADDRESS"}]}
+{"text": "Hamara naya number: 9988776655, purana band hai", "spans": [{"start": 20, "end": 30, "type": "PHONE"}]}
+{"text": "Email me at support.team@mycompany.in for the quote", "spans": [{"start": 12, "end": 37, "type": "EMAIL"}]}
+{"text": "UPI id is shop.owner@ybl, send Rs 500 token", "spans": [{"start": 10, "end": 24, "type": "UPI_ID"}]}
+{"text": "Mera Aadhaar 3456-7890-1238 khoya gaya, naya banwana hai", "spans": [{"start": 13, "end": 27, "type": "AADHAAR"}]}
+{"text": "The PIN code of our office is 400001 and the floor is 3", "spans": []}
+{"text": "Delivery slot 10-12 baje, gate pe 2 baar bell bajana", "spans": []}
+{"text": "Total 1250 + GST 225 = 1475 rupaye", "spans": []}
+{"text": "Aapka OTP 482913 hai, kisi ko mat batana", "spans": []}
+{"text": "Order number 9876543 ka status batao", "spans": []}
+{"text": "Mohammed Faizan ne payment faizan786@paytm se kiya", "spans": [{"start": 0, "end": 15, "type": "NAME"}, {"start": 27, "end": 42, "type": "UPI_ID"}]}
+{"text": "Ramesh bhai ne bola kal aayenge", "spans": []}
+{"text": "Rohit Sharma ka match dekha kya kal raat?", "spans": []}
+{"text": "Call me on 9XXXXXXXXX when free", "spans": []}
+{"text": "Address: Flat 9B, Sea Breeze Apartments, Worli, Mumbai 400018", "spans": [{"start": 9, "end": 61, "type": "ADDRESS"}]}

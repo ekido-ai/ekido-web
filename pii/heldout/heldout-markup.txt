@@ -1,0 +1,43 @@
+# A held-out check set for the PII stripper, written after the detectors were tuned on experiments/pii/pii-set.jsonl.
+# Every value is made up. {TYPE|value} marks a span; text without braces has no personal data.
+# Written to be messier than the template-based set: unusual names, addresses without a pincode, odd phone forms.
+Bhai mera number {PHONE|98765 43210} hai, kal subah call kar lena
+Hi, this is {NAME|Rahul Verma} from Pune, my mail is {EMAIL|RAHUL.VERMA@Example.COM}
+Order {NAME|Aarav Khanna} placed, deliver to {ADDRESS|Plot 14, Vasant Vihar, New Delhi 110057} before Friday
+Please update my KYC. Aadhaar: {AADHAAR|2345 6789 0124} PAN: {PAN|BQPPK4521L}
+payment kiya tha {UPI_ID|priya.nair@okhdfcbank} se, abhi tak refund nahi aaya
+Our company GSTIN is {GSTIN|29AABCT1332L1ZA}, please issue the invoice on this
+Contact the manager, {NAME|Sunil Kapoor}, on {PHONE|(+91) 98123-45678}
+Meri shipping: {ADDRESS|House No. 7, Lajpat Nagar, Delhi 110024} aur phone {PHONE|9811122233}
+Customer {NAME|Zoya Siddiqui} wants a refund for the blue kurta
+Thanks, regards, {NAME|Nikhil Joshi}
+Mr. {NAME|Kapoor} called twice today about the delivery
+Ship it to 12/3 MG Road near the old temple, Bengaluru
+My landline is 080-2345-6789 and the shop closes at 8 pm
+Tracking id 7012345678 for the parcel, still not delivered
+Is my order ORD458231 packed? It was 2 days ago
+Refund of Rs 1,299 aa gaya, thanks
+Kya 3 piece ka set milega 899 mein?
+Coupon FLAT50OFF lagaya par discount nahi mila
+Rate kya hai 100 piece ka? 5kg ka packet chahiye
+Meri biwi {NAME|Sunita Sharma} ka bill alag se banana
+Invoice INV-2026-00231 ka total Rs 4,500 hai, GST alag se
+{NAME|Priyanka Chopra} ne review diya: bahut accha product
+Order {NAME|Devanshu Trivedi} ka cancel kar do
+{PHONE|+91 90000 11122} pe WhatsApp karo
+Mere dost {NAME|Vikas Gupta} ka PAN {PAN|AKTPG7712C} hai, uska ITR bharna hai
+Send the parts to {ADDRESS|Shop 22, Industrial Area, Phase 2, Mohali 160055}
+Hamara naya number: {PHONE|9988776655}, purana band hai
+Email me at {EMAIL|support.team@mycompany.in} for the quote
+UPI id is {UPI_ID|shop.owner@ybl}, send Rs 500 token
+Mera Aadhaar {AADHAAR|3456-7890-1238} khoya gaya, naya banwana hai
+The PIN code of our office is 400001 and the floor is 3
+Delivery slot 10-12 baje, gate pe 2 baar bell bajana
+Total 1250 + GST 225 = 1475 rupaye
+Aapka OTP 482913 hai, kisi ko mat batana
+Order number 9876543 ka status batao
+{NAME|Mohammed Faizan} ne payment {UPI_ID|faizan786@paytm} se kiya
+Ramesh bhai ne bola kal aayenge
+Rohit Sharma ka match dekha kya kal raat?
+Call me on 9XXXXXXXXX when free
+Address: {ADDRESS|Flat 9B, Sea Breeze Apartments, Worli, Mumbai 400018}
