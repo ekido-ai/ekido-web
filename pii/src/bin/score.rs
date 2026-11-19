@@ -97,7 +97,7 @@ fn main() {
     }
     let result = json!({
         "tool": "ekido_pii score (strict match: start, end and type)",
-        "input": input,
+        "input": std::path::Path::new(input).file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_default(),
         "lines": lines.len(),
         "clean_lines": clean_lines,
         "clean_lines_with_a_false_positive": clean_lines_with_fp,

@@ -3,6 +3,8 @@
 #   needs: rustup target add wasm32-unknown-unknown ; cargo install wasm-bindgen-cli --version 0.2.100 --locked
 set -eu
 cd "$(dirname "$0")"
+# Keep this machine's folder names out of the binary (panic messages carry source paths).
+export RUSTFLAGS="--remap-path-prefix=$HOME/.cargo=/cargo --remap-path-prefix=$HOME/.rustup=/rustup --remap-path-prefix=$(cd .. && pwd)=/repo"
 cargo build --locked --release --lib --target wasm32-unknown-unknown
 out="../src/lib/pii/wasm"
 mkdir -p "$out"

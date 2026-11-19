@@ -27,7 +27,7 @@
       "type": "AADHAAR"
     }
   ],
-  "input": "C:\\Users\\arvin\\AppData\\Local\\Temp\\pii-set-a2.jsonl",
+  "input": "pii-set.jsonl",
   "lines": 300,
   "misses": [
     {

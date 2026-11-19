@@ -2,7 +2,7 @@
   "clean_lines": 60,
   "clean_lines_with_a_false_positive": 0,
   "false_positives": [],
-  "input": "C:\\Users\\arvin\\AppData\\Local\\Temp\\pii-set-a2.jsonl",
+  "input": "pii-set.jsonl",
   "lines": 300,
   "misses": [],
   "overall": {
