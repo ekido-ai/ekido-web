@@ -109,6 +109,14 @@ const server = createServer(async (req, res) => {
     // Lets the live shell connect, with no job to follow.
     if (req.method === "GET" && url.pathname === "/providers") return send(res, 200, []);
     if (req.method === "GET" && url.pathname === "/jobs") return send(res, 200, []);
+    // The same shapes staging answers with, so /status and /admin load against the mock (ticket P1).
+    if (req.method === "GET" && url.pathname === "/readyz") {
+      return send(res, 200, { status: "ready", checks: { database: { ok: true, detail: "mock" }, artifacts: { ok: true, detail: "mock" } } });
+    }
+    if (req.method === "GET" && url.pathname === "/fees") return send(res, 200, { protocol_fee: null });
+    // An empty event index synced to block 60,000,000: the head of the fake chain in e2e/fake-chain.ts (FAKE_BLOCK),
+    // so /chain takes the index path in browser tests. Against the real chain it is too far behind and the page scans instead.
+    if (req.method === "GET" && url.pathname === "/chain/logs") return send(res, 200, { synced_to: 60_000_000, logs: [] });
     if (req.method === "GET" && url.pathname === "/settlements") {
       if (SETTLE_PAGING === "missing") return send(res, 404, { detail: "Not Found" });
       const limit = Math.min(100, Number(url.searchParams.get("limit") ?? 50));
