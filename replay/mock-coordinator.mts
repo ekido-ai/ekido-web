@@ -114,6 +114,17 @@ const server = createServer(async (req, res) => {
       return send(res, 200, { status: "ready", checks: { database: { ok: true, detail: "mock" }, artifacts: { ok: true, detail: "mock" } } });
     }
     if (req.method === "GET" && url.pathname === "/fees") return send(res, 200, { protocol_fee: null });
+    // Platform account routes (/v1, ticket C5), so /settings renders in tests: a signed-in demo person with no team yet.
+    if (url.pathname === "/v1/me" && (req.method === "GET" || req.method === "OPTIONS")) {
+      // The web app sends the session cookie (credentials: "include"), so a wildcard origin isn't allowed: echo it.
+      res.writeHead(req.method === "OPTIONS" ? 204 : 200, {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": req.headers.origin ?? "*",
+        "Access-Control-Allow-Credentials": "true",
+        Vary: "Origin",
+      });
+      return res.end(req.method === "OPTIONS" ? "" : JSON.stringify({ user_id: "u_demo", email: "demo@example.com", name: null, orgs: [] }));
+    }
     // An empty event index synced to block 60,000,000: the head of the fake chain in e2e/fake-chain.ts (FAKE_BLOCK),
     // so /chain takes the index path in browser tests. Against the real chain it is too far behind and the page scans instead.
     if (req.method === "GET" && url.pathname === "/chain/logs") return send(res, 200, { synced_to: 60_000_000, logs: [] });

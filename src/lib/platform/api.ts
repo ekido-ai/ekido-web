@@ -1,0 +1,70 @@
+import { config } from "@/lib/config";
+
+/*
+ * The Platform API's account routes (ekido-platform, /v1). The site and the API share a host (Caddy forwards
+ * /sepolia/v1 to the Platform), so the httpOnly `ekido_session` cookie is first-party: every call sends it with
+ * `credentials: "include"`. The browser never sees the session token itself.
+ */
+
+export type Role = "owner" | "admin" | "member";
+export type KeyMode = "test" | "live";
+export const KEY_SCOPES = ["jobs", "models.read", "models.predict"] as const;
+export type KeyScope = (typeof KEY_SCOPES)[number];
+
+export type Me = { user_id: string; email: string | null; name: string | null; orgs: { org_id: string; name: string; role: Role }[] };
+export type Org = { org_id: string; name: string; members: { user_id: string; email: string | null; role: Role }[] };
+export type ApiKey = { key_id: string; name: string; mode: KeyMode; prefix: string; scopes: KeyScope[]; created_at: string; last_used_at: string | null };
+export type NewApiKey = ApiKey & { secret: string };
+
+/** A refused request, with the API's own error code (e.g. SIGN_IN_REQUIRED) and its readable detail. */
+export class PlatformError extends Error {
+  constructor(
+    readonly status: number,
+    readonly code: string,
+    message: string,
+  ) {
+    super(message);
+  }
+}
+
+const base = () => `${config.coordinatorUrl.replace(/\/$/, "")}/v1`;
+
+async function call<T>(method: "GET" | "POST" | "DELETE", path: string, body?: unknown): Promise<T> {
+  let response: Response;
+  try {
+    response = await fetch(base() + path, {
+      method,
+      credentials: "include",
+      headers: body === undefined ? undefined : { "Content-Type": "application/json" },
+      body: body === undefined ? undefined : JSON.stringify(body),
+      signal: AbortSignal.timeout(15000),
+    });
+  } catch {
+    throw new PlatformError(0, "OFFLINE", "Couldn't reach Ekido. Check your connection and try again.");
+  }
+  if (response.status === 204) return undefined as T;
+  const data = await response.json().catch(() => null);
+  if (!response.ok) {
+    const code = typeof data?.error === "string" ? data.error : `HTTP_${response.status}`;
+    const detail = typeof data?.detail === "string" ? data.detail : "Something went wrong. Try again.";
+    throw new PlatformError(response.status, code, detail);
+  }
+  return data as T;
+}
+
+export const platform = {
+  startEmailSignIn: (email: string) => call<{ sent: boolean }>("POST", "/auth/email/start", { email }),
+  verifyEmailSignIn: (token: string) => call<Me>("POST", "/auth/email/verify", { token }),
+  signOut: () => call<void>("POST", "/auth/logout"),
+  me: () => call<Me>("GET", "/me"),
+  createOrg: (name: string) => call<Org>("POST", "/orgs", { name }),
+  org: (orgId: string) => call<Org>("GET", `/orgs/${encodeURIComponent(orgId)}`),
+  invite: (orgId: string, email: string, role: Role) => call<{ user_id: string; invited: boolean }>("POST", `/orgs/${encodeURIComponent(orgId)}/members`, { email, role }),
+  removeMember: (orgId: string, userId: string) => call<void>("DELETE", `/orgs/${encodeURIComponent(orgId)}/members/${encodeURIComponent(userId)}`),
+  keys: (orgId: string) => call<ApiKey[]>("GET", `/orgs/${encodeURIComponent(orgId)}/api-keys`),
+  createKey: (orgId: string, name: string, mode: KeyMode, scopes: KeyScope[]) => call<NewApiKey>("POST", `/orgs/${encodeURIComponent(orgId)}/api-keys`, { name, mode, scopes }),
+  revokeKey: (orgId: string, keyId: string) => call<void>("DELETE", `/orgs/${encodeURIComponent(orgId)}/api-keys/${encodeURIComponent(keyId)}`),
+};
+
+/** A plain email check before asking the API; the Platform validates again. */
+export const looksLikeEmail = (value: string) => /^[^@\s]{1,64}@[^@\s]{1,253}\.[^@\s]{2,}$/.test(value.trim());
