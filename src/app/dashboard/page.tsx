@@ -32,7 +32,18 @@ const txLabel: Record<string, string> = {
   withdraw: "Withdrawal",
 };
 
-export default function MissionControl() {
+// Every screen has one top-level heading (ekido-internal#92). Mission control's visible headline is the live status,
+// so the page title is kept for screen readers and the outline.
+export default function MissionControlPage() {
+  return (
+    <>
+      <h1 className="sr-only">Mission control</h1>
+      <MissionControl />
+    </>
+  );
+}
+
+function MissionControl() {
   const [showTable, setShowTable] = useState(false);
   const { state, mode, provenance, live: liveSnap } = useDashboard();
   const fresh = describeStage(state);
