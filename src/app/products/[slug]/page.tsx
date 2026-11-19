@@ -5,30 +5,34 @@ import { ArrowUpRight, Check, CircleDashed } from "lucide-react";
 import { MarketingPage, PageHero, PageSection } from "@/components/landing/page-hero";
 import { StatusBadge } from "@/components/shell/marketing-nav";
 import { buttonStyles } from "@/components/ui/button-styles";
-import { PRODUCTS } from "@/lib/landing/products";
+import { PRODUCT_META } from "@/lib/landing/products";
+import { getProducts } from "@/lib/landing/products-server";
+import { getTranslations } from "next-intl/server";
 
 export function generateStaticParams() {
-  return PRODUCTS.map((p) => ({ slug: p.key }));
+  return PRODUCT_META.map((p) => ({ slug: p.key }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const p = PRODUCTS.find((x) => x.key === slug);
+  const p = (await getProducts()).find((x) => x.key === slug);
   return p ? { title: p.name, description: p.line } : {};
 }
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const p = PRODUCTS.find((x) => x.key === slug);
+  const products = await getProducts();
+  const p = products.find((x) => x.key === slug);
   if (!p) notFound();
-  const others = PRODUCTS.filter((x) => x.key !== p.key);
+  const t = await getTranslations("productPage");
+  const others = products.filter((x) => x.key !== p.key);
   return (
     <MarketingPage>
       <PageHero kicker={p.name} title={p.headline} sub={p.line}>
         <StatusBadge status={p.status} />
       </PageHero>
 
-      <PageSection title="What it does">
+      <PageSection title={t("does")}>
         <ul className="grid gap-4 sm:grid-cols-2">
           {p.does.map((t) => (
             <li key={t} className="artifact flex gap-3 p-5 text-[15px] text-ink">
@@ -39,10 +43,10 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         </ul>
       </PageSection>
 
-      <PageSection title="Where it stands">
+      <PageSection title={t("stands")}>
         <div className="grid gap-4 md:grid-cols-2">
           <div className="artifact p-6">
-            <h3 className="text-ink">Working today, on the public test network</h3>
+            <h3 className="text-ink">{t("today")}</h3>
             <ul className="mt-4 space-y-3 text-[15px] text-ink-2">
               {p.today.map((t) => (
                 <li key={t} className="flex gap-2.5">
@@ -53,7 +57,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             </ul>
           </div>
           <div className="rounded-2xl border border-dashed border-line-strong p-6">
-            <h3 className="text-ink">Coming next</h3>
+            <h3 className="text-ink">{t("next")}</h3>
             <ul className="mt-4 space-y-3 text-[15px] text-muted">
               {p.next.map((t) => (
                 <li key={t} className="flex gap-2.5">
@@ -71,7 +75,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         )}
       </PageSection>
 
-      <PageSection title="The rest of the platform">
+      <PageSection title={t("rest")}>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           {others.map((o) => (
             <Link key={o.key} href={o.href} className="artifact lift p-4">

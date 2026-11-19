@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { PRODUCTS } from "../src/lib/landing/products";
+import { PRODUCT_META } from "../src/lib/landing/products";
 import { useFakeChain } from "./fake-chain";
 
 /**
@@ -20,10 +20,11 @@ const REMOTE = Boolean(process.env.E2E_BASE_URL);
 
 const ROUTES: Route[] = [
   { path: "/" },
+  { path: "/acceptable-use" },
   { path: "/account" },
   { path: "/admin" },
   { path: "/chain" },
-  { path: "/dashboard", knownBug: "ekido-ai/ekido-internal#92" }, // No <h1> in the Mission control view.
+  { path: "/dashboard" },
   { path: "/developers" },
   { path: "/earnings" },
   { path: "/help" },
@@ -31,7 +32,7 @@ const ROUTES: Route[] = [
   { path: "/kit" },
   { path: "/pricing" },
   { path: "/privacy" },
-  ...PRODUCTS.map((p) => ({ path: `/products/${p.key}` })),
+  ...PRODUCT_META.map((p) => ({ path: `/products/${p.key}` })),
   { path: "/provide" },
   { path: "/quality" },
   { path: "/recovery" },

@@ -1,15 +1,19 @@
 import Link from "next/link";
 import { LogoMark } from "@/components/gpu/logo-mark";
+import { useTranslations } from "next-intl";
 
-const columns: { title: string; links: [string, string][] }[] = [
-  { title: "Use it", links: [["/dashboard", "Mission control"], ["/provide", "Earn with your device"], ["/earnings", "Earnings"], ["/verify", "Verify a payout"]] },
-  { title: "Proof", links: [["/chain", "Escrow ledger"], ["/chain#reserves", "Proof of reserves"], ["/settlement", "Settlement"], ["/status", "System status"], ["/admin", "Owner console"]] },
-  { title: "Help", links: [["/help", "Questions and answers"], ["/#how", "How it works"], ["/help#badges", "What the badges mean"], ["/security", "Report a problem"]] },
-  { title: "Legal", links: [["/privacy", "Privacy"], ["/privacy#cookies", "Cookies and storage"], ["/terms", "Terms of use"], ["/security", "Security"]] },
+const HREFS: string[][] = [
+  ["/dashboard", "/provide", "/earnings", "/verify"],
+  ["/chain", "/chain#reserves", "/settlement", "/status", "/admin"],
+  ["/help", "/#how", "/help#badges", "/security"],
+  ["/privacy", "/privacy#cookies", "/terms", "/acceptable-use", "/security"],
 ];
 
 /** Shared footer for every dashboard screen. The landing page has its own dark version with the same links. */
 export function SiteFooter() {
+  const t = useTranslations("shell.footer");
+  const text = t.raw("columns") as { title: string; links: string[] }[];
+  const columns = HREFS.map((hrefs, i) => ({ title: text[i].title, links: hrefs.map((href, j) => [href, text[i].links[j]] as [string, string]) }));
   return (
     <footer className="border-t border-line bg-surface">
       <div className="mx-auto grid max-w-[1840px] gap-8 px-4 py-10 sm:px-6 md:grid-cols-[1.4fr_repeat(4,1fr)]">
@@ -18,7 +22,7 @@ export function SiteFooter() {
             <LogoMark />
             Ekido
           </Link>
-          <p className="mt-3 max-w-xs text-sm text-ink-2">Your own AI model, built by devices people already have. Paid for only when it passes your test.</p>
+          <p className="mt-3 max-w-xs text-sm text-ink-2">{t("tagline")}</p>
         </div>
         {columns.map((col) => (
           <nav key={col.title} aria-label={col.title} className="flex flex-col gap-2 text-sm">
@@ -33,7 +37,7 @@ export function SiteFooter() {
       </div>
       <div className="border-t border-line">
         <p className="mx-auto max-w-[1840px] px-4 pb-28 pt-4 text-xs text-muted sm:px-6">
-          Runs on the Base Sepolia test network with test USDC, which has no value. The contracts are unaudited. Nothing here is financial advice. Type: Zodiak and Satoshi by the Indian Type Foundry, via Fontshare.
+          {t("bottom")}
         </p>
       </div>
     </footer>

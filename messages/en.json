@@ -1,0 +1,567 @@
+{
+  "nav": {
+    "products": "Products",
+    "solutions": "Solutions",
+    "developers": "Developers",
+    "pricing": "Pricing",
+    "roadmap": "Roadmap",
+    "wholePlatform": "See the whole platform →",
+    "byIndustry": "By industry",
+    "byRole": "By role",
+    "openApp": "Open the app"
+  },
+  "home": {
+    "live": "Live on a public test network",
+    "title": "Your own AI model,",
+    "titleMuted": "built by devices people already have.",
+    "lead": "Ekido trains a small model for one job in your business, in Hindi, Hinglish or English, on idle gaming PCs and laptops. You pay only if it passes your test.",
+    "ctaRun": "Watch a recorded run",
+    "ctaEarn": "Earn with your device",
+    "builtWith": "Built in the open with",
+    "rows": {
+      "assistant": {
+        "eyebrow": "Ekido Assistant",
+        "title": "Describe the job. Get a fixed quote.",
+        "body": "Tell the assistant what you need with a few examples. It turns that into a checked training job, with the quality bar and the price in plain words, before anything runs.",
+        "points": [
+          "Hindi, Hinglish or English",
+          "20 to 50 examples is enough",
+          "The bar and the price are fixed up front"
+        ],
+        "cta": "Explore Ekido Assistant"
+      },
+      "train": {
+        "eyebrow": "Ekido Train",
+        "title": "Training that carries on when a device drops out.",
+        "body": "Idle gaming PCs and laptops train your model. Each saves signed checkpoints, so when one stops, the next picks up from the last good one, like a relay.",
+        "points": [
+          "Small open models, fine-tuned for one job",
+          "Automatic recovery, no work paid twice",
+          "Phones join later, while they charge"
+        ],
+        "cta": "Explore Ekido Train"
+      },
+      "verify": {
+        "eyebrow": "Ekido Verify",
+        "title": "Good is not enough. It has to be better.",
+        "body": "Your model is scored on your own examples that it never trained on, and it must beat the same model before training. Miss either, and the refund is automatic.",
+        "points": [
+          "The test is fixed before training starts",
+          "Several verifiers must sign off",
+          "Device owners are paid only for work that passed"
+        ],
+        "cta": "Explore Ekido Verify"
+      }
+    },
+    "metricsTitle": "We stopped a training run halfway, on purpose.",
+    "metricsCta": "Watch the recording",
+    "metrics": [
+      {
+        "value": "0.6 s",
+        "label": "to notice a device had stopped"
+      },
+      {
+        "value": "65 s",
+        "label": "until training carried on elsewhere"
+      },
+      {
+        "value": "8 of 400",
+        "label": "training steps lost"
+      },
+      {
+        "value": "90.7%",
+        "label": "final accuracy on 2,000 test examples"
+      }
+    ],
+    "metricsNote": "Recorded on 4 Nov 2026: one run, one seed, on a local test network. A demonstration, not a benchmark.",
+    "platformEyebrow": "The platform",
+    "platformTitle": "Six products, one job: a model you own.",
+    "seePricing": "See pricing",
+    "rentTitle": "Renting a big AI model",
+    "rent": [
+      "A bill for every message, in dollars",
+      "English first; Indian languages often cost more",
+      "Your customers' messages go to someone else's servers",
+      "You pay whether the answers are good or not"
+    ],
+    "ownTitle": "Owning a model with Ekido",
+    "own": [
+      "One fixed price to train it",
+      "Trained on your examples, in your customers' language",
+      "Run it on your own machine if you want",
+      "Pay only if it passes your test"
+    ],
+    "faqEyebrow": "FAQ",
+    "faqTitle": "Questions people ask first.",
+    "faqMore": "More on",
+    "faqTrust": "trust and privacy",
+    "faqAnd": "and",
+    "faqPricing": "pricing",
+    "faqs": [
+      {
+        "q": "What is Ekido?",
+        "a": "A way for a small business to get its own small AI model for one job, like sorting support tickets or reading invoices. Idle gaming PCs and laptops do the training, and you pay only if the model passes your test."
+      },
+      {
+        "q": "How much data do I need?",
+        "a": "Between 20 and 50 examples of the right answer. Some are kept aside, unseen, to test the model before you pay."
+      },
+      {
+        "q": "Which languages?",
+        "a": "Hindi, Hinglish and English. Two of the first five jobs, support tickets and clinic questions, are built around Hinglish."
+      },
+      {
+        "q": "What if the model isn't good enough?",
+        "a": "Then you don't pay. It has to pass your test and beat the untrained model; if it misses either, the whole budget is refunded automatically."
+      },
+      {
+        "q": "Can I use it for my business today?",
+        "a": "Not yet for real money. Ekido runs on a public test network with test money until an independent audit."
+      }
+    ],
+    "closeTitle": "AI that belongs to the people who use it.",
+    "closeLead": "Follow the build, or put your idle device to work.",
+    "closeEarn": "Earn with your device",
+    "github": "GitHub"
+  },
+  "products": {
+    "assistant": {
+      "name": "Ekido Assistant",
+      "line": "Describe a job in plain words; get a checked training plan and a fixed quote.",
+      "headline": "Say what you need. Get a training plan you can trust.",
+      "does": [
+        "Understands a job described in Hindi, Hinglish or English",
+        "Turns 20 to 50 examples into a validated training job",
+        "Proposes the quality bar and a fixed quote before anything runs",
+        "Keeps some of your examples aside, unseen, to test the model"
+      ],
+      "today": [
+        "Job specifications are validated strictly before they're accepted",
+        "Five business recipes with their datasets and quality bars"
+      ],
+      "next": [
+        "The chat that writes the job for you",
+        "A self-hosted assistant, so your words stay on our servers"
+      ]
+    },
+    "train": {
+      "name": "Ekido Train",
+      "line": "Small models trained on idle devices, carried on like a relay if one stops.",
+      "headline": "Training that carries on when a device drops out.",
+      "does": [
+        "Fine-tunes small open models for one job, with LoRA",
+        "Every device saves signed checkpoints as it trains",
+        "When a device stops, the next resumes from the last good checkpoint",
+        "A larger model can turn your examples into more training data"
+      ],
+      "today": [
+        "Recovery after a device stops, recorded on 4 Nov (65 s to resume, 8 of 400 steps lost)",
+        "Stale workers are fenced out so work is never paid twice"
+      ],
+      "next": [
+        "Distillation runs on all five recipes",
+        "Phones joining for evaluation work"
+      ],
+      "appLabel": "See a recovery"
+    },
+    "verify": {
+      "name": "Ekido Verify",
+      "line": "The quality gate: pass your test and beat the untrained model, or a full refund.",
+      "headline": "Good is not enough. It has to be better.",
+      "does": [
+        "Scores the model on your own examples it never trained on",
+        "Requires it to beat the same model before training",
+        "Refuses bad checkpoints before anyone is paid",
+        "Needs signatures from more than one verifier to pay out"
+      ],
+      "today": [
+        "Both conditions are enforced, with an automatic refund when either fails",
+        "A checkpoint that got worse was refused on the 4 Nov run"
+      ],
+      "next": [
+        "Outside verifiers, not run by our team",
+        "A model passport recording how each model was tested"
+      ],
+      "appLabel": "See a model refused"
+    },
+    "host": {
+      "name": "Ekido Host",
+      "line": "Run your model as an API, or download it and run it on your own machine.",
+      "headline": "Your model, where you need it.",
+      "does": [
+        "Serves your model over an API with scoped keys",
+        "Exports it to run on your own machine, offline",
+        "Bills hosting per use instead of per message",
+        "A savings report with every number linked to its evidence"
+      ],
+      "today": [
+        "Accounts, organisations and test or live API keys",
+        "The savings report endpoint"
+      ],
+      "next": [
+        "Running models over the API",
+        "One-click download of your model"
+      ]
+    },
+    "pay": {
+      "name": "Ekido Pay",
+      "line": "A locked budget, payouts only for accepted work, refunds by rule. Rupees next.",
+      "headline": "Money moves only for work that passed.",
+      "does": [
+        "Locks the budget before work starts",
+        "Pays each device only for the steps that were accepted",
+        "Refunds automatically when the model misses the bar",
+        "Records the terms, verdict and payout split on a public ledger"
+      ],
+      "today": [
+        "Escrow, payouts and refunds on a public test network, with test money",
+        "Anyone can re-check a payout in their own browser"
+      ],
+      "next": [
+        "Rupee payments by UPI or card, with GST invoices",
+        "Real money only after an independent audit"
+      ],
+      "appLabel": "See a payout"
+    },
+    "devices": {
+      "name": "Ekido Devices",
+      "line": "The provider kit for gaming PCs and laptops. A Windows app and Android next.",
+      "headline": "Your idle device can run a leg.",
+      "does": [
+        "Connects outwards only: no open ports, no remote shell",
+        "Runs approved training jobs only",
+        "Pays for every training step that passes",
+        "You set the price and the hours, and stop anytime"
+      ],
+      "today": [
+        "The provider kit for Windows, macOS and Linux, with an NVIDIA GPU or just a CPU",
+        "No public list of devices; jobs name them only by a label"
+      ],
+      "next": [
+        "A Windows tray app that works only when you're idle",
+        "Android phones, while they charge",
+        "Gaming cafes and colleges as partners"
+      ],
+      "appLabel": "Join as a device owner"
+    }
+  },
+  "solutions": {
+    "industries": [
+      {
+        "name": "Retail and D2C",
+        "line": "Product descriptions and review sentiment"
+      },
+      {
+        "name": "Clinics",
+        "line": "Answer patients' questions in Hinglish"
+      },
+      {
+        "name": "Customer support",
+        "line": "Sort tickets into the right queue"
+      },
+      {
+        "name": "Accounting",
+        "line": "Read invoices into clean fields, GSTIN included"
+      }
+    ],
+    "roles": [
+      {
+        "name": "Business owners",
+        "line": "Your own model, paid for only when it passes"
+      },
+      {
+        "name": "Developers",
+        "line": "API keys, test and live modes, scoped access"
+      },
+      {
+        "name": "Device owners",
+        "line": "Earn from a gaming PC or laptop when it's idle"
+      }
+    ]
+  },
+  "status": {
+    "live": "Live on testnet",
+    "building": "Being built",
+    "planned": "Planned"
+  },
+  "platform": {
+    "learnMore": "Learn more",
+    "developers": {
+      "items": [
+        {
+          "title": "API keys with test and live modes",
+          "body": "Keys start ek_test_ or ek_live_, so a test key can never touch real money."
+        },
+        {
+          "title": "Scoped access",
+          "body": "Give a key only what it needs: jobs, models.read or models.predict."
+        },
+        {
+          "title": "A savings report you can audit",
+          "body": "Every number in it links to the raw evidence it came from."
+        },
+        {
+          "title": "Open SDK and CLI",
+          "body": "Planned, under an open licence, with a playground and test keys."
+        }
+      ],
+      "terminal": "terminal",
+      "caption": "Real endpoints of the Platform API. Running a model over the API is being built."
+    },
+    "trust": {
+      "items": [
+        {
+          "title": "The bar is set before work starts",
+          "body": "Your test and the pass mark are fixed in the quote, so nobody can move the goalposts."
+        },
+        {
+          "title": "Several verifiers sign off",
+          "body": "A payout needs signatures from more than one verifier; one bad actor can't approve work alone."
+        },
+        {
+          "title": "Payouts on a public ledger",
+          "body": "Terms, verdict and payout split are recorded where you can check them yourself."
+        },
+        {
+          "title": "No public list of devices",
+          "body": "Who trains your model isn't published; jobs name devices only by a label."
+        },
+        {
+          "title": "Encrypted in storage and in transit",
+          "body": "With our own keys, rotated. Encryption from your browser is next."
+        },
+        {
+          "title": "Personal data stripped in your browser",
+          "body": "Names and numbers removed before your examples ever upload."
+        },
+        {
+          "title": "Private pools for sensitive data",
+          "body": "Train only on devices you trust, or your own."
+        },
+        {
+          "title": "Model passport",
+          "body": "A record of how your model was trained and tested, that travels with it."
+        }
+      ],
+      "limit": "The honest limit: a device training your model has to read your examples while it trains. That's why jobs run only approved training code, and why private pools come before anything sensitive.",
+      "check": "Check a payout yourself"
+    },
+    "pricing": {
+      "plans": [
+        {
+          "name": "Pay per model",
+          "who": "For a small business",
+          "price": "Fixed quote",
+          "note": "Shown before you start",
+          "points": [
+            "One price to train a model for one job",
+            "Full refund if it misses your bar",
+            "Hosting billed per use, or run it yourself",
+            "Rupees by UPI or card, with GST invoices (coming)"
+          ],
+          "cta": "Watch a recorded run"
+        },
+        {
+          "name": "Business",
+          "who": "For teams and agencies",
+          "price": "Planned",
+          "note": "Monthly plan",
+          "points": [
+            "Team accounts and roles",
+            "Several models and API keys",
+            "Private pools for sensitive data",
+            "Priority support"
+          ],
+          "cta": "Follow the build"
+        },
+        {
+          "name": "Device owners",
+          "who": "For gaming PCs and laptops",
+          "price": "Free to join",
+          "note": "You set your own price",
+          "points": [
+            "Paid for every training step that passes",
+            "Approved jobs only, stop anytime",
+            "Your key never leaves your machine",
+            "Windows app and phones next"
+          ],
+          "cta": "Join as a device owner"
+        }
+      ]
+    },
+    "roadmap": {
+      "steps": [
+        {
+          "when": "Now",
+          "title": "The foundation",
+          "items": [
+            "Relay training and the quality gate",
+            "Payouts and refunds by rule",
+            "Five business recipes",
+            "Accounts, teams and API keys"
+          ]
+        },
+        {
+          "when": "Next",
+          "title": "Prove the value",
+          "items": [
+            "Describe a job to the assistant",
+            "Rupee payments with UPI",
+            "Hosting and export",
+            "First small businesses"
+          ]
+        },
+        {
+          "when": "Then",
+          "title": "The network grows",
+          "items": [
+            "A Windows app for device owners",
+            "Android phones while they charge",
+            "Private pools",
+            "Open SDK and playground"
+          ]
+        },
+        {
+          "when": "Later",
+          "title": "A model economy",
+          "items": [
+            "Marketplace with royalties",
+            "Model passports",
+            "Outside verifiers",
+            "India, then South-East Asia"
+          ]
+        }
+      ]
+    }
+  },
+  "productPage": {
+    "does": "What it does",
+    "stands": "Where it stands",
+    "today": "Working today, on the public test network",
+    "next": "Coming next",
+    "rest": "The rest of the platform"
+  },
+  "pages": {
+    "solutions": {
+      "kicker": "Solutions",
+      "title": "Built for the work small businesses do every day.",
+      "sub": "One job, one small model, trained on your own examples. These are the first jobs Ekido is built for.",
+      "byIndustry": "By industry",
+      "jobsTitle": "See the jobs",
+      "jobsSub": "Example inputs, written for this page, with what each model returns.",
+      "byRole": "By role"
+    },
+    "developers": {
+      "kicker": "Developers",
+      "title": "Build on Ekido with an API key.",
+      "sub": "Accounts, organisations and scoped keys are live on the public test network. Running models over the API comes with Ekido Host."
+    },
+    "pricing": {
+      "kicker": "Pricing",
+      "title": "Pay for results, not compute.",
+      "sub": "Prices are set from measured costs and shown in every quote, before you commit. No token, no per-message bill."
+    },
+    "trust": {
+      "kicker": "Trust and privacy",
+      "title": "Proof, not promises.",
+      "sub": "What protects your money and your data, and what is still on its way."
+    },
+    "roadmap": {
+      "kicker": "Roadmap",
+      "title": "Where Ekido is going.",
+      "sub": "Each step starts when the last one is proven."
+    }
+  },
+  "shell": {
+    "nav": {
+      "aria": "Screens",
+      "groups": {
+        "mission": "Mission control",
+        "missionShort": "Mission",
+        "training": "Training",
+        "payments": "Payments",
+        "earn": "Earn"
+      },
+      "items": {
+        "recovery": {
+          "label": "Recovery",
+          "hint": "How a job carried on when a device dropped out"
+        },
+        "quality": {
+          "label": "Quality",
+          "hint": "Why a model passed or was refused"
+        },
+        "newJob": {
+          "label": "New job",
+          "hint": "Lock a budget and start training"
+        },
+        "settlement": {
+          "label": "Settlement",
+          "hint": "Who got paid, and why"
+        },
+        "ledger": {
+          "label": "Public ledger",
+          "hint": "Reserves and every payment, live"
+        },
+        "verify": {
+          "label": "Verify a payout",
+          "hint": "Re-check it yourself in the browser"
+        },
+        "earnings": {
+          "label": "Earnings",
+          "hint": "What device owners made"
+        }
+      }
+    },
+    "footer": {
+      "tagline": "Your own AI model, built by devices people already have. Paid for only when it passes your test.",
+      "bottom": "Runs on the Base Sepolia test network with test USDC, which has no value. The contracts are unaudited. Nothing here is financial advice. Type: Zodiak and Satoshi by the Indian Type Foundry, via Fontshare.",
+      "columns": [
+        {
+          "title": "Use it",
+          "links": [
+            "Mission control",
+            "Earn with your device",
+            "Earnings",
+            "Verify a payout"
+          ]
+        },
+        {
+          "title": "Proof",
+          "links": [
+            "Escrow ledger",
+            "Proof of reserves",
+            "Settlement",
+            "System status",
+            "Owner console"
+          ]
+        },
+        {
+          "title": "Help",
+          "links": [
+            "Questions and answers",
+            "How it works",
+            "What the badges mean",
+            "Report a problem"
+          ]
+        },
+        {
+          "title": "Legal",
+          "links": [
+            "Privacy",
+            "Cookies and storage",
+            "Terms of use",
+            "Acceptable use",
+            "Security"
+          ]
+        }
+      ]
+    },
+    "storage": {
+      "aria": "Storage notice",
+      "text": "No cookies, no tracking. We only remember your theme and view in this browser.",
+      "link": "What we store",
+      "ok": "Got it"
+    }
+  }
+}
