@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { History, Radio, RotateCcw, SlidersHorizontal } from "lucide-react";
@@ -158,6 +159,7 @@ function SourceBar() {
 }
 
 export function AppShell({ children }: { children: React.ReactNode }) {
+  const tAuth = useTranslations("auth");
   const path = usePathname();
   // The live/recorded controls and the coordinator banner belong to the screens that show a job.
   const dash = DASH_PATHS.some((p) => path.startsWith(p));
@@ -181,6 +183,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <div className="ml-auto flex items-center gap-1 2xl:ml-0">
             {!landing && <ChainPulse />}
             <WalletButton />
+            <Link
+              href={landing ? "/login" : "/settings"}
+              aria-current={path.startsWith("/settings") || path.startsWith("/login") ? "page" : undefined}
+              className={cx(
+                "hidden h-9 items-center rounded-md px-2.5 text-sm font-medium sm:inline-flex",
+                path.startsWith("/settings") || path.startsWith("/login") ? "bg-surface-3 text-ink" : "text-ink-2 hover:bg-surface-2 hover:text-ink",
+              )}
+            >
+              {landing ? tAuth("headerSignIn") : tAuth("headerSettings")}
+            </Link>
             {landing && (
               <Link href="/dashboard" className="press ml-1 inline-flex h-9 items-center rounded-full bg-action px-4 text-sm font-semibold text-action-ink hover:bg-action-hover">
                 Open the app
