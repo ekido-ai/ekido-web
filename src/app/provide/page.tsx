@@ -178,7 +178,7 @@ export default function ProvidePage() {
           <div>
             <h1 className="font-serif text-4xl text-ink sm:text-5xl">Earn with your idle device</h1>
             <p className="mt-3 max-w-xl text-lg text-ink-2">
-              Your gaming PC or laptop trains small AI models for businesses while you're not using it. You're paid for every training step that passes, you set the price, your key never leaves your machine, and you can stop whenever you like.
+              {`Your gaming PC or laptop trains small AI models for businesses while you're not using it. When the job's model passes its quality test, you're paid for your accepted training steps. You set the price, your key never leaves your machine, and you can stop whenever you like.`}
             </p>
             <ul className="mt-5 flex flex-wrap gap-2 text-sm">
               {[

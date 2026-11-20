@@ -2,8 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { BadgeCheck, Blocks, ChevronDown, Coins, Gauge, Plus, RotateCcw, Server, ShieldCheck, Wallet } from "lucide-react";
-import { config } from "@/lib/config";
+import { BadgeCheck, Blocks, ChevronDown, Code2, Coins, Gauge, RotateCcw, Server, ShieldCheck, Tag, Wallet } from "lucide-react";
 import { cx } from "@/components/ui/cx";
 import { useTranslations } from "next-intl";
 
@@ -15,30 +14,26 @@ import { useTranslations } from "next-intl";
 type Item = { href: string; key: string; icon: typeof Gauge; off?: boolean };
 type Group = { key: string; icon: typeof Gauge; href?: string; items?: Item[] };
 
-const newJobOff = !config.signedJobs || config.chainId !== 84532 || !config.escrowAddress;
 
 export const NAV: Group[] = [
-  { key: "mission", icon: Gauge, href: "/dashboard" },
+  // What a customer or device owner came for. Train and My models join this list once they work end to end.
+  { key: "developers", icon: Code2, href: "/developers" },
+  { key: "earn", icon: Server, href: "/provide" },
+  { key: "pricing", icon: Tag, href: "/pricing" },
   {
-    key: "training",
-    icon: RotateCcw,
+    // The proof behind the product: live demo, recovery, quality and the public money trail.
+    key: "how",
+    icon: Gauge,
     items: [
+      { href: "/dashboard", key: "mission", icon: Gauge },
       { href: "/recovery", key: "recovery", icon: RotateCcw },
       { href: "/quality", key: "quality", icon: ShieldCheck },
-      { href: "/jobs/new", key: "newJob", icon: Plus, off: newJobOff },
-    ],
-  },
-  {
-    key: "payments",
-    icon: Coins,
-    items: [
       { href: "/settlement", key: "settlement", icon: Coins },
       { href: "/chain", key: "ledger", icon: Blocks },
       { href: "/verify", key: "verify", icon: BadgeCheck },
       { href: "/earnings", key: "earnings", icon: Wallet },
     ],
   },
-  { key: "earn", icon: Server, href: "/provide" },
 ];
 
 export function NavGroups({ path }: { path: string }) {
@@ -80,7 +75,7 @@ export function NavGroups({ path }: { path: string }) {
           return (
             <Link key={g.key} href={g.href} aria-current={active ? "page" : undefined} className={base}>
               <Icon className="hidden size-4 shrink-0 sm:block" aria-hidden />
-              <span className="truncate">{g.key === "mission" ? <><span className="sm:hidden">{t("groups.missionShort")}</span><span className="hidden sm:inline">{t("groups.mission")}</span></> : t(`groups.${g.key}`)}</span>
+              <span className="truncate">{t(`groups.${g.key}`)}</span>
             </Link>
           );
         }
