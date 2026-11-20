@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { BadgeCheck, Blocks, ChevronDown, Coins, Gauge, Plus, RotateCcw, Server, ShieldCheck, Wallet } from "lucide-react";
+import { BadgeCheck, Blocks, ChevronDown, Coins, FileLock2, Gauge, Plus, RotateCcw, Server, ShieldCheck, Wallet } from "lucide-react";
 import { config } from "@/lib/config";
 import { cx } from "@/components/ui/cx";
 import { useTranslations } from "next-intl";
@@ -25,6 +25,7 @@ export const NAV: Group[] = [
     items: [
       { href: "/recovery", key: "recovery", icon: RotateCcw },
       { href: "/quality", key: "quality", icon: ShieldCheck },
+      { href: "/prepare", key: "prepare", icon: FileLock2 },
       { href: "/jobs/new", key: "newJob", icon: Plus, off: newJobOff },
     ],
   },
