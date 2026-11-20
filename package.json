@@ -13,6 +13,7 @@
     "mock": "node replay/mock-coordinator.mts"
   },
   "dependencies": {
+    "age-encryption": "0.3.1",
     "lucide-react": "1.72.0",
     "next": "16.4.6",
     "next-intl": "4.15.1",
