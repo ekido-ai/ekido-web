@@ -1,58 +1,22 @@
 import { expect, test } from "@playwright/test";
-import { PRODUCT_META } from "../src/lib/landing/products";
 import { useFakeChain } from "./fake-chain";
+import { REMOTE, ROUTES } from "./routes";
 
 /**
  * Page smoke tests (ticket P1): one test per route under src/app/.
  * Each test checks the page loads with status 200, has no console errors, shows its main heading
  * and doesn't scroll sideways. The "phone" project (Pixel 7, 412 px) and a 375 px pass below cover small screens.
  *
- * A route that fails because of a real bug stays in the list with `knownBug` set to the issue number,
- * so the test is marked test.fail() and turns red again (as "unexpectedly passed") once the bug is fixed.
+ * The routes live in e2e/routes.ts.
  */
-type Route = { path: string; knownBug?: string };
+/** Routes that fail because of a real bug: the test is marked test.fail() with the issue, and turns red once it's fixed. */
+const KNOWN_BUGS: Record<string, string> = {};
 
-/**
- * Against the local build, Base Sepolia RPC traffic goes to a fake (e2e/fake-chain.ts) so the run doesn't depend on
- * public servers that rate-limit. Against staging (E2E_BASE_URL) the real chain is read, as users see it.
- */
-const REMOTE = Boolean(process.env.E2E_BASE_URL);
-
-const ROUTES: Route[] = [
-  { path: "/" },
-  { path: "/acceptable-use" },
-  { path: "/account" },
-  { path: "/admin" },
-  { path: "/chain" },
-  { path: "/dashboard" },
-  { path: "/developers" },
-  { path: "/earnings" },
-  { path: "/help" },
-  { path: "/jobs/new" },
-  { path: "/kit" },
-  { path: "/login" },
-  { path: "/login/verify" },
-  { path: "/pricing" },
-  { path: "/privacy" },
-  ...PRODUCT_META.map((p) => ({ path: `/products/${p.key}` })),
-  { path: "/provide" },
-  { path: "/quality" },
-  { path: "/recovery" },
-  { path: "/replay" },
-  { path: "/roadmap" },
-  { path: "/security" },
-  { path: "/settings" },
-  { path: "/settlement" },
-  { path: "/solutions" },
-  { path: "/status" },
-  { path: "/terms" },
-  { path: "/trust" },
-  { path: "/verify" },
-];
-
-for (const route of ROUTES) {
-  test(`${route.path} loads cleanly`, async ({ page }) => {
-    if (route.knownBug) test.fail(true, `known bug ${route.knownBug}`);
+// Against the local build, Base Sepolia RPC traffic goes to a fake (e2e/fake-chain.ts) so the run doesn't depend on
+// public servers that rate-limit. Against staging (E2E_BASE_URL) the real chain is read, as users see it.
+for (const path of ROUTES) {
+  test(`${path} loads cleanly`, async ({ page }) => {
+    if (KNOWN_BUGS[path]) test.fail(true, `known bug ${KNOWN_BUGS[path]}`);
 
     const errors: string[] = [];
     page.on("console", (message) => {
@@ -69,7 +33,7 @@ for (const route of ROUTES) {
     // The ticket asks for no sideways scroll at 375 px, narrower than the Pixel 7 profile.
     if (test.info().project.name === "phone") await page.setViewportSize({ width: 375, height: 812 });
 
-    const response = await page.goto(route.path);
+    const response = await page.goto(path);
     expect(response?.status(), "HTTP status").toBe(200);
     await expect(page.getByRole("heading", { level: 1 }).first(), "main heading").toBeVisible();
 

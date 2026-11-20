@@ -1,0 +1,39 @@
+name: Provider privacy (staging)
+
+# Ticket P2: every night, load every page and public API answer on staging as a visitor and fail on any provider
+# name, wallet, GPU model, list or count (decision 8). Also runs on demand from the Actions tab.
+on:
+  schedule:
+    - cron: "30 20 * * *" # 02:00 IST
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  privacy:
+    name: Provider privacy on staging
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Install Chromium for Playwright
+        run: npx playwright install --with-deps chromium
+      - name: Privacy test against staging
+        run: npx playwright test e2e/privacy.e2e.ts
+        env:
+          E2E_BASE_URL: https://ekido-staging.duckdns.org
+          # Optional: with it, the test also checks provider names, ids and keys from the operator's /providers list.
+          EKIDO_OPERATOR_TOKEN: ${{ secrets.EKIDO_OPERATOR_TOKEN }}
+      - name: Keep the report when the test fails
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: privacy-report
+          path: playwright-report
+          retention-days: 14
