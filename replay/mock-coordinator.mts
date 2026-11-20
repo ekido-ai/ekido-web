@@ -125,6 +125,26 @@ const server = createServer(async (req, res) => {
       });
       return res.end(req.method === "OPTIONS" ? "" : JSON.stringify({ user_id: "u_demo", email: "demo@example.com", name: null, orgs: [] }));
     }
+    // The owner's admin API (ticket C26), so /admin renders its owner view in tests: the demo person is the owner here.
+    if (url.pathname.startsWith("/v1/admin/") && req.method === "GET") {
+      const now = new Date().toISOString();
+      const fixtures: Record<string, unknown> = {
+        "/v1/admin/orgs": [{ org_id: "org-demo", name: "Sharma Electronics", members: 2, active_keys: 1, created_at: now }],
+        "/v1/admin/jobs": [{ job_id: "00000000-0000-4000-8000-000000000001", state: "RUNNING", budget_usdc: "12.5", created_at: now }],
+        "/v1/admin/providers": [],
+        "/v1/admin/payments": [],
+        "/v1/admin/orders": [],
+        "/v1/admin/audit": [],
+      };
+      const body = fixtures[url.pathname];
+      res.writeHead(body === undefined ? 404 : 200, {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": req.headers.origin ?? "*",
+        "Access-Control-Allow-Credentials": "true",
+        Vary: "Origin",
+      });
+      return res.end(JSON.stringify(body ?? { error: "NOT_FOUND", detail: "Not found." }));
+    }
     // An empty event index synced to block 60,000,000: the head of the fake chain in e2e/fake-chain.ts (FAKE_BLOCK),
     // so /chain takes the index path in browser tests. Against the real chain it is too far behind and the page scans instead.
     if (req.method === "GET" && url.pathname === "/chain/logs") return send(res, 200, { synced_to: 60_000_000, logs: [] });
