@@ -28,11 +28,6 @@ const LOADED: Record<string, RegExp> = {
  * marked test.fail() with the issue; when the bug is fixed it turns red as "unexpectedly passed": remove the entry.
  */
 const KNOWN_LEAKS: Record<string, { issue: string; expected: (finding: string) => boolean }> = {
-  // The "Demo views" panel shows DEMO_ADDRESSES.provider (src/lib/wallet/session.ts), a real provider's wallet.
-  "/admin": {
-    issue: "ekido-ai/ekido-internal#98",
-    expected: (f) => f.startsWith("names a provider: ") && f.includes("0xb68bd411876c45469ea19cda2a7a0adfaf8c8c46"),
-  },
   // Payees in "Where the money went", "Journal" and "Waiting to be withdrawn", and the registry panel's list.
   "/chain": {
     issue: "ekido-ai/ekido-internal#99",
