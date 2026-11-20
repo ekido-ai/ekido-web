@@ -22,8 +22,23 @@ const LOADED: Record<string, RegExp> = {
   "/chain": /^\d+ of \d+ agree$|^Mismatch found$/,
 };
 
-/** Routes that leak because of a real bug: marked test.fail() with the issue, so they turn red once it's fixed. */
-const KNOWN_LEAKS: Record<string, string> = {};
+/**
+ * Routes that leak because of a filed bug. `expected` says which findings that bug explains. Anything else on the page
+ * still fails the test outright, so a new leak can't hide behind an old one. Once the page has loaded, the test is
+ * marked test.fail() with the issue; when the bug is fixed it turns red as "unexpectedly passed": remove the entry.
+ */
+const KNOWN_LEAKS: Record<string, { issue: string; expected: (finding: string) => boolean }> = {
+  // The "Demo views" panel shows DEMO_ADDRESSES.provider (src/lib/wallet/session.ts), a real provider's wallet.
+  "/admin": {
+    issue: "ekido-ai/ekido-internal#98",
+    expected: (f) => f.startsWith("names a provider: ") && f.includes("0xb68bd411876c45469ea19cda2a7a0adfaf8c8c46"),
+  },
+  // Payees in "Where the money went", "Journal" and "Waiting to be withdrawn", and the registry panel's list.
+  "/chain": {
+    issue: "ekido-ai/ekido-internal#99",
+    expected: (f) => /^names a provider: 0x[0-9a-f]/.test(f) || f === 'provider list: heading "Providers, as they committed themselves"',
+  },
+};
 
 const COORDINATOR = process.env.E2E_COORDINATOR_URL ?? `${(process.env.E2E_BASE_URL ?? "").replace(/\/$/, "")}/sepolia`;
 
@@ -98,7 +113,8 @@ async function readPage(page: Page) {
 
 for (const path of ROUTES) {
   test(`${path} shows no provider identity, list or count`, async ({ page }) => {
-    if (KNOWN_LEAKS[path]) test.fail(true, `known leak ${KNOWN_LEAKS[path]}`);
+    // Reading the chain from a browser can take a while on public RPCs (ekido-ai/ekido-internal#94).
+    if (LOADED[path]) test.setTimeout(120_000);
 
     // Every coordinator answer the page reads as a visitor, scanned like the API above.
     const answers: Promise<string[]>[] = [];
@@ -110,8 +126,6 @@ for (const path of ROUTES) {
 
     await page.goto(path);
     if (LOADED[path]) {
-      // Reading the chain from a browser can take a while on public RPCs (ekido-ai/ekido-internal#94).
-      test.setTimeout(120_000);
       await expect(page.getByText(LOADED[path]).first(), `${path} finished loading, so the whole page is checked`).toBeVisible({ timeout: 90_000 });
     } else {
       // Some pages poll, so the network may never go quiet: wait for it a while, then check what's there.
@@ -127,6 +141,13 @@ for (const path of ROUTES) {
       ...headings.filter((h) => PROVIDER_LIST_HEADING.test(h)).map((h) => `provider list: heading "${h}"`),
       ...(await Promise.all(answers)).flat(),
     ];
+
+    const known = KNOWN_LEAKS[path];
+    if (known) {
+      // Checked before test.fail(), so these are real failures: a page that didn't load, or a leak the issue doesn't cover.
+      expect(found.filter((f) => !known.expected(f)), `${path}: leaks beyond ${known.issue}`).toEqual([]);
+      test.fail(true, `known leak ${known.issue}`);
+    }
     expect(found, `${path} as a visitor`).toEqual([]);
   });
 }
