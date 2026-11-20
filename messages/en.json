@@ -230,7 +230,7 @@
       "does": [
         "Connects outwards only: no open ports, no remote shell",
         "Runs approved training jobs only",
-        "Pays for every training step that passes",
+        "Pays for your accepted training steps when the model passes its test",
         "You set the price and the hours, and stop anytime"
       ],
       "today": [
@@ -380,7 +380,7 @@
           "price": "Free to join",
           "note": "You set your own price",
           "points": [
-            "Paid for every training step that passes",
+            "Paid for your accepted training steps when the model passes its test",
             "Approved jobs only, stop anytime",
             "Your key never leaves your machine",
             "Windows app and phones next"
@@ -476,11 +476,10 @@
     "nav": {
       "aria": "Screens",
       "groups": {
-        "mission": "Mission control",
-        "missionShort": "Mission",
-        "training": "Training",
-        "payments": "Payments",
-        "earn": "Earn"
+        "developers": "Developers",
+        "earn": "Earn",
+        "pricing": "Pricing",
+        "how": "How it works"
       },
       "items": {
         "recovery": {
@@ -490,10 +489,6 @@
         "quality": {
           "label": "Quality",
           "hint": "Why a model passed or was refused"
-        },
-        "newJob": {
-          "label": "New job",
-          "hint": "Lock a budget and start training"
         },
         "settlement": {
           "label": "Settlement",
@@ -510,6 +505,10 @@
         "earnings": {
           "label": "Earnings",
           "hint": "What device owners made"
+        },
+        "mission": {
+          "label": "Mission control",
+          "hint": "Watch a training job live, step by step"
         }
       }
     },
@@ -520,20 +519,21 @@
         {
           "title": "Use it",
           "links": [
-            "Mission control",
+            "Developers",
             "Earn with your device",
-            "Earnings",
-            "Verify a payout"
+            "Pricing",
+            "Settings"
           ]
         },
         {
-          "title": "Proof",
+          "title": "How it works",
           "links": [
+            "Mission control",
             "Escrow ledger",
             "Proof of reserves",
             "Settlement",
-            "System status",
-            "Owner console"
+            "Verify a payout",
+            "System status"
           ]
         },
         {
@@ -763,6 +763,53 @@
       "moneyTitle": "Where the money is",
       "moneyLead": "The full journal and reconciliation are on the",
       "chainLink": "On-chain page"
+    }
+  },
+  "developers": {
+    "docs": {
+      "basicsTitle": "The basics",
+      "baseTitle": "Base URL",
+      "baseBody": "Every endpoint below starts with this address.",
+      "authTitle": "Authentication",
+      "authBody": "Create a key in Settings → API keys, then send it as a Bearer token. Keys belong to your team and can be revoked at any time.",
+      "modesTitle": "Test and live keys",
+      "modesBody": "ek_test_ keys use test payments and the test network, and cost nothing. ek_live_ keys come with real payments; this build accepts test mode only.",
+      "endpointsTitle": "Endpoints",
+      "endpointsLead": "Each one says honestly whether it works today. Requests and answers are JSON; personal details never travel in a URL.",
+      "colEndpoint": "Endpoint",
+      "colWhat": "What it does",
+      "colWho": "Who can call it",
+      "colStatus": "Status",
+      "endpoint": {
+        "me": "Who you are, and the teams this key or sign-in can use",
+        "recipes": "The ready-made tasks you can train, with their columns and quality bar",
+        "datasets": "Upload your examples for a recipe; every row problem comes back at once",
+        "quotes": "Price, GST and the quality bar for a dataset, before you pay",
+        "orders": "Start a test payment for a quote (Razorpay Checkout)",
+        "order": "Whether the payment went through",
+        "jobs": "Start training from a paid quote",
+        "invoice": "The GST invoice for a paid order, as a PDF",
+        "job": "A job's progress, as you see it (devices are never named)",
+        "models": "Your team's trained models",
+        "predict": "Run your model on up to 32 inputs",
+        "chat": "OpenAI-style chat with your model",
+        "download": "A short-lived link to download your model"
+      },
+      "auth": {
+        "public": "Anyone",
+        "key": "Your key or sign-in",
+        "owner": "A signed-in team owner or admin"
+      },
+      "status": {
+        "live": "Live",
+        "payments": "Needs test payments",
+        "soon": "Coming 24 Nov"
+      },
+      "goldenTitle": "From examples to a quote",
+      "goldenLead": "The steps that work today with a test key. Paying and starting the job follow once test payments are switched on.",
+      "predictTitle": "Calling your model",
+      "predictLead": "Once your model passes its test, this is all it takes. Your text is never logged.",
+      "errorsBody": "Errors come back as JSON with an error code and a detail sentence you can show to a person. 401 means sign in or send a key; 404 means not found, or not yours; 422 lists what to fix; 429 means slow down."
     }
   }
 }

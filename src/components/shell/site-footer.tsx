@@ -3,8 +3,8 @@ import { LogoMark } from "@/components/gpu/logo-mark";
 import { useTranslations } from "next-intl";
 
 const HREFS: string[][] = [
-  ["/dashboard", "/provide", "/earnings", "/verify"],
-  ["/chain", "/chain#reserves", "/settlement", "/status", "/admin"],
+  ["/developers", "/provide", "/pricing", "/settings"],
+  ["/dashboard", "/chain", "/chain#reserves", "/settlement", "/verify", "/status"],
   ["/help", "/#how", "/help#badges", "/security"],
   ["/privacy", "/privacy#cookies", "/terms", "/acceptable-use", "/security"],
 ];
