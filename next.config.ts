@@ -32,7 +32,9 @@ const connect = [
 const CSP = [
   "default-src 'self'",
   // Next.js inlines its bootstrap and our theme script; no third-party scripts are allowed.
-  "script-src 'self' 'unsafe-inline'",
+  // 'wasm-unsafe-eval' lets the browser compile our own WebAssembly (the personal-detail remover, ticket C16) and nothing else:
+  // it does not allow eval() or new Function(), which 'unsafe-eval' would.
+  "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self' data:",

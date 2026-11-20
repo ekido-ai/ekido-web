@@ -1,0 +1,153 @@
+{
+  "clean_lines": 17,
+  "clean_lines_with_a_false_positive": 1,
+  "false_positives": [
+    {
+      "line": 7,
+      "text": "Contact the manager, Sunil Kapoor, on (+91) 98123-45678",
+      "text_found": "98123-45678",
+      "type": "PHONE"
+    },
+    {
+      "line": 38,
+      "text": "Rohit Sharma ka match dekha kya kal raat?",
+      "text_found": "Rohit Sharma",
+      "type": "NAME"
+    }
+  ],
+  "input": "heldout\\heldout-set.jsonl",
+  "lines": 40,
+  "misses": [
+    {
+      "expected": "29AABCT1332L1ZD",
+      "found_instead": [],
+      "line": 6,
+      "text": "Our company GSTIN is 29AABCT1332L1ZD, please issue the invoice on this",
+      "type": "GSTIN"
+    },
+    {
+      "expected": "(+91) 98123-45678",
+      "found_instead": [
+        "PHONE:98123-45678"
+      ],
+      "line": 7,
+      "text": "Contact the manager, Sunil Kapoor, on (+91) 98123-45678",
+      "type": "PHONE"
+    },
+    {
+      "expected": "Zoya Siddiqui",
+      "found_instead": [],
+      "line": 9,
+      "text": "Customer Zoya Siddiqui wants a refund for the blue kurta",
+      "type": "NAME"
+    },
+    {
+      "expected": "Kapoor",
+      "found_instead": [],
+      "line": 11,
+      "text": "Mr. Kapoor called twice today about the delivery",
+      "type": "NAME"
+    },
+    {
+      "expected": "Priyanka Chopra",
+      "found_instead": [],
+      "line": 22,
+      "text": "Priyanka Chopra ne review diya: bahut accha product",
+      "type": "NAME"
+    },
+    {
+      "expected": "Devanshu Trivedi",
+      "found_instead": [],
+      "line": 23,
+      "text": "Order Devanshu Trivedi ka cancel kar do",
+      "type": "NAME"
+    },
+    {
+      "expected": "3456-7890-1236",
+      "found_instead": [],
+      "line": 30,
+      "text": "Mera Aadhaar 3456-7890-1236 khoya gaya, naya banwana hai",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "Mohammed Faizan",
+      "found_instead": [],
+      "line": 36,
+      "text": "Mohammed Faizan ne payment faizan786@paytm se kiya",
+      "type": "NAME"
+    }
+  ],
+  "overall": {
+    "false_positives": 2,
+    "missed": 8,
+    "precision": 0.9167,
+    "recall": 0.7333
+  },
+  "per_type": {
+    "AADHAAR": {
+      "false_positives": 0,
+      "found_correctly": 1,
+      "labelled": 2,
+      "missed": 1,
+      "precision": 1.0,
+      "recall": 0.5
+    },
+    "ADDRESS": {
+      "false_positives": 0,
+      "found_correctly": 4,
+      "labelled": 4,
+      "missed": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "EMAIL": {
+      "false_positives": 0,
+      "found_correctly": 2,
+      "labelled": 2,
+      "missed": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "GSTIN": {
+      "false_positives": 0,
+      "found_correctly": 0,
+      "labelled": 1,
+      "missed": 1,
+      "precision": null,
+      "recall": 0.0
+    },
+    "NAME": {
+      "false_positives": 1,
+      "found_correctly": 6,
+      "labelled": 11,
+      "missed": 5,
+      "precision": 0.8571,
+      "recall": 0.5455
+    },
+    "PAN": {
+      "false_positives": 0,
+      "found_correctly": 2,
+      "labelled": 2,
+      "missed": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "PHONE": {
+      "false_positives": 1,
+      "found_correctly": 4,
+      "labelled": 5,
+      "missed": 1,
+      "precision": 0.8,
+      "recall": 0.8
+    },
+    "UPI_ID": {
+      "false_positives": 0,
+      "found_correctly": 3,
+      "labelled": 3,
+      "missed": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    }
+  },
+  "tool": "ekido_pii score (strict match: start, end and type)"
+}

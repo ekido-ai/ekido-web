@@ -31,6 +31,21 @@ jobs:
       - name: Production build
         run: npx next build
 
+  pii:
+    name: PII remover (Rust)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - name: Unit tests
+        working-directory: pii
+        run: cargo test --locked
+      - name: The WebAssembly module builds
+        working-directory: pii
+        run: cargo build --locked --release --lib --target wasm32-unknown-unknown
   e2e:
     name: Web e2e
     runs-on: ubuntu-latest

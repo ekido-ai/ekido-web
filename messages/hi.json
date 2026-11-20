@@ -495,6 +495,10 @@
           "label": "New job",
           "hint": "Lock a budget and start training"
         },
+        "prepare": {
+          "label": "Prepare data",
+          "hint": "Remove personal details and lock your file, in your browser"
+        },
         "settlement": {
           "label": "Settlement",
           "hint": "Who got paid, and why"
