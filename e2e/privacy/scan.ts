@@ -1,9 +1,11 @@
 import { GPU_CLASSES } from "../../src/lib/pricing";
 import { identitiesIn, type Identities } from "./identities";
+import { tag, tagJson } from "./redact";
 
 /**
  * What counts as a provider leak (ticket P2, decision 8: no public list or count of who is connected).
- * Each finding is one readable line, so a failing test says exactly what showed and where.
+ * Each finding is one readable line saying what kind of thing showed and where, with a one-way tag instead of the
+ * value (redact.ts): the logs and reports of this public repo must not publish what the test protects.
  */
 
 /** Keys whose value names a provider. Same set as the coordinator's redactor (public_view.py IDENTITY_KEYS). */
@@ -28,16 +30,16 @@ export function scanJson(data: unknown, ids: Identities, where: string): string[
       const at = `${path}.${key}`;
       if (IDENTITY_KEYS.has(key)) {
         const values = (Array.isArray(v) ? v : [v]).filter((x) => x !== null && x !== undefined);
-        for (const x of values) if (typeof x !== "string" || !REDACTED.test(x)) found.push(`${where}: ${at} is not redacted (${JSON.stringify(x).slice(0, 60)})`);
+        for (const x of values) if (typeof x !== "string" || !REDACTED.test(x)) found.push(`${where}: ${at} is not redacted (${tagJson(x)})`);
         continue;
       }
-      if (HARDWARE_KEYS.has(key) && v !== null) found.push(`${where}: ${at} gives away hardware (${JSON.stringify(v).slice(0, 60)})`);
+      if (HARDWARE_KEYS.has(key) && v !== null) found.push(`${where}: ${at} gives away hardware (${tagJson(v)})`);
       if (COUNT_KEY.test(key) && (typeof v === "number" || Array.isArray(v))) found.push(`${where}: ${at} lists or counts providers`);
       walk(v, at);
     }
   };
   walk(data, "$");
-  for (const hit of identitiesIn(JSON.stringify(data), ids)) found.push(`${where}: names a provider (${hit})`);
+  for (const hit of identitiesIn(JSON.stringify(data), ids)) found.push(`${where}: names a provider (${hit})`); // hit is already redacted
   return found;
 }
 
@@ -83,4 +85,14 @@ export const PROVIDER_LIST_HEADING = /^\s*(?:providers\b|connected\s+(?:provider
 
 export function countsIn(text: string): string[] {
   return [...new Set(COUNT_TEXT.flatMap((re) => [...text.matchAll(re)].map((m) => m[0])))];
+}
+
+/** All findings on one page, redacted: kind and tag, never the text that matched. */
+export function pageFindings(page: { text: string; html: string; headings: string[] }, ids: Identities): string[] {
+  return [
+    ...identitiesIn(page.html, ids).map((hit) => `names a provider (${hit})`),
+    ...gpuModelsIn(page.text, ids).map((model) => `GPU model (${tag(model)})`),
+    ...countsIn(page.text).map((count) => `provider count (${tag(count)})`),
+    ...page.headings.filter((h) => PROVIDER_LIST_HEADING.test(h)).map((h) => `provider list: heading (${tag(h)})`),
+  ];
 }

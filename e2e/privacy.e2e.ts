@@ -1,6 +1,9 @@
 import { expect, test, type Page } from "@playwright/test";
-import { loadIdentities, identitiesIn, type Identities } from "./privacy/identities";
-import { PROVIDER_LIST_HEADING, countsIn, gpuModelsIn, scanJson } from "./privacy/scan";
+import { mkdirSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { loadIdentities, type Identities } from "./privacy/identities";
+import { assertRedacted, tag } from "./privacy/redact";
+import { pageFindings, scanJson } from "./privacy/scan";
 import { REMOTE, ROUTES } from "./routes";
 
 /**
@@ -12,6 +15,10 @@ import { REMOTE, ROUTES } from "./routes";
  *   E2E_BASE_URL=https://ekido-staging.duckdns.org npx playwright test e2e/privacy.e2e.ts
  * Set EKIDO_OPERATOR_TOKEN to also check for provider names, ids, keys and their own GPU models.
  * E2E_COORDINATOR_URL defaults to <site>/sepolia, where staging serves the coordinator.
+ *
+ * This repo is public, so a failing run must not publish what it protects. Findings name the kind of leak, where it
+ * is and a one-way tag, never the value (privacy/redact.ts), and assertRedacted() checks that before anything is
+ * printed. They are also written to privacy-findings/, the only thing the nightly workflow uploads.
  */
 
 /**
@@ -31,7 +38,7 @@ const KNOWN_LEAKS: Record<string, { issue: string; expected: (finding: string) =
   // Payees in "Where the money went", "Journal" and "Waiting to be withdrawn", and the registry panel's list.
   "/chain": {
     issue: "ekido-ai/ekido-internal#99",
-    expected: (f) => /^names a provider: 0x[0-9a-f]/.test(f) || f === 'provider list: heading "Providers, as they committed themselves"',
+    expected: (f) => /^names a provider \(wallet( \(shortened\))?, sha256 [0-9a-f]{6}\)$/.test(f) || f === `provider list: heading (${tag("Providers, as they committed themselves")})`,
   },
 };
 
@@ -94,8 +101,23 @@ test("public API answers name no provider", async () => {
     }
   }
   test.info().annotations.push({ type: "jobs checked", description: String(jobIds.length) });
+  report("api", found);
   expect(found, "provider identities in public API answers").toEqual([]);
 });
+
+const FINDINGS_DIR = "privacy-findings";
+
+/**
+ * Checks the findings hold no identity, then writes them to privacy-findings/<project>/<test>.txt. That folder is
+ * what the nightly workflow uploads: never the HTML report, traces or screenshots, which show the page itself.
+ */
+function report(name: string, found: string[]) {
+  assertRedacted(found, ids.exact);
+  if (found.length === 0) return;
+  const dir = join(FINDINGS_DIR, test.info().project.name);
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(join(dir, `${name.replace(/[^a-z0-9]+/gi, "_").replace(/^_|_$/g, "") || "home"}.txt`), `${found.join("\n")}\n`);
+}
 
 /** Everything a page shows or carries: visible text, headings, and the full HTML (attributes, links, inline data). */
 async function readPage(page: Page) {
@@ -129,13 +151,8 @@ for (const path of ROUTES) {
     await page.waitForTimeout(2_000);
     const { text, html, headings } = await readPage(page);
 
-    const found = [
-      ...identitiesIn(html, ids).map((hit) => `names a provider: ${hit}`),
-      ...gpuModelsIn(text, ids).map((model) => `GPU model: ${model}`),
-      ...countsIn(text).map((count) => `provider count: "${count}"`),
-      ...headings.filter((h) => PROVIDER_LIST_HEADING.test(h)).map((h) => `provider list: heading "${h}"`),
-      ...(await Promise.all(answers)).flat(),
-    ];
+    const found = [...pageFindings({ text, html, headings }, ids), ...(await Promise.all(answers)).flat()];
+    report(path, found);
 
     const known = KNOWN_LEAKS[path];
     if (known) {

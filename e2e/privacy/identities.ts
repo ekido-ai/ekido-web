@@ -1,7 +1,8 @@
 import { closeSync, existsSync, openSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, resolve, sep } from "node:path";
 import { createPublicClient, http, parseAbi, type Hex } from "viem";
+import { tag } from "./redact";
 import { BASE_SEPOLIA } from "../../src/lib/chain/read";
 import { REGISTRY_DEPLOY_BLOCK, REGISTRY_EVENTS } from "../../src/lib/chain/registry";
 
@@ -125,7 +126,9 @@ type Stored = { exact: string[]; wallets: string[]; gpuModels: string[]; sources
  * file and stores the result, and the others wait for it. Files are named after the run's parent process.
  */
 export async function loadIdentities(coordinator: string): Promise<Identities> {
+  // The OS temp folder, never inside the repo: playwright-report/ and test-results/ can end up in a CI artifact.
   const cache = join(tmpdir(), `ekido-privacy-identities-${process.ppid}.json`);
+  if (resolve(cache).startsWith(resolve(process.cwd()) + sep)) throw new Error("the identities cache must live outside the repo");
   const lock = `${cache}.lock`;
   let mine = false;
   try {
@@ -164,15 +167,19 @@ export async function loadIdentities(coordinator: string): Promise<Identities> {
 
 const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-/** Every known identity in `text`, full or shortened (0x1c4d…337f, 0x1c4d...337f). */
+/**
+ * Every known identity in `text`, full or shortened (0x1c4d…337f, 0x1c4d...337f), as redacted labels:
+ * "wallet, sha256 1a2b3c", "wallet (shortened), sha256 1a2b3c" or "operator identity, sha256 1a2b3c". The tag is
+ * always of the full identity, so a shortened and a full hit on the same wallet carry the same tag. Never the value.
+ */
 export function identitiesIn(text: string, ids: Identities): string[] {
   const lower = text.toLowerCase();
   const hits = new Set<string>();
   for (const id of ids.exact) {
-    if (new RegExp(`(^|[^a-z0-9_])${escape(id)}(?![a-z0-9_])`).test(lower)) hits.add(id);
+    if (new RegExp(`(^|[^a-z0-9_])${escape(id)}(?![a-z0-9_])`).test(lower)) hits.add(`${ids.wallets.has(id) ? "wallet" : "operator identity"}, ${tag(id)}`);
   }
   for (const m of lower.matchAll(/0x([0-9a-f]{2,})(?:…|\.\.\.)([0-9a-f]{3,})/g)) {
-    for (const w of ids.wallets) if (w.startsWith(`0x${m[1]}`) && w.endsWith(m[2])) hits.add(`${m[0]} (${w})`);
+    for (const w of ids.wallets) if (w.startsWith(`0x${m[1]}`) && w.endsWith(m[2])) hits.add(`wallet (shortened), ${tag(w)}`);
   }
   return [...hits];
 }
