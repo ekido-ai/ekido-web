@@ -8,6 +8,7 @@ import { injectedProvider } from "@/lib/wallet/escrow";
 import { DEMO_ADDRESSES, restoreSession, sessionStore, signIn, signOut, viewAs } from "@/lib/wallet/session";
 import { friendlyError } from "@/lib/wallet/escrow";
 import { cx } from "@/components/ui/cx";
+import { useKeepInView } from "@/components/ui/keep-in-view";
 
 const short = (a: string) => `${a.slice(0, 6)}…${a.slice(-4)}`;
 
@@ -32,6 +33,10 @@ export function WalletButton({ dark = false }: { dark?: boolean }) {
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  // On phones the button can sit mid-row, so its popups are shifted back on screen (ekido-ai/ekido-core#124).
+  const signInMenu = useKeepInView<HTMLDivElement>(open && !session);
+  const accountMenu = useKeepInView<HTMLDivElement>(open && !!session);
+  const errorBox = useKeepInView<HTMLParagraphElement>(!!error);
 
   useEffect(() => {
     if (!restored) {
@@ -91,7 +96,7 @@ export function WalletButton({ dark = false }: { dark?: boolean }) {
         </button>
       )}
       {open && !session && (
-        <div role="menu" className="absolute right-0 top-11 z-50 w-[22rem] max-w-[calc(100vw-2rem)] rounded-xl border border-line-strong bg-surface p-2 text-sm text-ink shadow-soft">
+        <div ref={signInMenu} role="menu" className="absolute right-0 top-11 z-50 w-[22rem] max-w-[calc(100vw-2rem)] rounded-xl border border-line-strong bg-surface p-2 text-sm text-ink shadow-soft">
           <button role="menuitem" type="button" onClick={go} disabled={!hasWallet} className="flex w-full items-start gap-2 rounded-md px-2 py-2 text-left hover:bg-surface-2 disabled:cursor-not-allowed disabled:opacity-70">
             <Wallet className="mt-0.5 size-4 shrink-0" aria-hidden />
             <span>
@@ -112,7 +117,7 @@ export function WalletButton({ dark = false }: { dark?: boolean }) {
         </div>
       )}
       {open && session && (
-        <div role="menu" className="absolute right-0 top-11 z-50 w-64 rounded-xl border border-line-strong bg-surface p-2 text-sm text-ink shadow-soft">
+        <div ref={accountMenu} role="menu" className="absolute right-0 top-11 z-50 w-64 max-w-[calc(100vw-2rem)] rounded-xl border border-line-strong bg-surface p-2 text-sm text-ink shadow-soft">
           <p className="px-2 pb-2 pt-1 text-xs text-muted">
             {session.demo ? "Read-only demo view of a public testnet address. Nothing can be signed or sent." : "Signed in with a wallet signature until"} {session.demo ? "" : `${new Date(session.expiresAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}. This tab only.`}
           </p>
@@ -125,7 +130,7 @@ export function WalletButton({ dark = false }: { dark?: boolean }) {
         </div>
       )}
       {error && (
-        <p role="alert" className="absolute right-0 top-11 z-50 w-72 rounded-lg border border-critical bg-surface p-3 text-sm text-ink shadow-soft">
+        <p ref={errorBox} role="alert" className="absolute right-0 top-11 z-50 w-72 max-w-[calc(100vw-2rem)] rounded-lg border border-critical bg-surface p-3 text-sm text-ink shadow-soft">
           {error}
         </p>
       )}
