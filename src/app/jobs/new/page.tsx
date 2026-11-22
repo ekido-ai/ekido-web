@@ -6,6 +6,7 @@ import { FundStep } from "@/components/jobs/fund-step";
 import { PageHeader } from "@/components/shell/page-header";
 import { Button } from "@/components/ui/button";
 import { Panel } from "@/components/ui/panel";
+import { useTypedBeforeHydration } from "@/components/ui/typed-before-hydration";
 import { config } from "@/lib/config";
 import { useSourceControl } from "@/lib/events/source-context";
 import { checkRegisteredJob, prepareSignedRequest, type PreparedSignedRequest } from "@/lib/jobs/signed-request";
@@ -17,6 +18,9 @@ export default function NewJobPage() {
   const router = useRouter();
   const { followJob } = useSourceControl();
   const [text, setText] = useState("");
+  // JSON pasted before the script loaded would leave "Verify signed terms" disabled (ekido-ai/ekido-core#125).
+  const textField = useRef<HTMLTextAreaElement>(null);
+  useTypedBeforeHydration(textField, setText);
   const [token, setToken] = useState("");
   const [prepared, setPrepared] = useState<PreparedSignedRequest | null>(null);
   const [registered, setRegistered] = useState(false);
@@ -130,7 +134,7 @@ export default function NewJobPage() {
             <p className="text-xs text-ink-2">The file is checked here in your browser. Or paste its text below.</p>
             <label className="block text-sm text-ink">
               Signed job request JSON
-              <textarea className="mt-2 block min-h-36 w-full rounded-md border border-line bg-surface-2 p-3 font-mono"
+              <textarea ref={textField} className="mt-2 block min-h-36 w-full rounded-md border border-line bg-surface-2 p-3 font-mono"
                 value={text} maxLength={250000} disabled={busy} spellCheck={false}
                 onChange={(event) => { setText(event.target.value); setPrepared(null); setError(""); }} />
             </label>
