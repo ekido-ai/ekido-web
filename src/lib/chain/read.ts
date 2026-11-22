@@ -1,4 +1,5 @@
 import { createPublicClient, fallback, http, parseAbi, parseEventLogs, type Address, type Log, type PublicClient } from "viem";
+import { baseSepolia } from "viem/chains";
 import { config } from "../config";
 import { REGISTRY_EVENTS } from "./registry";
 import { buildBook, reconcile, reserves, sortEvents, type Book, type EscrowEvent, type Hex, type JobSplit, type Reconciliation, type Reserves } from "./ledger";
@@ -89,9 +90,21 @@ export interface Ledger {
   registry: { wallet: Address; hash: Hex; block: bigint; tx: Hex; updates: number }[];
 }
 
+/**
+ * Reads go out batched. A /chain load used to send every readContract, getBlock and getTransactionReceipt as its own
+ * HTTP request (dozens at once), and sepolia.base.org answered 429 (ekido-ai/ekido-internal#94). Now contract reads are
+ * folded into one Multicall3 eth_call, and the remaining calls share JSON-RPC batch requests (both public RPCs accept
+ * them). Results are unchanged: multicall reads at the same block, and a batch is just several requests in one POST.
+ */
+const RPC_BATCH = { batchSize: 50, wait: 16 } as const;
+
 export function chainClients(): { reads: PublicClient; logs: PublicClient } {
   return {
-    reads: createPublicClient({ transport: fallback(BASE_SEPOLIA.readRpcs.map((u) => http(u, { timeout: 10_000 }))) }) as PublicClient,
+    reads: createPublicClient({
+      chain: baseSepolia,
+      batch: { multicall: { wait: 16 } },
+      transport: fallback(BASE_SEPOLIA.readRpcs.map((u) => http(u, { timeout: 10_000, batch: RPC_BATCH }))),
+    }) as PublicClient,
     logs: createPublicClient({ transport: http(BASE_SEPOLIA.logsRpc, { timeout: 20_000 }) }) as PublicClient,
   };
 }

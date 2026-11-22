@@ -43,8 +43,12 @@ export function AdminArea() {
   const [tab, setTab] = useState<Tab>("jobs");
 
   const fetchGate = useCallback(() => {
-    Promise.all([platform.me(), admin.teams()])
-      .then(([me]) => setGate({ kind: "ready", email: me.email ?? "" }))
+    // Ask the admin API only once /v1/me says someone is signed in: a signed-out visitor shouldn't get a second 401
+    // in the console from /v1/admin/orgs (ekido-ai/ekido-internal#93).
+    platform
+      .me()
+      .then((me) => admin.teams().then(() => me))
+      .then((me) => setGate({ kind: "ready", email: me.email ?? "" }))
       .catch((e) => {
         if (e instanceof PlatformError && e.status === 401) setGate({ kind: "signed-out" });
         else if (e instanceof PlatformError && e.status === 404) setGate({ kind: "not-admin" });
