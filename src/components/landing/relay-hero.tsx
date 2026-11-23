@@ -89,12 +89,13 @@ export function RelayHero() {
               className={cx(
                 "relative rounded-2xl border p-3 transition-all duration-500 sm:p-4",
                 active ? "border-accent bg-surface-2" : "border-line bg-surface",
-                lost && "opacity-45",
-                later && "border-dashed opacity-60",
+                later && "border-dashed",
               )}
             >
-              <Icon className={cx("size-5 sm:size-6", active ? "text-accent-text" : "text-ink-2")} aria-hidden />
-              <div className="mt-2 text-sm font-semibold text-ink sm:text-base">{name}</div>
+              {/* Dim a lost or later device through its icon and a quieter text colour, never through opacity on the
+                  text: faded text fell below 4.5:1 contrast (ekido-ai/ekido-core#102). */}
+              <Icon className={cx("size-5 sm:size-6", active ? "text-accent-text" : "text-ink-2", lost && "opacity-45", later && "opacity-60")} aria-hidden />
+              <div className={cx("mt-2 text-sm font-semibold sm:text-base", lost || later ? "text-ink-2" : "text-ink")}>{name}</div>
               <div className="mt-0.5 text-xs leading-snug text-muted">{note}</div>
             </li>
           ))}
