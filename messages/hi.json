@@ -479,6 +479,7 @@
     "nav": {
       "aria": "Screens",
       "groups": {
+        "train": "Train",
         "developers": "Developers",
         "earn": "Earn",
         "pricing": "Pricing",
@@ -587,7 +588,8 @@
     "verifyFailed": "Links work once, for 15 minutes. Ask for a new one.",
     "noToken": "This page needs the link from your email. Ask for a new one.",
     "newLink": "Get a new link",
-    "walletNote": "Device owners: your earnings and payouts stay under your wallet, on the Account page."
+    "walletNote": "Device owners: your earnings and payouts stay under your wallet, on the Account page.",
+    "headerSignedInAs": "Signed in as {email}"
   },
   "settings": {
     "title": "Settings",
@@ -816,5 +818,87 @@
       "predictLead": "Once your model passes its test, this is all it takes. Your text is never logged.",
       "errorsBody": "Errors come back as JSON with an error code and a detail sentence you can show to a person. 401 means sign in or send a key; 404 means not found, or not yours; 422 lists what to fix; 429 means slow down."
     }
+  },
+  "train": {
+    "title": "Train your model",
+    "lead": "Bring examples of the job you want done. You'll see the price and the quality bar before you pay, and if the model misses the bar, you get your money back.",
+    "signInTitle": "Sign in to train a model",
+    "signInLead": "Your models belong to your team.",
+    "teamTitle": "Create your team first",
+    "teamLead": "Models, keys and invoices belong to a team.",
+    "teamButton": "Go to settings",
+    "stepsLabel": "Steps",
+    "step": {
+      "recipe": "Pick a task",
+      "file": "Your examples",
+      "quote": "Price and pay"
+    },
+    "errorTitle": "That didn't work",
+    "recipeTitle": "What should your model do?",
+    "recipeLead": "Each task has a fixed format and a quality bar.",
+    "columns": "Columns: {input} → {answer}",
+    "fileTitle": "Your examples for {recipe}",
+    "fileLead": "A CSV file with the columns {input} and {answer}. Add a column called split (train or test) to choose the test examples yourself; otherwise every fifth row is held back for the test.",
+    "privacyNote": "Remove names, phone numbers and other personal details from your examples before you upload them. They're sent to Ekido and to the devices that train your model.",
+    "labels": "Allowed answers: {labels}",
+    "rowsRead": "{file}: {train} training and {test} test examples.",
+    "tooLarge": "This file is larger than 20 MB. Use fewer or shorter examples.",
+    "needTest": "The quality check needs at least 20 test examples; this file gives {have}. Add more rows.",
+    "back": "Back",
+    "uploading": "Uploading…",
+    "getQuote": "Upload and see the price",
+    "quoteTitle": "Your price and quality bar",
+    "quoteLead": "For {train} training and {test} test examples.",
+    "training": "Training",
+    "gst": "GST (18%)",
+    "total": "Total",
+    "eta": "Ready in about",
+    "minutes": "{n} minutes",
+    "qualityTitle": "The quality bar",
+    "provisional": "Prices are provisional while Ekido is in test mode.",
+    "testMode": "Test mode: use Razorpay's test UPI or test card. No real money moves.",
+    "pay": "Pay {amount} and start",
+    "paying": "Waiting for the payment…",
+    "starting": "Payment received. Starting your training…",
+    "paymentFailed": "The payment didn't go through. Nothing was charged; try again.",
+    "paymentSlow": "We haven't heard from Razorpay yet. If you paid, your training starts as soon as it confirms; check back in a minute."
+  },
+  "job": {
+    "title": "Your model",
+    "loadFailed": "Couldn't load this job",
+    "notFound": "There's no such job in your team.",
+    "stage": {
+      "starting": "Starting",
+      "training": "Training",
+      "checking": "Checking",
+      "passed": "Ready"
+    },
+    "stageLead": {
+      "starting": "Finding a device to train on.",
+      "training": "Training on your examples.",
+      "checking": "Independent checkers are testing your model on your test examples.",
+      "passed": "Your model passed its quality bar and is ready.",
+      "refunded": "Your model missed its quality bar, so you get a full refund.",
+      "cancelled": "This job was cancelled."
+    },
+    "progress": "Progress",
+    "steps": "{done} of {total} steps",
+    "moved": "{n, plural, one {A device dropped out once; the training carried on from its last checkpoint on another device.} other {Devices dropped out # times; each time the training carried on from its last checkpoint on another device.}}",
+    "qualityTitle": "Quality check",
+    "qualityPending": "Your model must answer at least {floor}% of your test examples correctly.",
+    "qualityPassed": "{score}% of your test examples answered correctly. The bar was {floor}%: passed.",
+    "qualityMissed": "{score}% of your test examples answered correctly. The bar was {floor}%: missed, so you're refunded.",
+    "payment": {
+      "CREATED": "Payment of {amount} not completed yet.",
+      "HELD": "{amount} paid and held until the check passes.",
+      "SETTLED": "{amount} paid.",
+      "REFUNDED": "{amount} refunded.",
+      "NEEDS_REVIEW": "{amount}: payment under review."
+    },
+    "modelTitle": "Use your model",
+    "modelLead": "Download it to run anywhere, or call it with your API key.",
+    "download": "Download the model",
+    "callTitle": "Call it from your code",
+    "callLead": "Create a key with Run models in Settings, then:"
   }
 }
