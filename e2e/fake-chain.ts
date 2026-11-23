@@ -1,5 +1,5 @@
 import type { Page, Route } from "@playwright/test";
-import { encodeAbiParameters, numberToHex, toFunctionSelector, type Hex } from "viem";
+import { decodeFunctionData, encodeAbiParameters, encodeFunctionResult, numberToHex, parseAbi, toFunctionSelector, type Hex } from "viem";
 
 /**
  * A stand-in for the public Base Sepolia RPCs, so browser tests don't depend on someone else's server
@@ -35,6 +35,22 @@ const CALLS: Record<Hex, Hex> = Object.fromEntries(
 
 type Request = { id: number; method: string; params?: unknown[] };
 
+/** Multicall3: the app folds contract reads into one aggregate3 call (src/lib/chain/read.ts). */
+const multicall = parseAbi([
+  "struct Call3 { address target; bool allowFailure; bytes callData; }",
+  "struct Result { bool success; bytes returnData; }",
+  "function aggregate3(Call3[] calls) payable returns (Result[] returnData)",
+]);
+const AGGREGATE3 = toFunctionSelector("function aggregate3((address,bool,bytes)[])");
+
+/** Each inner call answered from CALLS, or undefined if one isn't known. */
+function aggregate3(data: Hex): Hex | undefined {
+  const { args } = decodeFunctionData({ abi: multicall, data });
+  const results = (args[0] as readonly { callData: Hex }[]).map((c) => CALLS[c.callData.slice(0, 10) as Hex]);
+  if (results.some((r) => !r)) return undefined;
+  return encodeFunctionResult({ abi: multicall, functionName: "aggregate3", result: results.map((r) => ({ success: true, returnData: r! })) });
+}
+
 function answer({ id, method, params }: Request) {
   const ok = (result: unknown) => ({ jsonrpc: "2.0", id, result });
   switch (method) {
@@ -45,7 +61,7 @@ function answer({ id, method, params }: Request) {
     case "eth_getCode": return ok("0x6080604052");
     case "eth_call": {
       const data = ((params?.[0] as { data?: Hex; input?: Hex })?.data ?? (params?.[0] as { input?: Hex })?.input ?? "0x") as Hex;
-      const result = CALLS[data.slice(0, 10) as Hex];
+      const result = data.startsWith(AGGREGATE3) ? aggregate3(data) : CALLS[data.slice(0, 10) as Hex];
       if (result) return ok(result);
       break;
     }
