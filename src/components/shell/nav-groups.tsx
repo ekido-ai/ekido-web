@@ -2,7 +2,7 @@
 
 import { useEffect, useReducer, useRef, useState } from "react";
 import Link from "next/link";
-import { BadgeCheck, Blocks, ChevronDown, Code2, Coins, Gauge, RotateCcw, Server, ShieldCheck, Tag, Wallet } from "lucide-react";
+import { BadgeCheck, Blocks, ChevronDown, Code2, Coins, Gauge, RotateCcw, Server, ShieldCheck, Sparkles, Tag, Wallet } from "lucide-react";
 import { cx } from "@/components/ui/cx";
 import { useTranslations } from "next-intl";
 import { closedMenu, menuReducer, type MenuState } from "./menu-state";
@@ -18,6 +18,7 @@ type Group = { key: string; icon: typeof Gauge; href?: string; items?: Item[] };
 
 export const NAV: Group[] = [
   // What a customer or device owner came for. Train and My models join this list once they work end to end.
+  { key: "train", icon: Sparkles, href: "/train" },
   { key: "developers", icon: Code2, href: "/developers" },
   { key: "earn", icon: Server, href: "/provide" },
   { key: "pricing", icon: Tag, href: "/pricing" },
@@ -64,15 +65,15 @@ export function NavGroups({ path }: { path: string }) {
     <nav
       ref={ref}
       aria-label={t("aria")}
-      // On phones each item is as wide as its label and the row spreads them out, instead of four equal columns that
-      // cut "Developers" and "How it works" short (ekido-ai/ekido-core#121).
-      className="order-last -mx-1 flex min-w-0 basis-full justify-between gap-0.5 sm:justify-start sm:gap-1 2xl:order-none 2xl:mx-0 2xl:basis-auto 2xl:flex-1"
+      // On phones each item is as wide as its label and the row spreads them out (ekido-ai/ekido-core#121). With five
+      // groups the row can be wider than a small phone, so it scrolls sideways instead of cutting a label short.
+      className="order-last -mx-1 flex min-w-0 basis-full justify-between gap-0.5 overflow-x-auto [scrollbar-width:none] sm:justify-start sm:gap-1 sm:overflow-visible 2xl:order-none 2xl:mx-0 2xl:basis-auto 2xl:flex-1"
     >
       {NAV.map((g) => {
         const Icon = g.icon;
         const active = g.href ? path.startsWith(g.href) : !!g.items?.some((i) => path.startsWith(i.href));
         const base = cx(
-          "nav-link inline-flex min-w-0 items-center justify-center gap-1 whitespace-nowrap rounded-md px-1.5 py-1.5 text-[13px] font-medium sm:justify-start sm:gap-1.5 sm:px-2.5 sm:text-sm",
+          "nav-link inline-flex shrink-0 items-center justify-center gap-1 whitespace-nowrap rounded-md px-1.5 py-1.5 text-[13px] font-medium sm:min-w-0 sm:shrink sm:justify-start sm:gap-1.5 sm:px-2.5 sm:text-sm",
           active ? "bg-surface-3 text-ink" : "text-ink-2 hover:bg-surface-2 hover:text-ink",
         );
         if (g.href) {
@@ -87,7 +88,7 @@ export function NavGroups({ path }: { path: string }) {
         return (
           // Not positioned on phones, so the menu below is placed against the header and fits the screen
           // (ekido-ai/ekido-core#129); from sm up it hangs under its own button.
-          <div key={g.key} className="sm:relative" onMouseEnter={() => dispatch({ type: "hover", key: g.key })} onMouseLeave={() => dispatch({ type: "leave" })}>
+          <div key={g.key} className="shrink-0 sm:relative" onMouseEnter={() => dispatch({ type: "hover", key: g.key })} onMouseLeave={() => dispatch({ type: "leave" })}>
             <button type="button" aria-expanded={isOpen} aria-haspopup="menu" aria-current={active ? "page" : undefined} onClick={() => dispatch({ type: "click", key: g.key })} className={cx(base, "w-full")}>
               <Icon className="hidden size-4 shrink-0 sm:block" aria-hidden />
               <span className="truncate">{t(`groups.${g.key}`)}</span>

@@ -1,6 +1,5 @@
 "use client";
 
-import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { History, Radio, RotateCcw, SlidersHorizontal } from "lucide-react";
@@ -18,6 +17,7 @@ import { Shortcuts } from "./shortcuts";
 import { CoordinatorOffline } from "./coordinator-offline";
 import { ChainPulse } from "@/components/chain/chain-pulse";
 import { WalletButton } from "@/components/wallet/wallet-button";
+import { AccountLink } from "@/components/shell/account-link";
 import { MarketingMenu, MarketingNav } from "./marketing-nav";
 import { NavGroups } from "./nav-groups";
 import { ScrollAnimator } from "@/components/motion/scroll-animator";
@@ -27,7 +27,7 @@ import { EasterEggs } from "@/components/gpu/easter-eggs";
 import { StorageNotice } from "./storage-notice";
 
 /** Screens that show a job, and so need the live/recorded controls. */
-const DASH_PATHS = ["/dashboard", "/recovery", "/quality", "/settlement", "/verify", "/earnings", "/replay", "/jobs"];
+const DASH_PATHS = ["/dashboard", "/recovery", "/quality", "/settlement", "/verify", "/earnings", "/replay", "/jobs/new"];
 
 
 /**
@@ -159,7 +159,6 @@ function SourceBar() {
 }
 
 export function AppShell({ children }: { children: React.ReactNode }) {
-  const tAuth = useTranslations("auth");
   const path = usePathname();
   // The live/recorded controls and the coordinator banner belong to the screens that show a job.
   const dash = DASH_PATHS.some((p) => path.startsWith(p));
@@ -182,17 +181,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {landing ? <MarketingNav /> : <NavGroups path={path} />}
           <div className="ml-auto flex items-center gap-1 2xl:ml-0">
             {!landing && <ChainPulse />}
-            <WalletButton />
-            <Link
-              href={landing ? "/login" : "/settings"}
-              aria-current={path.startsWith("/settings") || path.startsWith("/login") ? "page" : undefined}
-              className={cx(
-                "hidden h-9 items-center rounded-md px-2.5 text-sm font-medium sm:inline-flex",
-                path.startsWith("/settings") || path.startsWith("/login") ? "bg-surface-3 text-ink" : "text-ink-2 hover:bg-surface-2 hover:text-ink",
-              )}
-            >
-              {landing ? tAuth("headerSignIn") : tAuth("headerSettings")}
-            </Link>
+            {/* Wallet is optional (crypto users only); on a phone the header keeps room for sign-in. */}
+            <span className="hidden sm:contents">
+              <WalletButton />
+            </span>
+            <AccountLink path={path} />
             {landing && (
               <Link href="/dashboard" className="press inline-flex h-9 items-center rounded-full bg-action px-4 text-sm font-semibold text-action-ink hover:bg-action-hover sm:ml-1">
                 Open the app

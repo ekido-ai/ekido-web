@@ -16,7 +16,9 @@ export function Panel({
   bodyClassName?: string;
 }) {
   return (
-    <section className={cx("panel rounded-2xl border border-line", className)}>
+    // ScrollAnimator sets data-reveal/data-shown on panels, sometimes on streamed HTML before React hydrates it.
+    // Those two attributes belong to the animator; this silences only this element's attribute check.
+    <section className={cx("panel rounded-2xl border border-line", className)} suppressHydrationWarning>
       {(title || actions) && (
         <header className="flex flex-wrap items-start justify-between gap-3 border-b border-line px-6 py-4">
           <div className="min-w-0">
