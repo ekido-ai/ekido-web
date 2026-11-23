@@ -18,7 +18,7 @@ import { Shortcuts } from "./shortcuts";
 import { CoordinatorOffline } from "./coordinator-offline";
 import { ChainPulse } from "@/components/chain/chain-pulse";
 import { WalletButton } from "@/components/wallet/wallet-button";
-import { MarketingNav } from "./marketing-nav";
+import { MarketingMenu, MarketingNav } from "./marketing-nav";
 import { NavGroups } from "./nav-groups";
 import { ScrollAnimator } from "@/components/motion/scroll-animator";
 import { SiteFooter } from "./site-footer";
@@ -194,7 +194,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               {landing ? tAuth("headerSignIn") : tAuth("headerSettings")}
             </Link>
             {landing && (
-              <Link href="/dashboard" className="press ml-1 inline-flex h-9 items-center rounded-full bg-action px-4 text-sm font-semibold text-action-ink hover:bg-action-hover">
+              <Link href="/dashboard" className="press inline-flex h-9 items-center rounded-full bg-action sm:ml-1 px-4 text-sm font-semibold text-action-ink hover:bg-action-hover">
                 Open the app
               </Link>
             )}
@@ -218,6 +218,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <Shortcuts />
             </span>
             <ThemeToggle />
+            {landing && <MarketingMenu />}
           </div>
         </div>
       </header>

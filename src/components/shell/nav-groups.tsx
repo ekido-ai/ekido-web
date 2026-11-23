@@ -64,13 +64,15 @@ export function NavGroups({ path }: { path: string }) {
     <nav
       ref={ref}
       aria-label={t("aria")}
-      className="order-last -mx-1 grid min-w-0 basis-full grid-cols-4 gap-1 sm:flex 2xl:order-none 2xl:mx-0 2xl:basis-auto 2xl:flex-1"
+      // On phones each item is as wide as its label and the row spreads them out, instead of four equal columns that
+      // cut "Developers" and "How it works" short (ekido-ai/ekido-core#121).
+      className="order-last -mx-1 flex min-w-0 basis-full justify-between gap-0.5 sm:justify-start sm:gap-1 2xl:order-none 2xl:mx-0 2xl:basis-auto 2xl:flex-1"
     >
       {NAV.map((g) => {
         const Icon = g.icon;
         const active = g.href ? path.startsWith(g.href) : !!g.items?.some((i) => path.startsWith(i.href));
         const base = cx(
-          "nav-link inline-flex min-w-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-md px-2 py-1.5 text-sm font-medium sm:justify-start sm:px-2.5",
+          "nav-link inline-flex min-w-0 items-center justify-center gap-1 whitespace-nowrap rounded-md px-1.5 py-1.5 text-[13px] font-medium sm:justify-start sm:gap-1.5 sm:px-2.5 sm:text-sm",
           active ? "bg-surface-3 text-ink" : "text-ink-2 hover:bg-surface-2 hover:text-ink",
         );
         if (g.href) {

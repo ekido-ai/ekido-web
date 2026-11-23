@@ -24,7 +24,7 @@ const DEMOS: { role: keyof typeof DEMO_ADDRESSES; label: string; note: string; h
   { role: "owner", label: "Demo owner", note: "The owner console", href: "/admin" },
 ];
 
-/** Header control: "Sign in" opens a menu (a wallet, or a read-only demo account); signed in, the address and its menu. */
+/** Header control: "Connect wallet" opens a menu (a wallet, or a read-only demo account); signed in, the address and its menu. */
 export function WalletButton({ dark = false }: { dark?: boolean }) {
   const session = useSession();
   const router = useRouter();
@@ -92,7 +92,17 @@ export function WalletButton({ dark = false }: { dark?: boolean }) {
       ) : (
         <button type="button" onClick={toggle} disabled={busy} aria-expanded={open} aria-haspopup="menu" className={cx("inline-flex h-9 items-center gap-2 rounded-md border px-3 text-sm font-medium disabled:opacity-60", base)}>
           <Wallet className="size-4" aria-hidden />
-          {busy ? "Check your wallet…" : "Sign in"}
+          {/* Not "Sign in": the email sign-in link sits next to it, and after an email sign-in the header would still
+              say "Sign in" (ekido-ai/ekido-core#119). */}
+          {busy ? (
+            "Check your wallet…"
+          ) : (
+            // "Wallet" is as wide as the old "Sign in", so narrower headers don't wrap to a second line.
+            <>
+              <span className="hidden xl:inline">Connect wallet</span>
+              <span className="xl:hidden">Wallet</span>
+            </>
+          )}
         </button>
       )}
       {open && !session && (
