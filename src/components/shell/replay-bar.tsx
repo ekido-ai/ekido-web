@@ -6,6 +6,7 @@ import { useDashboard, usePlayer, usePlayerSnapshot } from "@/lib/events/source-
 import { formatClock } from "@/lib/events/describe";
 import { momentLabel, momentsOf, type MomentKind } from "@/lib/events/moments";
 import { cx } from "@/components/ui/cx";
+import { scrubTarget } from "./scrub";
 
 const SPEEDS = [0.5, 1, 2, 4];
 const dot: Record<MomentKind, string> = {
@@ -85,7 +86,7 @@ export function ReplayBar() {
         </span>
 
         {/* Scrubber with key moments. */}
-        <div className="relative order-last w-full px-1 py-3 sm:order-none sm:w-auto sm:flex-1 sm:px-0">
+        <div className="relative order-last w-full px-1 py-[3px] sm:order-none sm:w-auto sm:flex-1 sm:px-0">
           <div
             ref={track}
             role="slider"
@@ -95,7 +96,9 @@ export function ReplayBar() {
             aria-valuemax={Math.round(dur / 1000)}
             aria-valuenow={Math.round(snap.positionMs / 1000)}
             aria-valuetext={formatClock(snap.positionMs)}
-            className="group relative h-1.5 cursor-pointer rounded-full bg-surface-3 outline-none focus-visible:ring-2 focus-visible:ring-ink"
+            // A 24 px tall hit area around the 6 px track, and no browser panning, so a finger can drag it
+            // (ekido-ai/ekido-core#128).
+            className="group relative h-6 cursor-pointer touch-none rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ink"
             onPointerDown={(e) => {
               e.currentTarget.setPointerCapture(e.pointerId);
               player.seek(msAt(e.clientX));
@@ -106,14 +109,15 @@ export function ReplayBar() {
             }}
             onPointerLeave={() => setHoverMs(null)}
             onKeyDown={(e) => {
-              if (e.key === "ArrowLeft") player.seek(snap.positionMs - 5000);
-              else if (e.key === "ArrowRight") player.seek(snap.positionMs + 5000);
-              else return;
+              const to = scrubTarget(e.key, snap.positionMs, dur);
+              if (to === null) return;
+              player.seek(to);
               e.preventDefault();
               e.stopPropagation();
             }}
           >
-            <div className="absolute inset-y-0 left-0 rounded-full bg-accent transition-[width] duration-150" style={{ width: pct(snap.positionMs) }} />
+            <div className="absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-surface-3" />
+            <div className="absolute left-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-accent transition-[width] duration-150" style={{ width: pct(snap.positionMs) }} />
             <div
               className="absolute top-1/2 size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-surface bg-accent shadow transition-transform group-hover:scale-125"
               style={{ left: pct(snap.positionMs) }}

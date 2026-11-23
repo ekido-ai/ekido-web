@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import Link from "next/link";
 import { BadgeCheck, Blocks, ChevronDown, Code2, Coins, Gauge, RotateCcw, Server, ShieldCheck, Tag, Wallet } from "lucide-react";
 import { cx } from "@/components/ui/cx";
 import { useTranslations } from "next-intl";
+import { closedMenu, menuReducer, type MenuState } from "./menu-state";
 
 /*
  * Four choices instead of ten (Hick's law): the screens are grouped by what a person came to do.
@@ -38,12 +39,13 @@ export const NAV: Group[] = [
 
 export function NavGroups({ path }: { path: string }) {
   const t = useTranslations("shell.nav");
-  const [open, setOpen] = useState<string | null>(null);
+  // Hover opens a group's menu and a click keeps it open (menu-state.ts, ekido-ai/ekido-core#123).
+  const [{ open }, dispatch] = useReducer(menuReducer<string>, closedMenu as MenuState<string>);
   const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    const close = (e: MouseEvent) => ref.current && !ref.current.contains(e.target as Node) && setOpen(null);
-    const esc = (e: KeyboardEvent) => e.key === "Escape" && setOpen(null);
+    const close = (e: MouseEvent) => ref.current && !ref.current.contains(e.target as Node) && dispatch({ type: "close" });
+    const esc = (e: KeyboardEvent) => e.key === "Escape" && dispatch({ type: "close" });
     document.addEventListener("click", close);
     document.addEventListener("keydown", esc);
     return () => {
@@ -55,7 +57,7 @@ export function NavGroups({ path }: { path: string }) {
   const [shownPath, setShownPath] = useState(path);
   if (shownPath !== path) {
     setShownPath(path);
-    setOpen(null);
+    dispatch({ type: "close" });
   }
 
   return (
@@ -81,14 +83,16 @@ export function NavGroups({ path }: { path: string }) {
         }
         const isOpen = open === g.key;
         return (
-          <div key={g.key} className="relative" onMouseEnter={() => setOpen(g.key)} onMouseLeave={() => setOpen((o) => (o === g.key ? null : o))}>
-            <button type="button" aria-expanded={isOpen} aria-haspopup="menu" aria-current={active ? "page" : undefined} onClick={() => setOpen(isOpen ? null : g.key)} className={cx(base, "w-full")}>
+          // Not positioned on phones, so the menu below is placed against the header and fits the screen
+          // (ekido-ai/ekido-core#129); from sm up it hangs under its own button.
+          <div key={g.key} className="sm:relative" onMouseEnter={() => dispatch({ type: "hover", key: g.key })} onMouseLeave={() => dispatch({ type: "leave" })}>
+            <button type="button" aria-expanded={isOpen} aria-haspopup="menu" aria-current={active ? "page" : undefined} onClick={() => dispatch({ type: "click", key: g.key })} className={cx(base, "w-full")}>
               <Icon className="hidden size-4 shrink-0 sm:block" aria-hidden />
               <span className="truncate">{t(`groups.${g.key}`)}</span>
               <ChevronDown className={cx("size-3.5 shrink-0 transition-transform duration-200", isOpen && "rotate-180")} aria-hidden />
             </button>
             {isOpen && (
-              <div role="menu" className="nav-pop absolute left-0 top-full z-50 w-72 pt-2">
+              <div role="menu" className="nav-pop absolute inset-x-4 top-full z-50 pt-2 sm:inset-x-auto sm:left-0 sm:w-72">
                 <div className="rounded-xl border border-line-strong bg-surface p-1.5 shadow-soft">
                   {g.items!.map((i) => {
                     const ItemIcon = i.icon;

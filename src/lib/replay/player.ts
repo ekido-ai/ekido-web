@@ -32,6 +32,8 @@ export class ReplayPlayer {
   private timer: ReturnType<typeof setTimeout> | null = null;
   private listeners = new Set<Listener>();
   private snapshot: PlayerSnapshot;
+  /** The snapshot before anything happened, which is what the server rendered. */
+  private readonly initial: PlayerSnapshot;
 
   constructor(recording: Recording) {
     this.recording = recording;
@@ -39,6 +41,7 @@ export class ReplayPlayer {
     const t0 = this.events.length ? Date.parse(this.events[0].ts) : 0;
     this.offsets = this.events.map((e) => Date.parse(e.ts) - t0);
     this.snapshot = this.makeSnapshot();
+    this.initial = this.snapshot;
   }
 
   get durationMs(): number {
@@ -51,6 +54,13 @@ export class ReplayPlayer {
   };
 
   getSnapshot = (): PlayerSnapshot => this.snapshot;
+
+  /**
+   * For useSyncExternalStore's getServerSnapshot: what the server rendered. A part of the page that hydrates after
+   * the player has moved (seeked by `?at=`, or played) must still hydrate against the server's HTML, or React
+   * throws a hydration error (#418) and re-renders it on the client.
+   */
+  getServerSnapshot = (): PlayerSnapshot => this.initial;
 
   play(): void {
     if (this.playing) return;
