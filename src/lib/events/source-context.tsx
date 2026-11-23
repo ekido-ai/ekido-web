@@ -1,12 +1,15 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { usePathname } from "next/navigation";
 import realRun from "../../../replay/recordings/real-run.json";
 import { config } from "../config";
 import type { Connection } from "../live/live-source";
 import { RealLiveSource, type RealSnapshot } from "../live/real-source";
 import { recordingFromRealRun, type RealRecording } from "../live/translate";
 import { ReplayPlayer, type PlayerSnapshot } from "../replay/player";
+import { privateListsReadable } from "../platform/signed-in";
+import { showsJob } from "./job-paths";
 import type { DashboardState } from "./reduce";
 
 /** Every job start_demo_job.py runs has this budget unless told otherwise, including the recorded one. */
@@ -58,6 +61,9 @@ export function EventSourceProvider({ children }: { children: React.ReactNode })
   const [live] = useState(() => new RealLiveSource(config.coordinatorUrl));
   const [mode, setModeState] = useState<SourceMode>(config.defaultSource);
   const autoplaySpeed = useRef(0);
+  // Only the job screens read the coordinator; other pages make no job or provider calls (ekido-ai/ekido-internal#93).
+  const path = usePathname();
+  const onJobScreen = showsJob(path);
 
   // Restore the viewer's last choice after hydration (per-browser convenience only).
   // `?at=<seconds>` opens the replay at that moment: for rehearsals and screenshots.
@@ -93,9 +99,19 @@ export function EventSourceProvider({ children }: { children: React.ReactNode })
       return;
     }
     player.pause();
-    live.start();
-    return () => live.stop();
-  }, [mode, live, player]);
+    if (!onJobScreen) return;
+    let alive = true;
+    // Known before the first poll, so a local demo's first round already has its providers.
+    void privateListsReadable().then((readable) => {
+      if (!alive) return;
+      live.setProvidersReadable(readable);
+      live.start();
+    });
+    return () => {
+      alive = false;
+      live.stop();
+    };
+  }, [mode, live, player, onJobScreen]);
 
   useEffect(() => () => player.pause(), [player]);
 

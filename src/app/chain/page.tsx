@@ -14,6 +14,7 @@ import { BASE_SEPOLIA, STATES, readLedger, readWallet, type Ledger } from "@/lib
 import { journalCsv, short, usdc, type EscrowEvent } from "@/lib/chain/ledger";
 import { compareListings, type CoordinatorProvider } from "@/lib/chain/registry";
 import { config } from "@/lib/config";
+import { usePrivateListsReadable } from "@/lib/platform/signed-in";
 
 const scan = (kind: "address" | "tx" | "block", value: string) => `${BASE_SEPOLIA.explorer}/${kind}/${value}`;
 const eth = (wei: bigint) => {
@@ -58,23 +59,35 @@ export default function ChainPage() {
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState<[number, number] | null>(null);
   const [busy, setBusy] = useState(false);
+  const [started, setStarted] = useState(false);
+  // Signed in (or a local coordinator): read straight away, using our log index. Signed out on a public server: the
+  // index is private and reading the whole chain takes ~150 public-RPC calls, so it waits for "Check on chain"
+  // (ekido-ai/ekido-internal#93, #94).
+  const indexReadable = usePrivateListsReadable();
 
   const load = useCallback(async () => {
+    setStarted(true);
     setBusy(true);
     setError(null);
     setProgress(null);
     try {
-      setLedger(await readLedger((done, total) => setProgress([done, total])));
+      setLedger(await readLedger((done, total) => setProgress([done, total]), { useIndex: indexReadable === true }));
     } catch (e) {
       setError(e instanceof Error ? e.message.split("\n")[0] : "The chain could not be read.");
     } finally {
       setBusy(false);
     }
-  }, []);
+  }, [indexReadable]);
 
   useEffect(() => {
-    void load();
-  }, [load]);
+    if (indexReadable !== true) return;
+    // Runs once the answer is known; the state updates inside load() happen after its first await.
+    const timer = setTimeout(() => void load(), 0);
+    return () => clearTimeout(timer);
+  }, [indexReadable, load]);
+  // Signed out on a public server, until "Check on chain" is pressed.
+  const waiting = indexReadable === false && !started;
+  const idle = !started && !ledger;
 
   return (
     <div className="space-y-6">
@@ -82,13 +95,15 @@ export default function ChainPage() {
         title="On-chain ledger"
         aside={
           <div className="flex flex-wrap items-center gap-2">
-            <StatusPill tone={ledger ? "good" : error ? "critical" : "active"} size="lg">
-              {ledger ? `${BASE_SEPOLIA.name} · block ${ledger.block.toLocaleString("en-US")}` : error ? "Chain unreachable" : "Reading the chain"}
+            <StatusPill tone={ledger ? "good" : error ? "critical" : idle ? "neutral" : "active"} size="lg">
+              {ledger ? `${BASE_SEPOLIA.name} · block ${ledger.block.toLocaleString("en-US")}` : error ? "Chain unreachable" : idle ? "Not read yet" : "Reading the chain"}
             </StatusPill>
-            <Button onClick={load} disabled={busy} aria-label="Read the chain again">
-              <RefreshCw className={cx("size-4", busy && "animate-spin")} aria-hidden />
-              Read again
-            </Button>
+            {started && (
+              <Button onClick={load} disabled={busy} aria-label="Read the chain again">
+                <RefreshCw className={cx("size-4", busy && "animate-spin")} aria-hidden />
+                Read again
+              </Button>
+            )}
           </div>
         }
       >
@@ -100,7 +115,22 @@ export default function ChainPage() {
         <ErrorState title="Couldn't read Base Sepolia" detail={`${error} Public RPCs sometimes limit requests, so wait a moment and try again.`} onRetry={load} />
       )}
 
-      {!ledger && !error && (
+      {waiting && (
+        <Panel>
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <p className="max-w-2xl text-ink-2">
+              Your browser reads the escrow&apos;s whole history from {BASE_SEPOLIA.name}&apos;s public servers, about 150 requests. Start it when you want
+              to check: nothing is read until you do.
+            </p>
+            <Button variant="primary" onClick={load}>
+              <ShieldCheck className="size-4" aria-hidden />
+              Check on chain
+            </Button>
+          </div>
+        </Panel>
+      )}
+
+      {started && !ledger && !error && (
         <Panel>
           <div className="space-y-3" role="status" aria-live="polite">
             <p className="text-ink-2">
@@ -114,12 +144,12 @@ export default function ChainPage() {
         </Panel>
       )}
 
-      {ledger && <LedgerView ledger={ledger} />}
+      {ledger && <LedgerView ledger={ledger} coordinatorReadable={indexReadable === true} />}
     </div>
   );
 }
 
-function LedgerView({ ledger }: { ledger: Ledger }) {
+function LedgerView({ ledger, coordinatorReadable }: { ledger: Ledger; coordinatorReadable: boolean }) {
   const { reserves: r, counters, roles, book } = ledger;
   const clients = new Set(ledger.jobs.map((j) => j.split.client.toLowerCase()));
   const owedProviders = [...ledger.withdrawableOf].filter(([a]) => !clients.has(a)).reduce((s, [, v]) => s + v, BigInt(0));
@@ -232,7 +262,7 @@ function LedgerView({ ledger }: { ledger: Ledger }) {
         </ul>
       </Panel>
 
-      <RegistryPanel ledger={ledger} />
+      <RegistryPanel ledger={ledger} coordinatorReadable={coordinatorReadable} />
 
       <section className="space-y-4" aria-labelledby="jobs-h">
         <h2 id="jobs-h" className="font-serif text-2xl text-ink">
@@ -396,14 +426,16 @@ function LedgerView({ ledger }: { ledger: Ledger }) {
   );
 }
 
-function RegistryPanel({ ledger }: { ledger: Ledger }) {
-  const [coord, setCoord] = useState<CoordinatorProvider[] | null | "down" | "private">(null);
+function RegistryPanel({ ledger, coordinatorReadable }: { ledger: Ledger; coordinatorReadable: boolean }) {
+  const [coord, setCoord] = useState<CoordinatorProvider[] | null | "down" | "private">(coordinatorReadable ? null : "private");
   useEffect(() => {
+    // Signed out on a public server the list is private: don't ask for a 401 (ekido-ai/ekido-internal#93).
+    if (!coordinatorReadable) return;
     fetch(`${config.coordinatorUrl}/providers`, { signal: AbortSignal.timeout(8000) })
       .then((r) => (r.status === 401 || r.status === 403 ? "private" : r.ok ? r.json() : Promise.reject(r.status)))
       .then((rows: CoordinatorProvider[] | "private") => setCoord(rows))
       .catch(() => setCoord("down"));
-  }, []);
+  }, [coordinatorReadable]);
   const { listings, offChainOnly } = compareListings(ledger.registry, Array.isArray(coord) ? coord : null);
   const label = { matches: "Coordinator shows exactly these terms", differs: "Coordinator shows different terms", "not-listed": "Not listed by the coordinator" } as const;
   const tone = { matches: "good", differs: "critical", "not-listed": "warning" } as const;

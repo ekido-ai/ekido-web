@@ -143,6 +143,10 @@ for (const path of ROUTES) {
 
     await page.goto(path);
     if (LOADED[path]) {
+      // Signed out on a public server, /chain reads the chain only when asked (ekido-ai/ekido-internal#93).
+      const check = page.getByRole("button", { name: "Check on chain" });
+      await expect(page.getByText(LOADED[path]).first().or(check)).toBeVisible({ timeout: 90_000 });
+      if (await check.isVisible()) await check.click();
       await expect(page.getByText(LOADED[path]).first(), `${path} finished loading, so the whole page is checked`).toBeVisible({ timeout: 90_000 });
     } else {
       // Some pages poll, so the network may never go quiet: wait for it a while, then check what's there.

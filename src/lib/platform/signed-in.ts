@@ -1,0 +1,66 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { hasAccountHint } from "./account-hint";
+import { platform } from "./api";
+import { config } from "../config";
+
+/*
+ * "Is an Ekido account signed in here?" for calls that only an account may make (ekido-ai/ekido-internal#93).
+ * Without the account note it answers no straight away, so a signed-out visitor sends nothing that would be refused.
+ * With the note it asks `/v1/me` once and shares the answer; a 401 there removes the note (api.ts).
+ */
+
+let asking: Promise<boolean> | null = null;
+let known = false;
+
+export function accountSignedIn(): Promise<boolean> {
+  if (!hasAccountHint()) {
+    known = false;
+    return Promise.resolve(false);
+  }
+  if (known) return Promise.resolve(true);
+  asking ??= platform
+    .me()
+    .then(
+      () => (known = true),
+      () => false,
+    )
+    .finally(() => {
+      asking = null;
+    });
+  return asking;
+}
+
+/**
+ * True when the coordinator is served from the site's own host (Caddy's `/sepolia`), which is how the public
+ * deployments run. There its provider list, settlements and log index are private. A coordinator on another origin
+ * is a local demo or test, where they are open to the page.
+ */
+export function coordinatorOnSite(coordinatorUrl: string, siteHref: string): boolean {
+  try {
+    return new URL(coordinatorUrl, siteHref).origin === new URL(siteHref).origin;
+  } catch {
+    return false;
+  }
+}
+
+/** Whether the page may ask for the coordinator's private lists without being refused. */
+export function privateListsReadable(): Promise<boolean> {
+  if (typeof window === "undefined") return Promise.resolve(false);
+  if (!coordinatorOnSite(config.coordinatorUrl, window.location.href)) return Promise.resolve(true);
+  return accountSignedIn();
+}
+
+/** privateListsReadable() as state; null until known. */
+export function usePrivateListsReadable(): boolean | null {
+  const [readable, setReadable] = useState<boolean | null>(null);
+  useEffect(() => {
+    let alive = true;
+    void privateListsReadable().then((v) => alive && setReadable(v));
+    return () => {
+      alive = false;
+    };
+  }, []);
+  return readable;
+}

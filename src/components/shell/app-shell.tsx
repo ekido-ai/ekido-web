@@ -25,9 +25,8 @@ import { SiteFooter } from "./site-footer";
 import { LogoMark } from "@/components/gpu/logo-mark";
 import { EasterEggs } from "@/components/gpu/easter-eggs";
 import { StorageNotice } from "./storage-notice";
+import { showsJob } from "@/lib/events/job-paths";
 
-/** Screens that show a job, and so need the live/recorded controls. */
-const DASH_PATHS = ["/dashboard", "/recovery", "/quality", "/settlement", "/verify", "/earnings", "/replay", "/jobs/new"];
 
 
 /**
@@ -161,7 +160,7 @@ function SourceBar() {
 export function AppShell({ children }: { children: React.ReactNode }) {
   const path = usePathname();
   // The live/recorded controls and the coordinator banner belong to the screens that show a job.
-  const dash = DASH_PATHS.some((p) => path.startsWith(p));
+  const dash = showsJob(path);
   // The home page is the product site: its own section links and one primary button, no chain status.
   const landing = path === "/" || ["/products/", "/solutions", "/developers", "/pricing", "/trust", "/roadmap"].some((p) => path.startsWith(p));
   return (

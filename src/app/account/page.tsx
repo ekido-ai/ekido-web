@@ -17,6 +17,7 @@ import { viewAs } from "@/lib/wallet/session";
 import { config } from "@/lib/config";
 import { AnimatedNumber } from "@/components/motion/animated-number";
 import { Celebrate } from "@/components/motion/celebrate";
+import { privateListsReadable } from "@/lib/platform/signed-in";
 
 const scan = (kind: "address" | "tx", v: string) => `${BASE_SEPOLIA.explorer}/${kind}/${v}`;
 const eth = (wei: bigint) => (Number(wei) / 1e18).toFixed(6).replace(/0+$/, "").replace(/\.$/, "") || "0";
@@ -73,6 +74,8 @@ function SignedIn({ address, expiresAt, demo }: { address: `0x${string}`; expire
     } catch (e) {
       setError(e instanceof Error ? e.message.split("\n")[0] : "The chain couldn't be read.");
     }
+    // The provider list is private on a public server; signed out, it isn't asked for (ekido-ai/ekido-internal#93).
+    if (!(await privateListsReadable())) return setCoord(null);
     fetch(`${config.coordinatorUrl}/providers`, { signal: AbortSignal.timeout(8000) })
       .then((r) => (r.ok ? r.json() : null))
       .then(setCoord)

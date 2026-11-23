@@ -25,6 +25,7 @@ import { buttonStyles } from "@/components/ui/button-styles";
 import { StatusIcon, StatusPill, type Tone } from "@/components/ui/status";
 import { EmptyState, ErrorState, LoadingState } from "@/components/ui/states";
 import { cx } from "@/components/ui/cx";
+import { usePrivateListsReadable } from "@/lib/platform/signed-in";
 
 const stageTone: Record<Stage, Tone> = { proposed: "warning", reported: "neutral", disputed: "serious", refund_only: "idle", error: "critical" };
 const stageShort: Record<Stage, string> = {
@@ -117,9 +118,12 @@ export default function EarningsPage() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(true);
   const [nonce, setNonce] = useState(0);
+  // Settlements are private on a public server: a signed-out visitor is told to sign in, and nothing is asked
+  // for that would only be refused (ekido-ai/ekido-internal#93).
+  const readable = usePrivateListsReadable();
 
   useEffect(() => {
-    if (mode !== "live") return;
+    if (mode !== "live" || readable !== true) return;
     let alive = true;
     loadLedger(get)
       .then((l) => {
@@ -141,7 +145,7 @@ export default function EarningsPage() {
     return () => {
       alive = false;
     };
-  }, [mode, nonce]);
+  }, [mode, nonce, readable]);
 
   const load = () => {
     setBusy(true);
@@ -156,7 +160,7 @@ export default function EarningsPage() {
       <PageHeader
         title="Earnings"
         aside={
-          mode === "live" && (
+          mode === "live" && readable === true && (
             <Button size="sm" onClick={() => load()} disabled={busy}>
               <RefreshCw className={cx("size-3.5", busy && "animate-spin motion-reduce:animate-none")} aria-hidden /> Refresh
             </Button>
@@ -178,6 +182,17 @@ export default function EarningsPage() {
         >
           Earnings reads every settlement from the live coordinator. The recording has one job; its split is on the{" "}
           <Link href="/settlement" className="underline underline-offset-2">Settlement</Link> screen.
+        </EmptyState>
+      ) : readable === false ? (
+        <EmptyState
+          title="Sign in to see earnings"
+          action={
+            <Link href="/login" className={buttonStyles("primary", "md")}>
+              Sign in
+            </Link>
+          }
+        >
+          Settlements list what each provider is owed, so the coordinator shows them only to signed-in accounts.
         </EmptyState>
       ) : error ? (
         <ErrorState title="Couldn't load earnings" detail={`${error} Nothing is shown rather than a stale or partial total.`} onRetry={() => load()} />
