@@ -631,8 +631,10 @@
     "scopes": "Access",
     "scopeNames": {
       "jobs": "Start and read jobs",
-      "models.read": "Read models and reports",
-      "models.predict": "Run models"
+      "models": {
+        "read": "Read models and reports",
+        "predict": "Run models"
+      }
     },
     "createKey": "Create key",
     "revoke": "Revoke",
