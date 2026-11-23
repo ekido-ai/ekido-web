@@ -194,7 +194,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               {landing ? tAuth("headerSignIn") : tAuth("headerSettings")}
             </Link>
             {landing && (
-              <Link href="/dashboard" className="press inline-flex h-9 items-center rounded-full bg-action sm:ml-1 px-4 text-sm font-semibold text-action-ink hover:bg-action-hover">
+              <Link href="/dashboard" className="press inline-flex h-9 items-center rounded-full bg-action px-4 text-sm font-semibold text-action-ink hover:bg-action-hover sm:ml-1">
                 Open the app
               </Link>
             )}
