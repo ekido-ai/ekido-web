@@ -57,10 +57,10 @@ test("app header: hover then click keeps How it works open, and choosing an item
 });
 
 for (const path of ["/", "/dashboard"]) {
-  test(`wallet Sign in menu fits on screen on ${path}`, async ({ page }) => {
+  test(`wallet sign-in menu fits on screen on ${path}`, async ({ page }) => {
     if (isPhone()) await page.setViewportSize({ width: 360, height: 780 });
     await page.goto(path);
-    await page.locator("header").getByRole("button", { name: /^Sign in$/ }).click();
+    await page.locator("header").getByRole("button", { name: /^(Connect wallet|Wallet)$/ }).click();
     await onScreen(page, await page.getByRole("menu").first().boundingBox());
   });
 }

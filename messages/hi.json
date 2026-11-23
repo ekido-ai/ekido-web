@@ -8,7 +8,10 @@
     "wholePlatform": "See the whole platform →",
     "byIndustry": "By industry",
     "byRole": "By role",
-    "openApp": "Open the app"
+    "openApp": "Open the app",
+    "menu": "Menu",
+    "closeMenu": "Close menu",
+    "emailSignIn": "Sign in with email"
   },
   "home": {
     "live": "Live on a public test network",
