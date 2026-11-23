@@ -10,7 +10,7 @@ import { platform } from "@/lib/platform/api";
  * The header's account control. Signed in (the 30-day session cookie is valid), it shows the email and leads to
  * Settings; signed out, it says "Sign in". So a person can always see whether they're signed in.
  */
-export function AccountLink({ path }: { path: string }) {
+export function AccountLink({ path, hideOnPhone = false }: { path: string; hideOnPhone?: boolean }) {
   const t = useTranslations("auth");
   const [email, setEmail] = useState<string | null | undefined>(undefined);
 
@@ -33,7 +33,8 @@ export function AccountLink({ path }: { path: string }) {
       aria-current={here ? "page" : undefined}
       title={signedIn ? t("headerSignedInAs", { email: email || "" }) : undefined}
       className={cx(
-        "inline-flex h-9 max-w-[9rem] items-center gap-2 truncate rounded-md px-2 text-sm font-medium sm:max-w-[14rem] sm:px-2.5",
+        "h-9 max-w-[9rem] items-center gap-2 truncate rounded-md px-2 text-sm font-medium sm:inline-flex sm:max-w-[14rem] sm:px-2.5",
+        hideOnPhone ? "hidden" : "inline-flex",
         here ? "bg-surface-3 text-ink" : "text-ink-2 hover:bg-surface-2 hover:text-ink",
       )}
     >

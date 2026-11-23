@@ -181,11 +181,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {landing ? <MarketingNav /> : <NavGroups path={path} />}
           <div className="ml-auto flex items-center gap-1 2xl:ml-0">
             {!landing && <ChainPulse />}
-            {/* Wallet is optional (crypto users only); on a phone the header keeps room for sign-in. */}
-            <span className="hidden sm:contents">
-              <WalletButton />
-            </span>
-            <AccountLink path={path} />
+            <WalletButton />
+            {/* On a phone the marketing pages put sign-in in the Menu, so the link shows there only from sm up. */}
+            <AccountLink path={path} hideOnPhone={landing} />
             {landing && (
               <Link href="/dashboard" className="press inline-flex h-9 items-center rounded-full bg-action px-4 text-sm font-semibold text-action-ink hover:bg-action-hover sm:ml-1">
                 Open the app
