@@ -654,7 +654,8 @@
     "done": "I've stored it",
     "needScope": "Pick at least one kind of access.",
     "needName": "Give the key a name.",
-    "readOnly": "Only owners and admins can invite people or manage keys."
+    "readOnly": "Only owners and admins can invite people or manage keys.",
+    "keysLabel": "API keys"
   },
   "admin": {
     "title": "Admin",
@@ -861,7 +862,20 @@
     "paying": "Waiting for the payment…",
     "starting": "Payment received. Starting your training…",
     "paymentFailed": "The payment didn't go through. Nothing was charged; try again.",
-    "paymentSlow": "We haven't heard from Razorpay yet. If you paid, your training starts as soon as it confirms; check back in a minute."
+    "paymentSlow": "We haven't heard from Razorpay yet. If you paid, your training starts as soon as it confirms; check back in a minute.",
+    "quoteError": "Couldn't get a price",
+    "heldFor": "{n, plural, one {This price is held for 1 more minute.} other {This price is held for # more minutes.}}",
+    "expired": "This price has expired. Get a new one; your examples are kept.",
+    "newQuote": "Get a new price",
+    "dropTitle": "Drop your CSV file here, or choose one",
+    "dropHint": "A .csv file, up to {mb} MB. It stays on this device until you press Upload.",
+    "dropActive": "Drop it to use this file",
+    "dropReading": "Reading {file}…",
+    "dropChosen": "{file} · {size}",
+    "dropAnother": "Choose another file",
+    "dropWrongType": "{file} isn't a CSV file. Choose a file that ends in .csv.",
+    "dropTooBig": "{file} is larger than {mb} MB. Use fewer or shorter examples.",
+    "dropEmpty": "{file} is empty. Choose the file with your examples."
   },
   "job": {
     "title": "Your model",
@@ -871,7 +885,9 @@
       "starting": "Starting",
       "training": "Training",
       "checking": "Checking",
-      "passed": "Ready"
+      "passed": "Ready",
+      "refunded": "Refunded",
+      "cancelled": "Cancelled"
     },
     "stageLead": {
       "starting": "Finding a device to train on.",
@@ -899,6 +915,8 @@
     "modelLead": "Download it to run anywhere, or call it with your API key.",
     "download": "Download the model",
     "callTitle": "Call it from your code",
-    "callLead": "Create a key with Run models in Settings, then:"
+    "callLead": "Create a key with Run models in Settings, then:",
+    "timelineLabel": "Where your training is",
+    "percent": "{n}% trained"
   }
 }

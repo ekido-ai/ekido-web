@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/states";
 import { StatusPill, type Tone } from "@/components/ui/status";
 import { Timeline } from "@/components/ui/timeline";
+import { PlatformKit } from "@/components/platform/kit-samples";
 import { TruthBadge, type Truth } from "@/components/ui/truth-badge";
 
 const truths: Truth[] = ["REAL", "REAL_SEPARATE", "CAPPED_PROFILE", "INJECTED_FAULT", "RECORDED", "SAMPLE", "LOCAL_CHAIN", "SYNTHETIC"];
@@ -136,6 +137,9 @@ export default function KitPage() {
           <TxStatus label="finalize" status="failed" hash={"0x" + "ef".repeat(32)} href={null} />
         </div>
       </Panel>
+
+      {/* P4: the platform components, every state (ekido-ai/ekido-internal#45). */}
+      <PlatformKit />
     </div>
   );
 }
