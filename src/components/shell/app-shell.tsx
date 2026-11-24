@@ -163,7 +163,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   // The live/recorded controls and the coordinator banner belong to the screens that show a job.
   const dash = DASH_PATHS.some((p) => path.startsWith(p));
   // The home page is the product site: its own section links and one primary button, no chain status.
-  const landing = path === "/" || ["/products/", "/solutions", "/developers", "/pricing", "/trust", "/roadmap"].some((p) => path.startsWith(p));
+  const landing = path === "/" || path === "/products" || ["/products/", "/solutions", "/developers", "/pricing", "/trust", "/roadmap"].some((p) => path.startsWith(p));
+  // A customer's own screens (train a model, a job, settings) are a normal SaaS app: no chain status and no wallet button in the header.
+  // They pay in rupees; the chain is a proof layer, shown on the pages that are about it.
+  const customer = ["/train", "/settings", "/prepare"].some((p) => path.startsWith(p)) || (path.startsWith("/jobs/") && !path.startsWith("/jobs/new"));
   return (
     <div className="app-backdrop relative flex min-h-full flex-col">
       <a
@@ -180,8 +183,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </Link>
           {landing ? <MarketingNav /> : <NavGroups path={path} />}
           <div className="ml-auto flex items-center gap-1 2xl:ml-0">
-            {!landing && <ChainPulse />}
-            <WalletButton />
+            {!landing && !customer && <ChainPulse />}
+            {!customer && <WalletButton />}
             {/* On a phone the marketing pages put sign-in in the Menu, so the link shows there only from sm up. */}
             <AccountLink path={path} hideOnPhone={landing} />
             {landing && (

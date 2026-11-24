@@ -139,7 +139,7 @@ export async function PricingSection() {
           {p.featured && <span aria-hidden className="edge-strip absolute inset-x-0 top-0 h-1.5 bg-accent" />}
           <p className="text-sm text-muted">{p.who}</p>
           <h3 className="mt-1 text-xl text-ink">{p.name}</h3>
-          <p className="figure mt-5 font-serif text-4xl text-ink">{p.price}</p>
+          <p className={/\d/.test(p.price) ? "figure mt-5 font-serif text-4xl text-ink" : "mt-5 text-4xl font-bold tracking-tight text-ink"}>{p.price}</p>
           <p className="text-sm text-muted">{p.note}</p>
           <ul className="mb-8 mt-6 space-y-2.5 text-[15px] text-ink-2">
             {p.points.map((t) => (

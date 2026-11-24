@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, Check, ChevronDown, X } from "lucide-react";
+import { ArrowRight, ArrowUpRight, BadgeCheck, Check, ChevronDown, MessageSquareText, Server, Upload, X } from "lucide-react";
 import { DashboardLink } from "@/components/nexora/dashboard-link";
 import { LogoMark } from "@/components/gpu/logo-mark";
 import { RelayHero } from "@/components/landing/relay-hero";
@@ -69,7 +69,8 @@ export default async function Landing() {
     <div className="landing -mx-4 -mt-5 overflow-x-clip text-ink sm:-mx-6">
       {/* ── Hero: centred statement, the product right under it ── */}
       <section className="dot-grid relative border-b border-line">
-        <div className={`${wrap} pb-20 pt-20 text-center lg:pt-24`}>
+        <div className="pointer-events-none absolute! inset-x-0 top-0 h-[34rem] bg-[radial-gradient(60%_60%_at_50%_0%,rgba(254,80,0,0.11),transparent_72%)]" aria-hidden />
+        <div className={`${wrap} pb-24 pt-20 text-center lg:pt-28`}>
           <Link href="/status" className="mb-7 inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 text-sm text-ink-2 hover:text-ink">
             <span className="size-2 rounded-full bg-success" />
             {t("live")}
@@ -89,8 +90,18 @@ export default async function Landing() {
               {t("ctaEarn")}
             </Link>
           </div>
-          <div className="mx-auto mt-16 max-w-5xl text-left">
-            <ProductPreview />
+          <div className="relative mx-auto mt-16 max-w-5xl text-left">
+            <div className="rounded-[1.75rem] shadow-[0_40px_90px_-30px_rgba(19,30,41,0.35)]">
+              <ProductPreview />
+            </div>
+            <div className="absolute -right-4 -top-5 hidden w-60 rounded-xl border border-line bg-surface p-3.5 text-sm shadow-lg xl:block" aria-hidden>
+              <p className="flex items-center gap-2 font-semibold text-ink"><span className="size-2 rounded-full bg-success" />{t("chips.moved")}</p>
+              <p className="mt-1 text-xs text-ink-2">{t("chips.movedNote")}</p>
+            </div>
+            <div className="absolute -left-4 bottom-12 hidden w-60 rounded-xl border border-line bg-surface p-3.5 text-sm shadow-lg xl:block" aria-hidden>
+              <p className="flex items-center gap-2 font-semibold text-ink"><BadgeCheck className="size-4 text-success" />{t("chips.passed")}</p>
+              <p className="mt-1 text-xs text-ink-2">{t("chips.passedNote")}</p>
+            </div>
           </div>
         </div>
       </section>
@@ -104,6 +115,33 @@ export default async function Landing() {
           ))}
         </div>
       </div>
+
+      {/* ── How it works: four steps ── */}
+      <section className="border-b border-line">
+        <div className={`${wrap} py-24`}>
+          <div className="max-w-2xl">
+            <Eyebrow>{t("how.eyebrow")}</Eyebrow>
+            <h2 className="text-ink">{t("how.title")}</h2>
+          </div>
+          <ol className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {(t.raw("how.steps") as { title: string; body: string }[]).map((s, i) => {
+              const Icon = [MessageSquareText, Upload, BadgeCheck, Server][i] ?? Check;
+              return (
+                <li key={s.title} className="artifact relative p-6">
+                  <span className="flex items-center justify-between">
+                    <span className="grid size-11 place-items-center rounded-xl bg-ink text-ink-inverse">
+                      <Icon className="size-5" aria-hidden />
+                    </span>
+                    <span className="figure text-3xl leading-none text-line-strong">{i + 1}</span>
+                  </span>
+                  <h3 className="mt-5 text-ink">{s.title}</h3>
+                  <p className="mt-2 text-[15px] leading-relaxed text-ink-2">{s.body}</p>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+      </section>
 
       {/* ── Feature rows ── */}
       <section className={`${wrap} space-y-28 py-28`}>
@@ -129,8 +167,8 @@ export default async function Landing() {
       </section>
 
       {/* ── Metrics band ── */}
-      <section className="border-y border-line bg-surface-2/60">
-        <div className={`${wrap} py-16`}>
+      <section className="theme-dark ink-band border-y border-line">
+        <div className={`${wrap} py-20`}>
           <div className="flex flex-wrap items-end justify-between gap-4">
             <h2 className="max-w-xl text-ink">{t("metricsTitle")}</h2>
             <DashboardLink mode="recorded" className="inline-flex items-center gap-1.5 font-semibold text-ink hover:text-accent-text">
@@ -140,7 +178,7 @@ export default async function Landing() {
           <dl className="mt-10 grid grid-cols-2 gap-8 lg:grid-cols-4">
             {metrics.map((m) => (
               <div key={m.label} className="border-l-2 border-accent pl-5">
-                <dt className="figure text-[clamp(2rem,3.4vw,2.8rem)] leading-none text-ink">{m.value}</dt>
+                <dt className="figure text-[clamp(2.4rem,4.4vw,3.6rem)] leading-none text-ink">{m.value}</dt>
                 <dd className="mt-2 text-sm text-ink-2">{m.label}</dd>
               </div>
             ))}

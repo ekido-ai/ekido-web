@@ -14,6 +14,34 @@
     "emailSignIn": "Sign in with email"
   },
   "home": {
+    "how": {
+      "eyebrow": "How it works",
+      "title": "From a description to a model you own, in four steps.",
+      "steps": [
+        {
+          "title": "Describe the job",
+          "body": "Say what you want in plain words, in Hindi, Hinglish or English. The assistant picks the right recipe."
+        },
+        {
+          "title": "Bring a few examples",
+          "body": "Twenty to fifty is enough. Personal details are removed in your browser before anything is sent."
+        },
+        {
+          "title": "We train it and check it",
+          "body": "Idle devices train the model. It must pass your own test and beat the untrained model, or you are refunded."
+        },
+        {
+          "title": "Use it or take it home",
+          "body": "Host it as an API, or download it and run it on your own machine. Either way you see what it saves."
+        }
+      ]
+    },
+    "chips": {
+      "moved": "A device stopped",
+      "movedNote": "Example: the next one resumed from the last good checkpoint.",
+      "passed": "Quality check passed",
+      "passedNote": "Example: 17 of 20 test examples correct. The bar was 80%."
+    },
     "live": "Live on a public test network",
     "title": "Your own AI model,",
     "titleMuted": "built by devices people already have.",
@@ -445,6 +473,70 @@
     "rest": "The rest of the platform"
   },
   "pages": {
+    "products": {
+      "kicker": "Products and services",
+      "title": "One service: your own AI model, from a description to a result.",
+      "sub": "Ekido is one service. You describe a job, and you get a small model that is checked on your own examples, hosted or yours to keep, and paid for only if it passes. The products below are its parts: use the whole thing, or only the part you need.",
+      "ctaApp": "Train a model",
+      "ctaPricing": "See pricing",
+      "fitTitle": "One service, one path",
+      "fitSub": "Every job takes the same path through the same parts. You never have to manage them yourself.",
+      "devicesLine": "Underneath all of it: the devices that do the training. Gaming PCs and laptops today, phones next.",
+      "productsTitle": "The parts of the service",
+      "productsSub": "Each part has its own page. It says what works today on the public test network and what is still being built.",
+      "learnMore": "Learn more",
+      "servicesTitle": "Services around the products",
+      "servicesSub": "Some work needs a person next to the platform. Here is what we offer, and what is still planned.",
+      "services": [
+        {
+          "name": "Pilot with your own examples",
+          "line": "Two weeks, one narrow task, your own data. We build the model with you and report what it does against what you use today.",
+          "status": "building",
+          "points": [
+            "A quality report on examples you set aside",
+            "A savings report on your real volume and prices",
+            "A hosted endpoint for 30 days, or the model to take home",
+            "A full refund if the model misses the bar"
+          ]
+        },
+        {
+          "name": "Private pool",
+          "line": "Run your jobs only on your own machines, or on Indian cloud capacity under contract. Nothing goes to community devices.",
+          "status": "planned",
+          "points": [
+            "Your data stays inside your organisation",
+            "Keys that exist only for your job",
+            "Audit logs you can export"
+          ]
+        },
+        {
+          "name": "For developers",
+          "line": "Train from code, take the model home as a file, or let us host it.",
+          "status": "building",
+          "points": [
+            "API keys with scopes",
+            "Export a model that runs offline",
+            "A free plan for individual developers (planned)"
+          ]
+        }
+      ],
+      "solutionsLine": "Looking for a job to start with? Ticket sorting, invoice reading, product descriptions, customer questions and review sentiment are the first five.",
+      "solutionsCta": "See the first jobs",
+      "promise": [
+        {
+          "title": "One quote",
+          "body": "The price is fixed and shown before you start."
+        },
+        {
+          "title": "One quality bar",
+          "body": "The model must pass your own test, and beat the untrained model."
+        },
+        {
+          "title": "One refund rule",
+          "body": "Miss the bar and you are refunded automatically."
+        }
+      ]
+    },
     "solutions": {
       "kicker": "Solutions",
       "title": "Built for the work small businesses do every day.",
