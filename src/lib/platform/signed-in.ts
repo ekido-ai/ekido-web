@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { hasAccountHint } from "./account-hint";
-import { platform } from "./api";
+import { platform, type Me } from "./api";
 import { config } from "../config";
 
 /*
@@ -30,6 +30,21 @@ export function accountSignedIn(): Promise<boolean> {
       asking = null;
     });
   return asking;
+}
+
+/**
+ * The signed-in account, or null. Without the account note it is null straight away, with no request, so the
+ * header doesn't log a `/v1/me` 401 on every page for a signed-out visitor (ekido-ai/ekido-internal#93).
+ */
+export function currentAccount(): Promise<Me | null> {
+  if (!hasAccountHint()) return Promise.resolve(null);
+  return platform.me().then(
+    (me) => {
+      known = true;
+      return me;
+    },
+    () => null,
+  );
 }
 
 /**

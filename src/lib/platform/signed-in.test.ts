@@ -101,3 +101,25 @@ describe("the account note follows sign-in and sign-out", () => {
     expect(localStorage.getItem("ekido.account")).toBeNull();
   });
 });
+
+describe("currentAccount, for the header's account link", () => {
+  it("is null with no request when this browser never signed in", async () => {
+    const { currentAccount } = await import("./signed-in");
+    expect(await currentAccount()).toBeNull();
+    expect(calls).toEqual([]);
+  });
+
+  it("is the account from /v1/me when the note is there", async () => {
+    localStorage.setItem("ekido.account", "1");
+    const { currentAccount } = await import("./signed-in");
+    expect(await currentAccount()).toMatchObject({ user_id: "u1" });
+  });
+
+  it("is null, and drops the note, when the session has ended", async () => {
+    localStorage.setItem("ekido.account", "1");
+    meStatus = 401;
+    const { currentAccount } = await import("./signed-in");
+    expect(await currentAccount()).toBeNull();
+    expect(localStorage.getItem("ekido.account")).toBeNull();
+  });
+});
