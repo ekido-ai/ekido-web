@@ -6,31 +6,11 @@ import { platform, type Me } from "./api";
 import { config } from "../config";
 
 /*
- * "Is an Ekido account signed in here?" for calls that only an account may make (ekido-ai/ekido-internal#93).
- * Without the account note it answers no straight away, so a signed-out visitor sends nothing that would be refused.
- * With the note it asks `/v1/me` once and shares the answer; a 401 there removes the note (api.ts).
+ * Two questions the pages ask before calling anything private (ekido-ai/ekido-internal#93):
+ * - currentAccount(): is an Ekido account signed in here? Only for the Platform's own routes (the header's link).
+ * - privateListsReadable(): will the coordinator answer this page for its provider list, settlements and log index?
+ * They are separate because the coordinator never reads the Platform session.
  */
-
-let asking: Promise<boolean> | null = null;
-let known = false;
-
-export function accountSignedIn(): Promise<boolean> {
-  if (!hasAccountHint()) {
-    known = false;
-    return Promise.resolve(false);
-  }
-  if (known) return Promise.resolve(true);
-  asking ??= platform
-    .me()
-    .then(
-      () => (known = true),
-      () => false,
-    )
-    .finally(() => {
-      asking = null;
-    });
-  return asking;
-}
 
 /**
  * The signed-in account, or null. Without the account note it is null straight away, with no request, so the
@@ -38,33 +18,37 @@ export function accountSignedIn(): Promise<boolean> {
  */
 export function currentAccount(): Promise<Me | null> {
   if (!hasAccountHint()) return Promise.resolve(null);
-  return platform.me().then(
-    (me) => {
-      known = true;
-      return me;
-    },
-    () => null,
-  );
+  return platform.me().catch(() => null);
 }
 
+const LOOPBACK = new Set(["localhost", "127.0.0.1", "[::1]"]);
+
 /**
- * True when the coordinator is served from the site's own host (Caddy's `/sepolia`), which is how the public
- * deployments run. There its provider list, settlements and log index are private: they answer only the operator
- * token, not a signed-in account (checked on staging, 24 Nov, Chromium, WebKit and Firefox: 401 with a valid
- * session). A coordinator on another origin is a local demo or test, where they are open to the page.
+ * Whether the coordinator at `coordinatorUrl` lets a page at `siteHref` read its private lists (`/providers`,
+ * `/settlements`, `/chain/logs`). This follows the coordinator's ApiGuard (ekido-coordinator, api_guard.py), which
+ * opens them only to:
+ * - the operator token, which a browser never has and must never be given; or
+ * - a request made on the coordinator's own machine: a loopback address and Host header, with no X-Forwarded-For.
+ *   That is also how a container started with OPEN_API is reached.
+ * The guard doesn't read the Platform session, so a signed-in Ekido account changes nothing. A page can therefore
+ * read the lists only when it talks to a loopback coordinator directly, as the local demo and tests do. A coordinator
+ * on the site's own host (Caddy's `/sepolia`, as on staging) sits behind a proxy that adds X-Forwarded-For. A
+ * coordinator on another non-loopback host answers 401. Checked on staging on 24 Nov: 401 with and without a
+ * signed-in session, in Chromium, WebKit and Firefox.
  */
-export function coordinatorOnSite(coordinatorUrl: string, siteHref: string): boolean {
+export function privateListsOpenTo(coordinatorUrl: string, siteHref: string): boolean {
   try {
-    return new URL(coordinatorUrl, siteHref).origin === new URL(siteHref).origin;
+    const coordinator = new URL(coordinatorUrl, siteHref);
+    return LOOPBACK.has(coordinator.hostname) && coordinator.origin !== new URL(siteHref).origin;
   } catch {
     return false;
   }
 }
 
-/** Whether the page may ask for the coordinator's private lists without being refused: only off the public site. */
+/** Whether this page may ask for the coordinator's private lists without being refused (privateListsOpenTo). */
 export function privateListsReadable(): Promise<boolean> {
   if (typeof window === "undefined") return Promise.resolve(false);
-  return Promise.resolve(!coordinatorOnSite(config.coordinatorUrl, window.location.href));
+  return Promise.resolve(privateListsOpenTo(config.coordinatorUrl, window.location.href));
 }
 
 /** privateListsReadable() as state; null until known. */
