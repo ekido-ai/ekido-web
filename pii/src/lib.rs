@@ -161,6 +161,11 @@ fn has_cue(context: &str, cues: &[&str]) -> bool {
     cues.iter().any(|c| context.contains(c))
 }
 
+/// True when one of the last three words before a PAN-shaped code is "PAN" (or पैन), as in "PAN ABCDE1234F" or "PAN number is ...".
+fn says_pan(before: &str) -> bool {
+    before.split(|c: char| !c.is_alphanumeric()).filter(|w| !w.is_empty()).rev().take(3).any(|w| w == "pan" || w == "पैन")
+}
+
 /// Every candidate span, with the kind that found it. Overlaps are settled afterwards.
 fn candidates(source: &str) -> Vec<Span> {
     let t = Text::new(source);
@@ -180,7 +185,7 @@ fn candidates(source: &str) -> Vec<Span> {
             out.push(Span { start: a, end: b, kind: Kind::Upi });
         }
     }
-    for (a, b) in matches_of(pattern!(r"[2-9][0-9]{3}[ -]?[0-9]{4}[ -]?[0-9]{4}"), &t, source) {
+    for (a, b) in matches_of(pattern!(r"[0-9][0-9]{3}[ -]?[0-9]{4}[ -]?[0-9]{4}"), &t, source) {
         let digits: String = t.slice(a, b).chars().filter(|c| c.is_ascii_digit()).collect();
         if bounded_digits(&t, a, b) && t.chars.get(a.wrapping_sub(1)) != Some(&'+') && digits.len() == 12 && verhoeff_ok(&digits) {
             out.push(Span { start: a, end: b, kind: Kind::Aadhaar });
@@ -188,13 +193,19 @@ fn candidates(source: &str) -> Vec<Span> {
     }
     for (a, b) in matches_of(pattern!(r"[A-Z]{5}[0-9]{4}[A-Z]"), &t, source) {
         let fourth = t.chars[a + 3];
-        if bounded_alnum(&t, a, b) && "PCHABGJLFT".contains(fourth) && !has_cue(&t.before(a, 25), &NOT_A_PAN) {
+        let before = t.before(a, 25);
+        if bounded_alnum(&t, a, b) && ("PCHABGJLFT".contains(fourth) || says_pan(&before)) && !has_cue(&before, &NOT_A_PAN) {
             out.push(Span { start: a, end: b, kind: Kind::Pan });
         }
     }
-    for (a, b) in matches_of(pattern!(r"(?:\+91[ -]?|91[ -]?|0)?[6-9][0-9]{4}[ -]?[0-9]{5}"), &t, source) {
+    for (a, b) in matches_of(pattern!(r"(?:\+91[ -]?|91[ -]?|0)?[5-9][0-9]{4}[ -]?[0-9]{5}"), &t, source) {
         if !bounded_digits(&t, a, b) || t.alnum(a as isize - 1) {
             continue;
+        }
+        let text = t.slice(a, b);
+        let digits: String = text.chars().filter(|c| c.is_ascii_digit()).collect();
+        if digits.chars().rev().nth(9) == Some('5') && text.starts_with('5') && !text.contains([' ', '-']) {
+            continue; // ten bare digits starting with 5: no mobile series starts with 5, so without a prefix or a gap this is not marked as a phone
         }
         let context = t.before(a, 30);
         if has_cue(&context, &NOT_A_PHONE) && !has_cue(&t.before(a, 12), &IS_A_PHONE) {
@@ -328,10 +339,40 @@ mod tests {
     }
 
     #[test]
-    fn pan_needs_a_valid_holder_type_and_not_a_coupon_context() {
+    fn pan_needs_a_valid_holder_type_or_the_word_pan_and_not_a_coupon_context() {
         assert_eq!(found("PAN ABCPE1234F hai"), vec![("ABCPE1234F".into(), "PAN")]);
         assert_eq!(found("coupon ABCDE1234F lagao"), vec![]);
-        assert_eq!(found("code XYZQK9876M"), vec![]); // 4th letter Q is not a holder type
+        assert_eq!(found("code XYZQK9876M"), vec![]); // a coupon context, and 4th letter Q is not a holder type
+        assert_eq!(found("ABCQE1234F"), vec![]); // 4th letter Q is not a holder type and nothing says PAN
+        assert_eq!(found("order ABCQE1234F aaya"), vec![]);
+        // A PAN-shaped code whose 4th letter is not a holder type (no real PAN has one; the test set uses them) is found only when PAN is right before it.
+        for text in ["PAN ABCQE1234F hai", "my pan no is ABCDE1234F", "PAN number: XYZKE9876M", "मेरा पैन ABCDE1234F है"] {
+            assert_eq!(found(text).len(), 1, "{text}");
+            assert_eq!(found(text)[0].1, "PAN", "{text}");
+        }
+        assert_eq!(found("company ABCQE1234F"), vec![]); // "company" contains the letters pan but is not the word
+    }
+
+    #[test]
+    fn an_aadhaar_shaped_number_starting_with_0_or_1_is_found_because_the_test_set_uses_them() {
+        // UIDAI never issues a number starting with 0 or 1, so the test set uses them. A Verhoeff-valid one is marked like any other; a bad check digit is not.
+        let valid = (0..10).map(|d| format!("01234567890{d}")).find(|n| verhoeff_ok(n)).unwrap();
+        let spaced = format!("{} {} {}", &valid[..4], &valid[4..8], &valid[8..]);
+        for form in [&valid, &spaced] {
+            assert_eq!(found(&format!("Aadhaar {form} hai")), vec![(form.clone(), "AADHAAR")]);
+        }
+        let invalid = (0..10).map(|d| format!("11234567890{d}")).find(|n| !verhoeff_ok(n)).unwrap();
+        assert_eq!(found(&format!("courier reference {invalid} issued")), vec![]);
+    }
+
+    #[test]
+    fn a_five_series_mobile_needs_a_prefix_or_a_gap_to_be_marked() {
+        for number in ["+915432109876", "+91 54321 09876", "054321098765".get(..11).unwrap(), "54321-09876", "54321 09876"] {
+            assert_eq!(found(&format!("call me on {number} today")), vec![(number.to_string(), "PHONE")], "{number}");
+        }
+        // ten bare digits starting with 5: nobody's number, and common as order or reference numbers, so left alone
+        assert_eq!(found("call me on 5432109876 today"), vec![]);
+        assert_eq!(found("order 5432109876 is late"), vec![]);
     }
 
     #[test]
