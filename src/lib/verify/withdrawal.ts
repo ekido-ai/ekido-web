@@ -1,4 +1,4 @@
-import { createPublicClient, decodeEventLog, http, isAddress, isHex, parseAbi, size, type Address, type Hex } from "viem";
+import { BaseError, createPublicClient, decodeEventLog, http, isAddress, isHex, parseAbi, size, TransactionReceiptNotFoundError, type Address, type Hex } from "viem";
 
 const withdrawalAbi = parseAbi(["event Withdrawal(address indexed account, uint256 amount)"]);
 
@@ -9,6 +9,20 @@ export interface WithdrawalProof {
   transactionHash: Hex;
 }
 
+/**
+ * Plain words for a failure while reading the chain. viem's own messages name the library and its version
+ * ("Version: viem@2.57.19") and can run to several lines (ekido-ai/ekido-core#127).
+ */
+export function chainReadError(error: unknown): Error {
+  if (error instanceof TransactionReceiptNotFoundError) {
+    return new Error("No transaction with this hash on this chain. Check the hash, or try again in a minute if it was only just sent.");
+  }
+  if (error instanceof BaseError) {
+    return new Error(`Couldn't read the chain: ${error.shortMessage.replace(/\s+/g, " ").slice(0, 160)}`);
+  }
+  return error instanceof Error ? error : new Error("Couldn't read the chain.");
+}
+
 /** Verify a specific receipt against a separately configured escrow and chain.
  * A withdrawal aggregates all credits for a wallet, so it cannot prove which job was withdrawn.
  */
@@ -17,8 +31,9 @@ export async function verifyWithdrawal(transactionHash: string, wallet: string, 
   if (!isAddress(wallet)) throw new Error("Enter a valid wallet address.");
   if (!escrow || !isAddress(escrow)) throw new Error("Configure a trusted escrow address first.");
   const client = createPublicClient({ transport: http(rpcUrl) });
-  if (await client.getChainId() !== chainId) throw new Error("The RPC is connected to a different chain.");
-  const receipt = await client.getTransactionReceipt({ hash: transactionHash as Hex });
+  const read = <T>(call: Promise<T>) => call.catch((error: unknown) => { throw chainReadError(error); });
+  if (await read(client.getChainId()) !== chainId) throw new Error("The RPC is connected to a different chain.");
+  const receipt = await read(client.getTransactionReceipt({ hash: transactionHash as Hex }));
   if (receipt.status !== "success") throw new Error("The withdrawal transaction did not succeed.");
   let amount = BigInt(0);
   let found = false;

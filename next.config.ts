@@ -1,4 +1,4 @@
-import type { NextConfig } from "next";
+﻿import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
 // Text comes from messages/<locale>.json through next-intl (src/i18n/request.ts).
@@ -24,6 +24,7 @@ const connect = [
   ...origin(process.env.NEXT_PUBLIC_RPC_URL),
   ...origin(process.env.NEXT_PUBLIC_DEMO_HELPER_URL),
   "https://sepolia.base.org",
+  "https://api.razorpay.com", "https://lumberjack.razorpay.com",
   "https://base-sepolia-rpc.publicnode.com",
   // Local development and the laptop demo stack.
   "http://127.0.0.1:8000", "ws://127.0.0.1:8000", "http://127.0.0.1:8001", "http://127.0.0.1:8545",
@@ -34,9 +35,11 @@ const CSP = [
   // Next.js inlines its bootstrap and our theme script; no third-party scripts are allowed.
   // 'wasm-unsafe-eval' lets the browser compile our own WebAssembly (the personal-detail remover, ticket C16) and nothing else:
   // it does not allow eval() or new Function(), which 'unsafe-eval' would.
-  "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'",
+  // Razorpay Checkout (test mode): its script, its payment window and the calls it makes. Nothing else from outside.
+  "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://checkout.razorpay.com",
+  "frame-src https://api.razorpay.com https://checkout.razorpay.com",
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob:",
+  "img-src 'self' data: blob: https://*.razorpay.com",
   "font-src 'self' data:",
   `connect-src ${[...new Set(connect)].join(" ")}`,
   "frame-ancestors 'none'",
@@ -68,7 +71,7 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     // The landing page is "/" and the dashboard "/dashboard". Old links keep working:
-    // "/?view=dashboard", "/?at=…" and the rest move to /dashboard with their query intact.
+    // "/?view=dashboard", "/?at=â€¦" and the rest move to /dashboard with their query intact.
     const old = ["view", "at", "play", "source", "job"].map((key) => ({
       source: "/",
       has: [{ type: "query" as const, key }],

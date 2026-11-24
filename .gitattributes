@@ -1,0 +1,2 @@
+# The built WebAssembly module and its glue must keep their exact bytes (CI compares them with a fresh build).
+src/lib/pii/wasm/* -text

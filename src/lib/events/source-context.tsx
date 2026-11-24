@@ -145,7 +145,7 @@ export function usePlayer(): ReplayPlayer {
 
 export function usePlayerSnapshot(): PlayerSnapshot {
   const p = usePlayer();
-  return useSyncExternalStore(p.subscribe, p.getSnapshot, p.getSnapshot);
+  return useSyncExternalStore(p.subscribe, p.getSnapshot, p.getServerSnapshot);
 }
 
 export function useSourceControl() {
@@ -158,8 +158,8 @@ export function useSourceControl() {
 /** The one hook screens use for data. */
 export function useDashboard(): SourceView {
   const { player, live, mode } = useCtx();
-  const p = useSyncExternalStore(player.subscribe, player.getSnapshot, player.getSnapshot);
-  const l = useSyncExternalStore(live.subscribe, live.getSnapshot, live.getSnapshot);
+  const p = useSyncExternalStore(player.subscribe, player.getSnapshot, player.getServerSnapshot);
+  const l = useSyncExternalStore(live.subscribe, live.getSnapshot, live.getServerSnapshot);
   if (mode === "live") {
     return {
       mode,

@@ -1,0 +1,32 @@
+name: Customer journey J1 (staging)
+
+# Ticket P5: the customer journey on staging every night. Steps that staging can't run yet are test.fixme with their
+# blocker named (see e2e/journey.e2e.ts and ekido-ai/ekido-internal#46).
+on:
+  schedule:
+    - cron: "0 21 * * *" # 02:30 IST
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  journey:
+    name: Journey J1 on staging
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Install Chromium for Playwright
+        run: npx playwright install --with-deps chromium
+      # JOURNEY_SESSION is a test account's session cookie (30 days). Without it the suite skips rather than fails.
+      - name: Journey against staging
+        run: npx playwright test e2e/journey.e2e.ts --project=desktop --reporter=list --trace=off
+        env:
+          E2E_BASE_URL: https://ekido-staging.duckdns.org
+          JOURNEY_SESSION: ${{ secrets.JOURNEY_SESSION }}

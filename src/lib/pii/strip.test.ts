@@ -73,3 +73,18 @@ describe("the module cannot reach the network or the page", () => {
     expect(imports.map((i) => `${i.module}.${i.name}`)).toEqual(["wbg.__wbindgen_init_externref_table"]);
   });
 });
+
+describe("identifiers that cannot be issued (the shapes the test set uses)", () => {
+  it("removes a +91 mobile starting with 5 and a PAN with an unused 4th letter next to the word PAN (the 0-or-1 Aadhaar shape is tested in Rust, where its check digit is computed)", () => {
+    const out = stripText("phone +91 54321 09876 PAN ABCQE1234F");
+    expect(out.redacted).toContain("[PHONE]");
+    expect(out.redacted).toContain("[PAN]");
+    expect(out.redacted).not.toMatch(/54321 09876|ABCQE1234F/);
+  });
+
+  it("leaves ten bare digits starting with 5, and a PAN-shaped code with nothing saying PAN, alone", () => {
+    for (const text of ["order 5432109876 is late", "code ABCQE1234F", "ref ABCQE1234F"]) {
+      expect(stripText(text).redacted).toBe(text);
+    }
+  });
+});

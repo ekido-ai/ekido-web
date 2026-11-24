@@ -1,16 +1,19 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import Link from "next/link";
-import { BadgeCheck, Boxes, ChevronDown, Coins, Cpu, Server, Sparkles } from "lucide-react";
+import { BadgeCheck, Boxes, ChevronDown, Coins, Cpu, Menu, Server, Sparkles, X } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { cx } from "@/components/ui/cx";
 import { useTranslations } from "next-intl";
 import { type Status } from "@/lib/landing/products";
+import { closedMenu, menuReducer, type MenuState } from "./menu-state";
 import { useProducts, useSolutions } from "@/lib/landing/products-client";
 
 /*
  * The home page's header, like a platform site: Products and Solutions open menus, then Developers, Pricing and
- * Roadmap. Menus open on click or hover, close on Escape, a click outside, or choosing a link.
+ * Roadmap. Menus open on hover or click; a click keeps a menu open (see menu-state.ts). They close on Escape, a click
+ * outside, choosing a link, or the pointer leaving a menu that hover opened.
  */
 
 const ICONS: Record<string, typeof Boxes> = { assistant: Sparkles, train: Boxes, verify: BadgeCheck, host: Server, pay: Coins, devices: Cpu };
@@ -30,30 +33,31 @@ export function StatusBadge({ status }: { status: Status }) {
   );
 }
 
-type Menu = "products" | "solutions" | null;
+type MenuKey = "products" | "solutions";
 
 export function MarketingNav() {
   const t = useTranslations("nav");
   const PRODUCTS = useProducts();
   const SOLUTIONS = useSolutions();
-  const [open, setOpen] = useState<Menu>(null);
+  const [{ open }, dispatch] = useReducer(menuReducer<MenuKey>, closedMenu as MenuState<MenuKey>);
+  const close = () => dispatch({ type: "close" });
   const ref = useRef<HTMLElement>(null);
   const closing = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Moving the pointer from a trigger to its menu must never close it: closing waits a moment and is cancelled
   // the instant the pointer is back over the nav or a menu.
-  const keepOpen = (menu?: Menu) => {
+  const keepOpen = (menu?: MenuKey) => {
     if (closing.current) clearTimeout(closing.current);
     closing.current = null;
-    if (menu !== undefined) setOpen(menu);
+    if (menu !== undefined) dispatch({ type: "hover", key: menu });
   };
   const closeSoon = () => {
     if (closing.current) clearTimeout(closing.current);
-    closing.current = setTimeout(() => setOpen(null), 180);
+    closing.current = setTimeout(() => dispatch({ type: "leave" }), 180);
   };
 
   useEffect(() => {
-    const away = (e: MouseEvent) => ref.current && !ref.current.contains(e.target as Node) && setOpen(null);
-    const esc = (e: KeyboardEvent) => e.key === "Escape" && setOpen(null);
+    const away = (e: MouseEvent) => ref.current && !ref.current.contains(e.target as Node) && dispatch({ type: "close" });
+    const esc = (e: KeyboardEvent) => e.key === "Escape" && dispatch({ type: "close" });
     document.addEventListener("click", away);
     document.addEventListener("keydown", esc);
     return () => {
@@ -62,12 +66,12 @@ export function MarketingNav() {
     };
   }, []);
 
-  const trigger = (menu: Exclude<Menu, null>, label: string) => (
+  const trigger = (menu: MenuKey, label: string) => (
     <button
       type="button"
       aria-expanded={open === menu}
       aria-controls={`menu-${menu}`}
-      onClick={() => setOpen(open === menu ? null : menu)}
+      onClick={() => dispatch({ type: "click", key: menu })}
       onMouseEnter={() => keepOpen(menu)}
       className={cx("inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-medium", open === menu ? "bg-surface-2 text-ink" : "text-ink-2 hover:bg-surface-2 hover:text-ink")}
     >
@@ -76,7 +80,7 @@ export function MarketingNav() {
     </button>
   );
   const plain = (href: string, label: string) => (
-    <Link href={href} onClick={() => setOpen(null)} className="rounded-full px-3 py-1.5 text-sm font-medium text-ink-2 hover:bg-surface-2 hover:text-ink">
+    <Link href={href} onClick={close} className="rounded-full px-3 py-1.5 text-sm font-medium text-ink-2 hover:bg-surface-2 hover:text-ink">
       {label}
     </Link>
   );
@@ -96,7 +100,7 @@ export function MarketingNav() {
             {PRODUCTS.map((p) => {
               const Icon = ICONS[p.key] ?? Boxes;
               return (
-                <Link key={p.key} href={p.href} onClick={() => setOpen(null)} className="flex gap-3 rounded-2xl p-3 hover:bg-surface-2">
+                <Link key={p.key} href={p.href} onClick={close} className="flex gap-3 rounded-2xl p-3 hover:bg-surface-2">
                   <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-action text-action-ink">
                     <Icon className="size-5" aria-hidden />
                   </span>
@@ -110,7 +114,7 @@ export function MarketingNav() {
               );
             })}
           </div>
-          <Link href="/#products" onClick={() => setOpen(null)} className="mt-2 block rounded-2xl bg-surface-2 px-4 py-3 text-sm font-semibold text-ink hover:bg-surface-3">
+          <Link href="/#products" onClick={close} className="mt-2 block rounded-2xl bg-surface-2 px-4 py-3 text-sm font-semibold text-ink hover:bg-surface-3">
             {t("wholePlatform")}
           </Link>
           </div>
@@ -124,7 +128,7 @@ export function MarketingNav() {
             <div key={title}>
               <p className="kicker mb-2 text-[0.7rem]">{title}</p>
               {items.map((s) => (
-                <Link key={s.name} href={s.href} onClick={() => setOpen(null)} className="block rounded-xl p-2.5 hover:bg-surface-2">
+                <Link key={s.name} href={s.href} onClick={close} className="block rounded-xl p-2.5 hover:bg-surface-2">
                   <span className="block text-sm font-semibold text-ink">{s.name}</span>
                   <span className="block text-[13px] text-ink-2">{s.line}</span>
                 </Link>
@@ -135,5 +139,84 @@ export function MarketingNav() {
         </div>
       )}
     </nav>
+  );
+}
+
+/*
+ * Below lg the menus above are hidden, so phones and tablets get one Menu button with the same places
+ * (ekido-ai/ekido-core#120), plus email sign-in, whose header link is hidden on phones. It closes on Escape, a tap
+ * outside, choosing a link or a new page.
+ */
+export function MarketingMenu() {
+  const t = useTranslations("nav");
+  const PRODUCTS = useProducts();
+  const SOLUTIONS = useSolutions();
+  const path = usePathname();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const [shownPath, setShownPath] = useState(path);
+  if (shownPath !== path) {
+    setShownPath(path);
+    setOpen(false);
+  }
+
+  useEffect(() => {
+    if (!open) return;
+    const away = (e: MouseEvent) => ref.current && !ref.current.contains(e.target as Node) && setOpen(false);
+    const esc = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    document.addEventListener("click", away);
+    document.addEventListener("keydown", esc);
+    return () => {
+      document.removeEventListener("click", away);
+      document.removeEventListener("keydown", esc);
+    };
+  }, [open]);
+
+  const close = () => setOpen(false);
+  const row = "block rounded-lg px-3 py-2.5 text-sm font-medium text-ink hover:bg-surface-2";
+  return (
+    // Not positioned, so the panel is placed against the sticky header and spans the screen.
+    <div ref={ref} className="lg:hidden">
+      <button
+        type="button"
+        aria-expanded={open}
+        aria-controls="menu-site"
+        aria-label={open ? t("closeMenu") : t("menu")}
+        onClick={() => setOpen((o) => !o)}
+        className="inline-flex h-9 w-8 items-center justify-center rounded-md text-ink-2 hover:bg-surface-2 hover:text-ink sm:w-9"
+      >
+        {open ? <X className="size-5" aria-hidden /> : <Menu className="size-5" aria-hidden />}
+      </button>
+      {open && (
+        <nav
+          id="menu-site"
+          aria-label="Product"
+          className="nav-pop absolute inset-x-4 top-full z-50 mt-2 max-h-[calc(100dvh-5rem)] overflow-y-auto rounded-2xl border border-line-strong bg-surface p-2 shadow-soft sm:left-auto sm:w-96"
+        >
+          <p className="kicker px-3 pb-1 pt-2 text-[0.7rem]">{t("products")}</p>
+          {PRODUCTS.map((p) => (
+            <Link key={p.key} href={p.href} onClick={close} className={cx(row, "flex flex-wrap items-center gap-2")}>
+              {p.name} <StatusBadge status={p.status} />
+            </Link>
+          ))}
+          {([[t("byIndustry"), SOLUTIONS.industries], [t("byRole"), SOLUTIONS.roles]] as const).map(([title, items]) => (
+            <div key={title}>
+              <p className="kicker px-3 pb-1 pt-3 text-[0.7rem]">{title}</p>
+              {items.map((s) => (
+                <Link key={s.name} href={s.href} onClick={close} className={row}>
+                  {s.name}
+                </Link>
+              ))}
+            </div>
+          ))}
+          <div className="my-2 border-t border-line" />
+          <Link href="/developers" onClick={close} className={row}>{t("developers")}</Link>
+          <Link href="/pricing" onClick={close} className={row}>{t("pricing")}</Link>
+          <Link href="/roadmap" onClick={close} className={row}>{t("roadmap")}</Link>
+          <div className="my-2 border-t border-line" />
+          <Link href="/login" onClick={close} className={row}>{t("emailSignIn")}</Link>
+        </nav>
+      )}
+    </div>
   );
 }
