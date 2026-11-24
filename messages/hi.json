@@ -42,6 +42,13 @@
       "passed": "गुणवत्ता जाँच पास",
       "passedNote": "उदाहरण: 20 में से 17 टेस्ट उदाहरण सही। पैमाना 80% था।"
     },
+    "art": {
+      "pc": "गेमिंग पीसी",
+      "laptop": "लैपटॉप",
+      "phone": "फ़ोन: आगे",
+      "check": "गुणवत्ता जाँच",
+      "model": "आपका मॉडल"
+    },
     "live": "Live on a public test network",
     "title": "Your own AI model,",
     "titleMuted": "built by devices people already have.",

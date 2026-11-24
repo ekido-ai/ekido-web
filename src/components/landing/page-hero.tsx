@@ -5,7 +5,6 @@ export function PageHero({ kicker, title, sub, children }: { kicker: string; tit
   return (
     <section className="dot-grid relative border-b border-line bg-surface-2/40">
       <div className="pointer-events-none absolute! inset-x-0 top-0 h-80 bg-[radial-gradient(55%_70%_at_30%_0%,rgba(254,80,0,0.10),transparent_72%)]" aria-hidden />
-      <div className="sash-art sash-small hidden lg:block" aria-hidden />
       <div className="relative mx-auto max-w-[1200px] px-4 pb-20 pt-20 sm:px-8 lg:pt-24">
         <p className="kicker mb-4">{kicker}</p>
         <h1 className="max-w-3xl text-ink">{title}</h1>

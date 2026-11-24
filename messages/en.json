@@ -42,6 +42,13 @@
       "passed": "Quality check passed",
       "passedNote": "Example: 17 of 20 test examples correct. The bar was 80%."
     },
+    "art": {
+      "pc": "GAMING PC",
+      "laptop": "LAPTOP",
+      "phone": "PHONES: NEXT",
+      "check": "QUALITY CHECK",
+      "model": "YOUR MODEL"
+    },
     "live": "Live on a public test network",
     "title": "Your own AI model,",
     "titleMuted": "built by devices people already have.",

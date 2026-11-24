@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, BadgeCheck, Boxes, Check, Coins, Cpu, Layers, Server, Sparkles } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Check, Layers } from "lucide-react";
+import { ProductIcon } from "@/components/brand/product-icons";
 import { getTranslations } from "next-intl/server";
 import { MarketingPage, PageHero, PageSection } from "@/components/landing/page-hero";
 import { StatusBadge } from "@/components/shell/marketing-nav";
@@ -13,7 +14,6 @@ export const metadata: Metadata = {
   description: "Describe a job, train a small model on idle devices, check it, host it or take it home, and pay only if it passes. The products and the services around them.",
 };
 
-const ICONS: Record<string, typeof Boxes> = { assistant: Sparkles, train: Boxes, verify: BadgeCheck, host: Server, pay: Coins, devices: Cpu };
 /** The job's path, in order. Devices are the supply side, so they sit under the path, not in it. */
 const FLOW = ["assistant", "train", "verify", "host", "pay"];
 
@@ -42,13 +42,12 @@ export default async function ProductsPage() {
         <div className="artifact overflow-hidden">
           <ol className="grid divide-y divide-line md:grid-cols-5 md:divide-x md:divide-y-0">
             {flow.map((p, i) => {
-              const Icon = ICONS[p.key] ?? Boxes;
-              return (
+                return (
                 <li key={p.key}>
                   <Link href={p.href} className="group flex h-full flex-col gap-3 p-5 transition-colors hover:bg-surface-2/60">
                     <span className="flex items-center justify-between">
                       <span className="grid size-9 place-items-center rounded-lg bg-surface-2 text-ink group-hover:bg-surface-3">
-                        <Icon className="size-5" aria-hidden />
+                        <ProductIcon name={p.key} className="size-5" />
                       </span>
                       <span className="text-xs font-semibold text-muted">{i + 1}</span>
                     </span>
@@ -62,7 +61,7 @@ export default async function ProductsPage() {
           {devices && (
             <Link href={devices.href} className="flex flex-wrap items-center gap-4 border-t border-line bg-surface-2/50 px-5 py-4 transition-colors hover:bg-surface-2">
               <span className="grid size-9 place-items-center rounded-lg bg-surface text-ink">
-                <Cpu className="size-5" aria-hidden />
+                <ProductIcon name="devices" className="size-5" />
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block text-[15px] font-semibold text-ink">{devices.name}</span>
@@ -88,12 +87,11 @@ export default async function ProductsPage() {
       <PageSection title={t("productsTitle")} sub={t("productsSub")} id="products">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {products.map((p) => {
-            const Icon = ICONS[p.key] ?? Boxes;
             return (
               <Link key={p.key} href={p.href} className="artifact lift flex flex-col p-6">
                 <span className="flex items-start justify-between gap-3">
                   <span className="grid size-10 place-items-center rounded-xl bg-surface-2 text-ink">
-                    <Icon className="size-5" aria-hidden />
+                    <ProductIcon name={p.key} className="size-5" />
                   </span>
                   <StatusBadge status={p.status} />
                 </span>
