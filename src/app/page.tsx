@@ -6,7 +6,6 @@ import { LogoMark } from "@/components/gpu/logo-mark";
 import { RelayHero } from "@/components/landing/relay-hero";
 import { ProductPreview, Quote, Result } from "@/components/landing/product-preview";
 import { ProductCatalog } from "@/components/landing/platform-sections";
-import { buttonStyles } from "@/components/ui/button-styles";
 import { getTranslations } from "next-intl/server";
 
 export const metadata: Metadata = {
