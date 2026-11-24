@@ -49,8 +49,9 @@ export function currentAccount(): Promise<Me | null> {
 
 /**
  * True when the coordinator is served from the site's own host (Caddy's `/sepolia`), which is how the public
- * deployments run. There its provider list, settlements and log index are private. A coordinator on another origin
- * is a local demo or test, where they are open to the page.
+ * deployments run. There its provider list, settlements and log index are private: they answer only the operator
+ * token, not a signed-in account (checked on staging, 24 Nov, Chromium, WebKit and Firefox: 401 with a valid
+ * session). A coordinator on another origin is a local demo or test, where they are open to the page.
  */
 export function coordinatorOnSite(coordinatorUrl: string, siteHref: string): boolean {
   try {
@@ -60,11 +61,10 @@ export function coordinatorOnSite(coordinatorUrl: string, siteHref: string): boo
   }
 }
 
-/** Whether the page may ask for the coordinator's private lists without being refused. */
+/** Whether the page may ask for the coordinator's private lists without being refused: only off the public site. */
 export function privateListsReadable(): Promise<boolean> {
   if (typeof window === "undefined") return Promise.resolve(false);
-  if (!coordinatorOnSite(config.coordinatorUrl, window.location.href)) return Promise.resolve(true);
-  return accountSignedIn();
+  return Promise.resolve(!coordinatorOnSite(config.coordinatorUrl, window.location.href));
 }
 
 /** privateListsReadable() as state; null until known. */

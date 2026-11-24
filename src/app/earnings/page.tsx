@@ -118,8 +118,8 @@ export default function EarningsPage() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(true);
   const [nonce, setNonce] = useState(0);
-  // Settlements are private on a public server: a signed-out visitor is told to sign in, and nothing is asked
-  // for that would only be refused (ekido-ai/ekido-internal#93).
+  // Settlements are private (operator only) on a public server: the page says so, and asks for nothing that would only
+  // be refused (ekido-ai/ekido-internal#93).
   const readable = usePrivateListsReadable();
 
   useEffect(() => {
@@ -185,14 +185,15 @@ export default function EarningsPage() {
         </EmptyState>
       ) : readable === false ? (
         <EmptyState
-          title="Sign in to see earnings"
+          title="Earnings are private on this network"
           action={
-            <Link href="/login" className={buttonStyles("primary", "md")}>
-              Sign in
+            <Link href="/account" className={buttonStyles("secondary", "md")}>
+              Your account
             </Link>
           }
         >
-          Settlements list what each provider is owed, so the coordinator shows them only to signed-in accounts.
+          The coordinator shows every provider&apos;s settlements only to its operator. As a provider, see what you&apos;re owed on your
+          account page by signing in with your wallet.
         </EmptyState>
       ) : error ? (
         <ErrorState title="Couldn't load earnings" detail={`${error} Nothing is shown rather than a stale or partial total.`} onRetry={() => load()} />

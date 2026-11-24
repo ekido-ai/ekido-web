@@ -60,8 +60,8 @@ export default function ChainPage() {
   const [progress, setProgress] = useState<[number, number] | null>(null);
   const [busy, setBusy] = useState(false);
   const [started, setStarted] = useState(false);
-  // Signed in (or a local coordinator): read straight away, using our log index. Signed out on a public server: the
-  // index is private and reading the whole chain takes ~150 public-RPC calls, so it waits for "Check on chain"
+  // A local coordinator: read straight away, using its log index. On a public server the index is private (operator
+  // only) and reading the whole chain takes ~150 public-RPC calls, so it waits for "Check on chain"
   // (ekido-ai/ekido-internal#93, #94).
   const indexReadable = usePrivateListsReadable();
 
@@ -85,7 +85,7 @@ export default function ChainPage() {
     const timer = setTimeout(() => void load(), 0);
     return () => clearTimeout(timer);
   }, [indexReadable, load]);
-  // Signed out on a public server, until "Check on chain" is pressed.
+  // On a public server, until "Check on chain" is pressed.
   const waiting = indexReadable === false && !started;
   const idle = !started && !ledger;
 
@@ -429,7 +429,7 @@ function LedgerView({ ledger, coordinatorReadable }: { ledger: Ledger; coordinat
 function RegistryPanel({ ledger, coordinatorReadable }: { ledger: Ledger; coordinatorReadable: boolean }) {
   const [coord, setCoord] = useState<CoordinatorProvider[] | null | "down" | "private">(coordinatorReadable ? null : "private");
   useEffect(() => {
-    // Signed out on a public server the list is private: don't ask for a 401 (ekido-ai/ekido-internal#93).
+    // On a public server the list is private (operator only): don't ask for a 401 (ekido-ai/ekido-internal#93).
     if (!coordinatorReadable) return;
     fetch(`${config.coordinatorUrl}/providers`, { signal: AbortSignal.timeout(8000) })
       .then((r) => (r.status === 401 || r.status === 403 ? "private" : r.ok ? r.json() : Promise.reject(r.status)))

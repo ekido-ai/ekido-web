@@ -74,7 +74,7 @@ function SignedIn({ address, expiresAt, demo }: { address: `0x${string}`; expire
     } catch (e) {
       setError(e instanceof Error ? e.message.split("\n")[0] : "The chain couldn't be read.");
     }
-    // The provider list is private on a public server; signed out, it isn't asked for (ekido-ai/ekido-internal#93).
+    // The provider list is private (operator only) on a public server, so it isn't asked for (ekido-ai/ekido-internal#93).
     if (!(await privateListsReadable())) return setCoord(null);
     fetch(`${config.coordinatorUrl}/providers`, { signal: AbortSignal.timeout(8000) })
       .then((r) => (r.ok ? r.json() : null))
