@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight, BadgeCheck, Boxes, Check, Coins, Cpu, EyeOff, FileLock2, KeyRound, Landmark, Layers, Lock, Scale, Server, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowUpRight, BadgeCheck, Check, EyeOff, FileLock2, KeyRound, Landmark, Layers, Lock, Scale, ShieldCheck } from "lucide-react";
 import { ProductIcon } from "@/components/brand/product-icons";
 import { StatusBadge } from "@/components/shell/marketing-nav";
 import { type Status } from "@/lib/landing/products";
