@@ -572,7 +572,8 @@ body {
 @keyframes ca-boot { 0% { fill: rgba(70, 18, 4, 0.55); } 45% { fill: #ffffff; } 100% { fill: #ffe1cf; } }
 .ca-mem { fill: rgba(60, 14, 2, 0.7); }
 .ca-mem.is-on { fill: #fff1e6; }
-.ca-label { font: 700 7.5px ui-monospace, "Cascadia Mono", Consolas, monospace; letter-spacing: 1.6px; fill: rgba(40, 8, 0, 0.7); }
+/* The brand mono (IBM Plex Mono, loaded at 400–600), not each OS's own mono (ekido-ai/ekido-core#117). */
+.ca-label { font: 600 7.5px var(--font-mono); letter-spacing: 1.6px; fill: rgba(40, 8, 0, 0.7); }
 :root[data-overclock] .ca-die-a { stop-color: #ff4d6d; }
 :root[data-overclock] .ca-die-b { stop-color: #8a0a24; }
 @media (prefers-reduced-motion: reduce) { .cf-pulse { animation: none; opacity: 0; } }

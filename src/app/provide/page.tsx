@@ -178,7 +178,7 @@ export default function ProvidePage() {
           <div>
             <h1 className="font-serif text-4xl text-ink sm:text-5xl">Earn with your idle device</h1>
             <p className="mt-3 max-w-xl text-lg text-ink-2">
-              Your gaming PC or laptop trains small AI models for businesses while you're not using it. You're paid for every training step that passes, you set the price, your key never leaves your machine, and you can stop whenever you like.
+              {`Your gaming PC or laptop trains small AI models for businesses while you're not using it. When the job's model passes its quality test, you're paid for your accepted training steps. You set the price, your key never leaves your machine, and you can stop whenever you like.`}
             </p>
             <ul className="mt-5 flex flex-wrap gap-2 text-sm">
               {[
@@ -274,7 +274,7 @@ export default function ProvidePage() {
                 </p>
               )}
               <p className="text-sm">
-                The first run creates your key in <code className="font-mono text-xs">~/.ekido/provider.key</code> (a key an earlier version made at <code className="font-mono text-xs">~/.gpuchain/provider.key</code> keeps working) and prints only your address. Never share that file.
+                The first run creates your key in <code className="font-mono text-xs">~/.ekido/provider.key</code> (a key made by an earlier version of the kit keeps working) and prints only your address. Never share that file.
               </p>
             </Step>
             <Step n={4} title="Get paid">

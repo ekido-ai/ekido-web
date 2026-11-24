@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ExternalLink, Gauge, Radio, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { useDashboard, useSourceControl } from "@/lib/events/source-context";
@@ -14,6 +14,7 @@ import { Panel } from "@/components/ui/panel";
 import { Button } from "@/components/ui/button";
 import { StatusIcon } from "@/components/ui/status";
 import { EmptyState, ErrorState } from "@/components/ui/states";
+import { useTypedBeforeHydration } from "@/components/ui/typed-before-hydration";
 
 const SOURCE: Record<string, string> = { chain: "Read from the chain", recomputed: "Recomputed in your browser", coordinator: "From the coordinator" };
 
@@ -25,6 +26,11 @@ export default function VerifyPage() {
   const [busy, setBusy] = useState(false);
   const [withdrawalHash, setWithdrawalHash] = useState("");
   const [withdrawalWallet, setWithdrawalWallet] = useState("");
+  // Text typed before the script loaded would be wiped by the first re-render (ekido-ai/ekido-core#125).
+  const hashField = useRef<HTMLInputElement>(null);
+  const walletField = useRef<HTMLInputElement>(null);
+  useTypedBeforeHydration(hashField, setWithdrawalHash);
+  useTypedBeforeHydration(walletField, setWithdrawalWallet);
   const [withdrawal, setWithdrawal] = useState<WithdrawalProof | null>(null);
   const [withdrawalError, setWithdrawalError] = useState<string | null>(null);
   const [withdrawalBusy, setWithdrawalBusy] = useState(false);
@@ -141,10 +147,10 @@ export default function VerifyPage() {
       <Panel title="Check a withdrawal transaction" subtitle="Read-only check against the configured chain and escrow. A withdrawal can combine credits from several jobs.">
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="space-y-1 text-sm text-ink">Transaction hash
-            <input value={withdrawalHash} onChange={(e) => { setWithdrawalHash(e.target.value); setWithdrawal(null); }} className="w-full rounded-md border border-line bg-surface-2 px-3 py-2 font-mono text-xs text-ink" placeholder="0x…" />
+            <input ref={hashField} value={withdrawalHash} onChange={(e) => { setWithdrawalHash(e.target.value); setWithdrawal(null); }} className="w-full rounded-md border border-line bg-surface-2 px-3 py-2 font-mono text-xs text-ink" placeholder="0x…" />
           </label>
           <label className="space-y-1 text-sm text-ink">Recipient wallet
-            <input value={withdrawalWallet} onChange={(e) => { setWithdrawalWallet(e.target.value); setWithdrawal(null); }} className="w-full rounded-md border border-line bg-surface-2 px-3 py-2 font-mono text-xs text-ink" placeholder="0x…" />
+            <input ref={walletField} value={withdrawalWallet} onChange={(e) => { setWithdrawalWallet(e.target.value); setWithdrawal(null); }} className="w-full rounded-md border border-line bg-surface-2 px-3 py-2 font-mono text-xs text-ink" placeholder="0x…" />
           </label>
         </div>
         <div className="mt-4"><Button onClick={checkWithdrawal} disabled={withdrawalBusy}>{withdrawalBusy ? "Checking…" : "Check withdrawal"}</Button></div>

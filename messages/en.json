@@ -8,7 +8,10 @@
     "wholePlatform": "See the whole platform →",
     "byIndustry": "By industry",
     "byRole": "By role",
-    "openApp": "Open the app"
+    "openApp": "Open the app",
+    "menu": "Menu",
+    "closeMenu": "Close menu",
+    "emailSignIn": "Sign in with email"
   },
   "home": {
     "live": "Live on a public test network",
@@ -230,7 +233,7 @@
       "does": [
         "Connects outwards only: no open ports, no remote shell",
         "Runs approved training jobs only",
-        "Pays for every training step that passes",
+        "Pays for your accepted training steps when the model passes its test",
         "You set the price and the hours, and stop anytime"
       ],
       "today": [
@@ -380,7 +383,7 @@
           "price": "Free to join",
           "note": "You set your own price",
           "points": [
-            "Paid for every training step that passes",
+            "Paid for your accepted training steps when the model passes its test",
             "Approved jobs only, stop anytime",
             "Your key never leaves your machine",
             "Windows app and phones next"
@@ -476,11 +479,11 @@
     "nav": {
       "aria": "Screens",
       "groups": {
-        "mission": "Mission control",
-        "missionShort": "Mission",
-        "training": "Training",
-        "payments": "Payments",
-        "earn": "Earn"
+        "train": "Train",
+        "developers": "Developers",
+        "earn": "Earn",
+        "pricing": "Pricing",
+        "how": "How it works"
       },
       "items": {
         "recovery": {
@@ -490,10 +493,6 @@
         "quality": {
           "label": "Quality",
           "hint": "Why a model passed or was refused"
-        },
-        "newJob": {
-          "label": "New job",
-          "hint": "Lock a budget and start training"
         },
         "settlement": {
           "label": "Settlement",
@@ -510,6 +509,10 @@
         "earnings": {
           "label": "Earnings",
           "hint": "What device owners made"
+        },
+        "mission": {
+          "label": "Mission control",
+          "hint": "Watch a training job live, step by step"
         }
       }
     },
@@ -520,20 +523,21 @@
         {
           "title": "Use it",
           "links": [
-            "Mission control",
+            "Developers",
             "Earn with your device",
-            "Earnings",
-            "Verify a payout"
+            "Pricing",
+            "Settings"
           ]
         },
         {
-          "title": "Proof",
+          "title": "How it works",
           "links": [
+            "Mission control",
             "Escrow ledger",
             "Proof of reserves",
             "Settlement",
-            "System status",
-            "Owner console"
+            "Verify a payout",
+            "System status"
           ]
         },
         {
@@ -584,7 +588,8 @@
     "verifyFailed": "Links work once, for 15 minutes. Ask for a new one.",
     "noToken": "This page needs the link from your email. Ask for a new one.",
     "newLink": "Get a new link",
-    "walletNote": "Device owners: your earnings and payouts stay under your wallet, on the Account page."
+    "walletNote": "Device owners: your earnings and payouts stay under your wallet, on the Account page.",
+    "headerSignedInAs": "Signed in as {email}"
   },
   "settings": {
     "title": "Settings",
@@ -631,8 +636,10 @@
     "scopes": "Access",
     "scopeNames": {
       "jobs": "Start and read jobs",
-      "models.read": "Read models and reports",
-      "models.predict": "Run models"
+      "models": {
+        "read": "Read models and reports",
+        "predict": "Run models"
+      }
     },
     "createKey": "Create key",
     "revoke": "Revoke",
@@ -648,5 +655,250 @@
     "needScope": "Pick at least one kind of access.",
     "needName": "Give the key a name.",
     "readOnly": "Only owners and admins can invite people or manage keys."
+  },
+  "admin": {
+    "title": "Admin",
+    "lead": "Teams, jobs, payments and providers, for the owner only. Every change made here is logged.",
+    "signedInAs": "Signed in as {email}",
+    "loadFailed": "Couldn't load the admin area",
+    "signInTitle": "Sign in first",
+    "signInLead": "The admin area is for the owner's account.",
+    "notFoundTitle": "Page not found",
+    "notFoundLead": "There's nothing here for this account.",
+    "tabsLabel": "Admin sections",
+    "refresh": "Refresh",
+    "tab": {
+      "jobs": "Jobs",
+      "payments": "Payments",
+      "teams": "Teams",
+      "providers": "Providers",
+      "network": "Network",
+      "audit": "Audit log"
+    },
+    "jobs": {
+      "title": "Jobs",
+      "lead": "The latest 100, newest first. Open one to see its checkpoints or cancel it.",
+      "loadFailed": "Couldn't load jobs",
+      "empty": "No jobs yet",
+      "job": "Job",
+      "state": "State",
+      "budget": "Budget",
+      "created": "Created",
+      "attempt": "Attempt",
+      "deadline": "Deadline",
+      "onchain": "On-chain id",
+      "back": "All jobs",
+      "detailLead": "Now {state}.",
+      "checkpoints": "Checkpoints ({count})",
+      "noCheckpoints": "No checkpoints yet.",
+      "step": "Step",
+      "size": "Size",
+      "signer": "Signed by",
+      "cancel": "Cancel job",
+      "cancelConfirm": "Press again to cancel",
+      "cancelLead": "The Coordinator stops the job; the cancel is logged.",
+      "cancelled": "Cancelled. The job is now {state}."
+    },
+    "payments": {
+      "ordersTitle": "Orders",
+      "ordersLead": "Test-mode Razorpay orders, newest first. A paid order that is still held can be refunded in full.",
+      "settlementsTitle": "Settlements",
+      "settlementsLead": "How finished jobs were settled.",
+      "loadFailed": "Couldn't load payments",
+      "noOrders": "No orders yet",
+      "noSettlements": "No settlements yet",
+      "team": "Team",
+      "amount": "Amount",
+      "status": "Status",
+      "job": "Job",
+      "created": "Created",
+      "verdict": "Verdict",
+      "refund": "Refund",
+      "refundConfirm": "Press again to refund {amount}",
+      "refunded": "Refunded {amount}."
+    },
+    "teams": {
+      "title": "Teams",
+      "loadFailed": "Couldn't load teams",
+      "empty": "No teams yet",
+      "name": "Name",
+      "members": "Members",
+      "keys": "Active keys",
+      "created": "Created"
+    },
+    "providers": {
+      "title": "Providers",
+      "lead": "Who trains for Ekido. These names are shown only here, never to customers.",
+      "loadFailed": "Couldn't load providers",
+      "empty": "No providers yet",
+      "name": "Name",
+      "status": "Status",
+      "gpu": "GPU",
+      "price": "Price per step",
+      "wallet": "Wallet"
+    },
+    "audit": {
+      "title": "Audit log",
+      "lead": "Every change made from the admin area: who, when, what and how it went. The latest 200.",
+      "loadFailed": "Couldn't load the audit log",
+      "empty": "Nothing changed yet",
+      "when": "When",
+      "who": "Who",
+      "action": "Action",
+      "target": "On",
+      "outcome": "Outcome"
+    },
+    "network": {
+      "title": "Network health",
+      "refresh": "Refresh",
+      "retry": "Retry",
+      "chainUnreachable": "Base Sepolia didn't answer, so the network figures aren't available right now.",
+      "reserves": "Escrow reserves",
+      "reservesValue": "{held} held / {owed} owed",
+      "role": {
+        "coordinator": "Coordinator (sends settlements)",
+        "arbiter": "Arbiter (decides disputes)",
+        "owner": "Owner (sets verifiers)"
+      },
+      "gas": "{eth} ETH",
+      "gasLow": "{eth} ETH, top up soon",
+      "revenueTitle": "Revenue",
+      "revenueLead": "The protocol fee, on accepted work only",
+      "feeTo": "{percent}% to {address}",
+      "feesOwed": "{amount} USDC earned, waiting to withdraw",
+      "noFee": "No fee is charged on this network yet.",
+      "moneyTitle": "Where the money is",
+      "moneyLead": "The full journal and reconciliation are on the",
+      "chainLink": "On-chain page"
+    }
+  },
+  "developers": {
+    "docs": {
+      "basicsTitle": "The basics",
+      "baseTitle": "Base URL",
+      "baseBody": "Every endpoint below starts with this address.",
+      "authTitle": "Authentication",
+      "authBody": "Create a key in Settings → API keys, then send it as a Bearer token. Keys belong to your team and can be revoked at any time.",
+      "modesTitle": "Test and live keys",
+      "modesBody": "ek_test_ keys use test payments and the test network, and cost nothing. ek_live_ keys come with real payments; this build accepts test mode only.",
+      "endpointsTitle": "Endpoints",
+      "endpointsLead": "Each one says honestly whether it works today. Requests and answers are JSON; personal details never travel in a URL.",
+      "colEndpoint": "Endpoint",
+      "colWhat": "What it does",
+      "colWho": "Who can call it",
+      "colStatus": "Status",
+      "endpoint": {
+        "me": "Who you are, and the teams this key or sign-in can use",
+        "recipes": "The ready-made tasks you can train, with their columns and quality bar",
+        "datasets": "Upload your examples for a recipe; every row problem comes back at once",
+        "quotes": "Price, GST and the quality bar for a dataset, before you pay",
+        "orders": "Start a test payment for a quote (Razorpay Checkout)",
+        "order": "Whether the payment went through",
+        "jobs": "Start training from a paid quote",
+        "invoice": "The GST invoice for a paid order, as a PDF",
+        "job": "A job's progress, as you see it (devices are never named)",
+        "models": "Your team's trained models",
+        "predict": "Run your model on up to 32 inputs",
+        "chat": "OpenAI-style chat with your model",
+        "download": "A short-lived link to download your model"
+      },
+      "auth": {
+        "public": "Anyone",
+        "key": "Your key or sign-in",
+        "owner": "A signed-in team owner or admin"
+      },
+      "status": {
+        "live": "Live",
+        "payments": "Needs test payments",
+        "soon": "Coming 24 Nov"
+      },
+      "goldenTitle": "From examples to a quote",
+      "goldenLead": "The steps that work today with a test key. Paying and starting the job follow once test payments are switched on.",
+      "predictTitle": "Calling your model",
+      "predictLead": "Once your model passes its test, this is all it takes. Your text is never logged.",
+      "errorsBody": "Errors come back as JSON with an error code and a detail sentence you can show to a person. 401 means sign in or send a key; 404 means not found, or not yours; 422 lists what to fix; 429 means slow down."
+    }
+  },
+  "train": {
+    "title": "Train your model",
+    "lead": "Bring examples of the job you want done. You'll see the price and the quality bar before you pay, and if the model misses the bar, you get your money back.",
+    "signInTitle": "Sign in to train a model",
+    "signInLead": "Your models belong to your team.",
+    "teamTitle": "Create your team first",
+    "teamLead": "Models, keys and invoices belong to a team.",
+    "teamButton": "Go to settings",
+    "stepsLabel": "Steps",
+    "step": {
+      "recipe": "Pick a task",
+      "file": "Your examples",
+      "quote": "Price and pay"
+    },
+    "errorTitle": "That didn't work",
+    "recipeTitle": "What should your model do?",
+    "recipeLead": "Each task has a fixed format and a quality bar.",
+    "columns": "Columns: {input} → {answer}",
+    "fileTitle": "Your examples for {recipe}",
+    "fileLead": "A CSV file with the columns {input} and {answer}. Add a column called split (train or test) to choose the test examples yourself; otherwise every fifth row is held back for the test.",
+    "privacyNote": "Remove names, phone numbers and other personal details from your examples before you upload them. They're sent to Ekido and to the devices that train your model.",
+    "labels": "Allowed answers: {labels}",
+    "rowsRead": "{file}: {train} training and {test} test examples.",
+    "tooLarge": "This file is larger than 20 MB. Use fewer or shorter examples.",
+    "needTest": "The quality check needs at least 20 test examples; this file gives {have}. Add more rows.",
+    "back": "Back",
+    "uploading": "Uploading…",
+    "getQuote": "Upload and see the price",
+    "quoteTitle": "Your price and quality bar",
+    "quoteLead": "For {train} training and {test} test examples.",
+    "training": "Training",
+    "gst": "GST (18%)",
+    "total": "Total",
+    "eta": "Ready in about",
+    "minutes": "{n} minutes",
+    "qualityTitle": "The quality bar",
+    "provisional": "Prices are provisional while Ekido is in test mode.",
+    "testMode": "Test mode: use Razorpay's test UPI or test card. No real money moves.",
+    "pay": "Pay {amount} and start",
+    "paying": "Waiting for the payment…",
+    "starting": "Payment received. Starting your training…",
+    "paymentFailed": "The payment didn't go through. Nothing was charged; try again.",
+    "paymentSlow": "We haven't heard from Razorpay yet. If you paid, your training starts as soon as it confirms; check back in a minute."
+  },
+  "job": {
+    "title": "Your model",
+    "loadFailed": "Couldn't load this job",
+    "notFound": "There's no such job in your team.",
+    "stage": {
+      "starting": "Starting",
+      "training": "Training",
+      "checking": "Checking",
+      "passed": "Ready"
+    },
+    "stageLead": {
+      "starting": "Finding a device to train on.",
+      "training": "Training on your examples.",
+      "checking": "Independent checkers are testing your model on your test examples.",
+      "passed": "Your model passed its quality bar and is ready.",
+      "refunded": "Your model missed its quality bar, so you get a full refund.",
+      "cancelled": "This job was cancelled."
+    },
+    "progress": "Progress",
+    "steps": "{done} of {total} steps",
+    "moved": "{n, plural, one {A device dropped out once; the training carried on from its last checkpoint on another device.} other {Devices dropped out # times; each time the training carried on from its last checkpoint on another device.}}",
+    "qualityTitle": "Quality check",
+    "qualityPending": "Your model must answer at least {floor}% of your test examples correctly.",
+    "qualityPassed": "{score}% of your test examples answered correctly. The bar was {floor}%: passed.",
+    "qualityMissed": "{score}% of your test examples answered correctly. The bar was {floor}%: missed, so you're refunded.",
+    "payment": {
+      "CREATED": "Payment of {amount} not completed yet.",
+      "HELD": "{amount} paid and held until the check passes.",
+      "SETTLED": "{amount} paid.",
+      "REFUNDED": "{amount} refunded.",
+      "NEEDS_REVIEW": "{amount}: payment under review."
+    },
+    "modelTitle": "Use your model",
+    "modelLead": "Download it to run anywhere, or call it with your API key.",
+    "download": "Download the model",
+    "callTitle": "Call it from your code",
+    "callLead": "Create a key with Run models in Settings, then:"
   }
 }

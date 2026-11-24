@@ -33,6 +33,8 @@ export class RealLiveSource {
   private readonly base: string;
   private readonly listeners = new Set<Listener>();
   private snap: RealSnapshot;
+  /** The snapshot before start(), which is what the server rendered. */
+  private readonly initial: RealSnapshot;
   private running = false;
   private jobId: string | null = null;
   private selectedJob: string | null = null;
@@ -58,6 +60,7 @@ export class RealLiveSource {
   constructor(baseUrl: string) {
     this.base = baseUrl.replace(/\/$/, "");
     this.snap = { state: emptyState, connection: "idle", failures: 0, lastMessageAt: null, hello: null, error: null, url: this.base, synthetic: false };
+    this.initial = this.snap;
   }
 
   subscribe = (listener: Listener) => {
@@ -66,6 +69,13 @@ export class RealLiveSource {
   };
 
   getSnapshot = () => this.snap;
+
+  /**
+   * For useSyncExternalStore's getServerSnapshot. The provider starts the source in an effect, so a page segment
+   * that hydrates after that (e.g. /replay) would otherwise hydrate against "connecting" or "live" while the server
+   * rendered "idle": React error #418 on every load (ekido-ai/ekido-core#126).
+   */
+  getServerSnapshot = () => this.initial;
 
   start(): void {
     if (this.running) return;

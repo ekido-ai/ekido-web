@@ -104,7 +104,9 @@ function MissionControl() {
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_19rem]">
       <section className="min-w-0 panel rounded-2xl border border-line px-4 py-4 sm:px-6" aria-live="polite">
         <div className="flex flex-wrap items-start justify-between gap-6">
-          <div className="min-w-0 flex-1">
+          {/* A 16rem basis, so on phones the hint or buttons wrap below instead of squeezing the headline
+              into one word per line (ekido-ai/ekido-core#130). */}
+          <div className="min-w-0 flex-[1_1_16rem]">
             <StatusPill tone={stage.tone} size="lg">
               <span className="text-xl sm:text-2xl">{stage.headline}</span>
             </StatusPill>
