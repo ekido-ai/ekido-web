@@ -68,37 +68,41 @@ export default async function Landing() {
   return (
     <div className="landing -mx-4 -mt-5 overflow-x-clip text-ink sm:-mx-6">
       {/* ── Hero: centred statement, the product right under it ── */}
-      <section className="dot-grid relative border-b border-line">
-        <div className="pointer-events-none absolute! inset-x-0 top-0 h-[34rem] bg-[radial-gradient(60%_60%_at_50%_0%,rgba(254,80,0,0.11),transparent_72%)]" aria-hidden />
-        <div className={`${wrap} pb-24 pt-20 text-center lg:pt-28`}>
-          <Link href="/status" className="mb-7 inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 text-sm text-ink-2 hover:text-ink">
-            <span className="size-2 rounded-full bg-success" />
-            {t("live")}
-            <ArrowUpRight className="size-3.5" aria-hidden />
-          </Link>
-          <h1 className="mx-auto max-w-4xl text-ink">
-            {t("title")} <span className="text-muted">{t("titleMuted")}</span>
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-ink-2">
-            {t("lead")}
-          </p>
-          <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-            <DashboardLink mode="recorded" className={`${buttonStyles("primary", "lg")} press rounded-full`}>
-              {t("ctaRun")} <ArrowRight className="nudge size-4" aria-hidden />
-            </DashboardLink>
-            <Link href="/products/devices" className={`${buttonStyles("secondary", "lg")} press rounded-full`}>
-              {t("ctaEarn")}
+      <section className="relative border-b border-line">
+        <div className="theme-dark ink-band relative overflow-hidden">
+          <div className="sash-art sash-hero" aria-hidden />
+          <div className={`${wrap} relative z-10 pb-48 pt-20 text-center lg:pt-28`}>
+            <Link href="/status" className="mb-7 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1 text-sm text-white/80 hover:text-white">
+              <span className="size-2 rounded-full bg-success" />
+              {t("live")}
+              <ArrowUpRight className="size-3.5" aria-hidden />
             </Link>
+            <h1 className="mx-auto max-w-4xl text-white">
+              {t("title")} <span className="text-white/60">{t("titleMuted")}</span>
+            </h1>
+            <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/75">
+              {t("lead")}
+            </p>
+            <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
+              <DashboardLink mode="recorded" className="press inline-flex items-center gap-2 rounded-full bg-accent px-7 py-3.5 text-base font-semibold text-white shadow-[0_14px_30px_-12px_rgba(254,80,0,0.8)]">
+                {t("ctaRun")} <ArrowRight className="nudge size-4" aria-hidden />
+              </DashboardLink>
+              <Link href="/products/devices" className="press inline-flex items-center gap-2 rounded-full border border-white/30 px-7 py-3.5 text-base font-semibold text-white hover:bg-white/10">
+                {t("ctaEarn")}
+              </Link>
+            </div>
           </div>
-          <div className="relative mx-auto mt-16 max-w-5xl text-left">
-            <div className="rounded-[1.75rem] shadow-[0_40px_90px_-30px_rgba(19,30,41,0.35)]">
+        </div>
+        <div className={`${wrap} relative -mt-36 pb-24`}>
+          <div className="relative mx-auto max-w-5xl text-left">
+            <div className="rounded-[1.75rem] shadow-[0_50px_100px_-30px_rgba(19,30,41,0.55)]">
               <ProductPreview />
             </div>
-            <div className="absolute -right-4 -top-5 hidden w-60 rounded-xl border border-line bg-surface p-3.5 text-sm shadow-lg xl:block" aria-hidden>
+            <div className="absolute -right-6 top-24 hidden w-60 rounded-xl border border-line bg-surface p-3.5 text-sm shadow-lg xl:block" aria-hidden>
               <p className="flex items-center gap-2 font-semibold text-ink"><span className="size-2 rounded-full bg-success" />{t("chips.moved")}</p>
               <p className="mt-1 text-xs text-ink-2">{t("chips.movedNote")}</p>
             </div>
-            <div className="absolute -left-4 bottom-12 hidden w-60 rounded-xl border border-line bg-surface p-3.5 text-sm shadow-lg xl:block" aria-hidden>
+            <div className="absolute -left-6 bottom-12 hidden w-60 rounded-xl border border-line bg-surface p-3.5 text-sm shadow-lg xl:block" aria-hidden>
               <p className="flex items-center gap-2 font-semibold text-ink"><BadgeCheck className="size-4 text-success" />{t("chips.passed")}</p>
               <p className="mt-1 text-xs text-ink-2">{t("chips.passedNote")}</p>
             </div>
@@ -250,8 +254,9 @@ export default async function Landing() {
       </section>
 
       {/* ── Closing call to action ── */}
-      <section className="theme-dark ink-band">
-        <div className={`${wrap} flex flex-wrap items-center justify-between gap-8 py-20`}>
+      <section className="theme-dark ink-band relative overflow-hidden">
+        <div className="sash-art sash-small hidden md:block" aria-hidden />
+        <div className={`${wrap} relative flex flex-wrap items-center justify-between gap-8 py-24`}>
           <div>
             <h2 className="max-w-2xl text-ink">{t("closeTitle")}</h2>
             <p className="mt-3 text-lg text-ink-2">{t("closeLead")}</p>
