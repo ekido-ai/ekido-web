@@ -163,7 +163,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   // The live/recorded controls and the coordinator banner belong to the screens that show a job.
   const dash = DASH_PATHS.some((p) => path.startsWith(p));
   // The home page is the product site: its own section links and one primary button, no chain status.
-  const landing = path === "/" || path === "/products" || ["/products/", "/solutions", "/developers", "/pricing", "/trust", "/roadmap"].some((p) => path.startsWith(p));
+  const landing =
+    path === "/" ||
+    path === "/products" ||
+    ["/products/", "/solutions", "/developers", "/pricing", "/trust", "/roadmap", "/provide", "/help", "/status", "/security", "/privacy", "/terms", "/acceptable-use", "/login"].some((p) => path.startsWith(p));
   // A customer's own screens (train a model, a job, settings) are a normal SaaS app: no chain status and no wallet button in the header.
   // They pay in rupees; the chain is a proof layer, shown on the pages that are about it.
   const customer = ["/train", "/settings", "/prepare"].some((p) => path.startsWith(p)) || (path.startsWith("/jobs/") && !path.startsWith("/jobs/new"));
@@ -188,7 +191,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             {/* On a phone the marketing pages put sign-in in the Menu, so the link shows there only from sm up. */}
             <AccountLink path={path} hideOnPhone={landing} />
             {landing && (
-              <Link href="/dashboard" className="press inline-flex h-9 items-center rounded-full bg-action px-4 text-sm font-semibold text-action-ink hover:bg-action-hover sm:ml-1">
+              <Link href="/train" className="press inline-flex h-9 items-center rounded-full bg-action px-4 text-sm font-semibold text-action-ink hover:bg-action-hover sm:ml-1">
                 Open the app
               </Link>
             )}

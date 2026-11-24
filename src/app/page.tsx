@@ -116,7 +116,8 @@ export default async function Landing() {
             {(t.raw("how.steps") as { title: string; body: string }[]).map((s, i) => {
               const Icon = [MessageSquareText, Upload, BadgeCheck, Server][i] ?? Check;
               return (
-                <li key={s.title} className="artifact relative p-6">
+                <li key={s.title} className="relative">
+                  <Link href={["/products/assistant", "/products/train", "/products/verify", "/products/host"][i]} className="artifact lift block h-full p-6">
                   <span className="flex items-center justify-between">
                     <span className="grid size-11 place-items-center rounded-xl bg-ink text-ink-inverse">
                       <Icon className="size-5" aria-hidden />
@@ -125,6 +126,7 @@ export default async function Landing() {
                   </span>
                   <h3 className="mt-5 text-ink">{s.title}</h3>
                   <p className="mt-2 text-[15px] leading-relaxed text-ink-2">{s.body}</p>
+                  </Link>
                 </li>
               );
             })}

@@ -13,6 +13,51 @@
     "closeMenu": "Close menu",
     "emailSignIn": "Sign in with email"
   },
+  "scenes": {
+    "assistant": [
+      "YOUR JOB IN PLAIN WORDS",
+      "RECIPE CHOSEN",
+      "FIXED QUOTE"
+    ],
+    "train": [
+      "DEVICE STOPS",
+      "SAVED CHECKPOINT",
+      "NEXT DEVICE RESUMES",
+      "PHONES: NEXT"
+    ],
+    "verify": [
+      "UNTRAINED BASE",
+      "TRAINED MODEL",
+      "YOUR TEST EXAMPLES",
+      "PASS: PAID. MISS: REFUND"
+    ],
+    "host": [
+      "HOSTED ENDPOINT",
+      "OR YOUR OWN MACHINE",
+      "API KEY WITH SCOPES",
+      "YOUR APP"
+    ],
+    "pay": [
+      "PAID: WORK ACCEPTED",
+      "PAID: WORK ACCEPTED",
+      "LOCKED BUDGET",
+      "NOT PAID: REJECTED"
+    ],
+    "devices": [
+      "GAMING PCS",
+      "LAPTOPS",
+      "PHONES: NEXT",
+      "OUTBOUND ONLY, NO OPEN PORTS"
+    ]
+  },
+  "flow": {
+    "here": "YOU ARE HERE",
+    "under": "Underneath all of it:",
+    "before": "BEFORE THIS STEP",
+    "next": "NEXT STEP",
+    "title": "One service, in order",
+    "sub": "Every job takes the same five steps, on the same devices. Each part has its own page."
+  },
   "home": {
     "how": {
       "eyebrow": "How it works",

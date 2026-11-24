@@ -55,7 +55,7 @@ export function HeroArt({ labels }: { labels: { pc: string; laptop: string; phon
     grid.push(<line key={`b${i}`} x1={p(0, i)[0]} y1={p(0, i)[1]} x2={p(9, i)[0]} y2={p(9, i)[1]} />);
   }
   return (
-    <svg viewBox="0 0 660 470" role="img" aria-label={labels.model} className="h-auto w-full">
+    <svg viewBox="-60 0 780 470" role="img" aria-label={labels.model} className="h-auto w-full">
       <defs>
         <linearGradient id="hero-floor" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="#fff3ec" />

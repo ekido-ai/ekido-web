@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, Check, Layers } from "lucide-react";
 import { ProductIcon } from "@/components/brand/product-icons";
+import { HeroArt } from "@/components/landing/hero-art";
 import { getTranslations } from "next-intl/server";
 import { MarketingPage, PageHero, PageSection } from "@/components/landing/page-hero";
 import { StatusBadge } from "@/components/shell/marketing-nav";
@@ -22,6 +23,7 @@ type Service = { name: string; line: string; status: Status; points: string[] };
 export default async function ProductsPage() {
   const products = await getProducts();
   const t = await getTranslations("pages.products");
+  const homeArt = (await getTranslations("home")).raw("art") as { pc: string; laptop: string; phone: string; check: string; model: string };
   const services = t.raw("services") as Service[];
   const byKey = Object.fromEntries(products.map((p) => [p.key, p]));
   const flow = FLOW.map((k) => byKey[k]).filter(Boolean);
@@ -29,7 +31,7 @@ export default async function ProductsPage() {
 
   return (
     <MarketingPage>
-      <PageHero kicker={t("kicker")} title={t("title")} sub={t("sub")}>
+      <PageHero kicker={t("kicker")} title={t("title")} sub={t("sub")} art={<HeroArt labels={homeArt} />}>
         <Link href="/train" className={`${buttonStyles("primary", "lg")} press rounded-full`}>
           {t("ctaApp")} <ArrowUpRight className="nudge size-4" aria-hidden />
         </Link>
