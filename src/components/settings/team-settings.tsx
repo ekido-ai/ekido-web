@@ -7,6 +7,7 @@ import { Check, Copy, LogOut } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Field, inputClass } from "@/components/auth/field";
 import { Button, ConfirmButton } from "@/components/ui/button";
+import { ApiKeyList } from "@/components/platform/api-key-list";
 import { buttonStyles } from "@/components/ui/button-styles";
 import { Panel } from "@/components/ui/panel";
 import { ErrorState, SkeletonLines } from "@/components/ui/states";
@@ -197,37 +198,12 @@ function KeysPanel({ orgId, keys, manage, onChange }: { orgId: string; keys: Api
   const t = useTranslations("settings");
   const [created, setCreated] = useState<NewApiKey | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const date = (iso: string) => new Date(iso).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
 
   return (
     <Panel title={t("keys")} subtitle={t("keysLead")}>
       <div className="space-y-6 p-6">
         {created && <NewKeySecret secret={created.secret} onDone={() => setCreated(null)} />}
-        {keys.length === 0 ? (
-          <p className="text-sm text-muted">{t("noKeys")}</p>
-        ) : (
-          <ul className="divide-y divide-line rounded-lg border border-line">
-            {keys.map((k) => (
-              <li key={k.key_id} className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 text-sm">
-                <span className="min-w-0 space-y-0.5">
-                  <span className="block font-semibold text-ink">
-                    {k.name} <span className="rounded border border-line px-1.5 py-0.5 text-xs font-medium text-ink-2">{t(`modes.${k.mode}`)}</span>
-                  </span>
-                  <span className="block font-mono text-xs text-muted">{k.prefix}…</span>
-                  <span className="block text-xs text-ink-2">{k.scopes.map((s) => t(`scopeNames.${s}`)).join(" · ")}</span>
-                  <span className="block text-xs text-muted">
-                    {t("created", { date: date(k.created_at) })} · {k.last_used_at ? t("lastUsed", { date: date(k.last_used_at) }) : t("neverUsed")}
-                  </span>
-                </span>
-                {manage && (
-                  <ConfirmButton size="sm" variant="danger" confirmLabel={t("confirmRevoke")} onConfirm={() => platform.revokeKey(orgId, k.key_id).then(onChange, (e) => setError(e.message))}>
-                    {t("revoke")}
-                  </ConfirmButton>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
+        <ApiKeyList keys={keys} manage={manage} onRevoke={(k) => platform.revokeKey(orgId, k.key_id).then(onChange, (e) => setError(e.message))} />
         {error && <ErrorState title={error} />}
         {manage ? <NewKeyForm orgId={orgId} onCreated={(k) => { setCreated(k); onChange(); }} /> : <p className="text-sm text-muted">{t("readOnly")}</p>}
       </div>

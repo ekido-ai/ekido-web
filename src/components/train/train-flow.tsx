@@ -9,8 +9,10 @@ import { buttonStyles } from "@/components/ui/button-styles";
 import { cx } from "@/components/ui/cx";
 import { Panel } from "@/components/ui/panel";
 import { ErrorState, SkeletonLines } from "@/components/ui/states";
+import { DropZone } from "@/components/platform/drop-zone";
+import { QuoteCard } from "@/components/platform/quote-card";
 import { platform, PlatformError, type Me } from "@/lib/platform/api";
-import { parseCsv, rowsForRecipe, rupees, train, type Dataset, type Quote, type Recipe } from "@/lib/platform/train";
+import { parseCsv, rowsForRecipe, train, type Dataset, type Quote, type Recipe } from "@/lib/platform/train";
 
 /*
  * Tickets C9 and A14's customer side: pick a recipe, bring examples, see the price and the quality bar, pay, and the
@@ -42,7 +44,8 @@ export function TrainFlow() {
   const [recipes, setRecipes] = useState<Recipe[] | null>(null);
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [rows, setRows] = useState<{ train: Record<string, string>[]; test: Record<string, string>[] } | null>(null);
-  const [fileName, setFileName] = useState("");
+  const [file, setFile] = useState<{ name: string; size: number } | null>(null);
+  const [reading, setReading] = useState<string | null>(null);
   const [dataset, setDataset] = useState<Dataset | null>(null);
   const [quote, setQuote] = useState<Quote | null>(null);
   const [step, setStep] = useState<Step>("recipe");
@@ -61,14 +64,18 @@ export function TrainFlow() {
       if (!recipe) return;
       setError(null);
       setRows(null);
-      setFileName(file.name);
+      setFile(null);
+      setReading(file.name);
       try {
-        if (file.size > 20 * 1024 * 1024) throw new Error(t("tooLarge"));
+        // The drop zone has already refused a wrong type, an empty file and anything over the limit.
         const parsed = rowsForRecipe(parseCsv(await file.text()), recipe);
         if (parsed.test.length < 20) throw new Error(t("needTest", { have: parsed.test.length }));
         setRows(parsed);
+        setFile({ name: file.name, size: file.size });
       } catch (e) {
         setError((e as Error).message);
+      } finally {
+        setReading(null);
       }
     },
     [recipe, t],
@@ -83,6 +90,22 @@ export function TrainFlow() {
       setDataset(ds);
       setQuote(await train.quote(org.org_id, ds.dataset_id));
       setStep("quote");
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  /** A quote runs out; the examples are already uploaded, so a new price needs only the dataset. */
+  async function newQuote() {
+    if (!org || !dataset) return;
+    setBusy(true);
+    setError(null);
+    // The expired quote stays on screen (with its button off while busy) until the new one arrives, so a failure
+    // leaves "Get a new price" there to try again.
+    try {
+      setQuote(await train.quote(org.org_id, dataset.dataset_id));
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -197,10 +220,10 @@ export function TrainFlow() {
           <div className="space-y-4">
             <p className="rounded-lg border border-warning bg-surface-2 p-3 text-sm text-ink">{t("privacyNote")}</p>
             {recipe.labels.length > 0 && <p className="text-sm text-ink-2">{t("labels", { labels: recipe.labels.join(", ") })}</p>}
-            <input type="file" accept=".csv,text/csv" onChange={(e) => e.target.files?.[0] && void readFile(e.target.files[0])} className="block text-sm" />
-            {rows && (
+            <DropZone accept={[".csv"]} maxBytes={20 * 1024 * 1024} onFile={(f) => void readFile(f)} reading={reading} chosen={file} disabled={busy} />
+            {rows && file && (
               <div className="space-y-3">
-                <p className="text-sm text-ink">{t("rowsRead", { file: fileName, train: rows.train.length, test: rows.test.length })}</p>
+                <p className="text-sm text-ink">{t("rowsRead", { file: file.name, train: rows.train.length, test: rows.test.length })}</p>
                 <div className="overflow-x-auto rounded-lg border border-line">
                   <table className="w-full text-left text-sm">
                     <thead className="bg-surface-2 text-ink-2"><tr><th className="px-3 py-1.5">{recipe.columns.input}</th><th className="px-3 py-1.5">{recipe.columns.answer}</th></tr></thead>
@@ -223,37 +246,18 @@ export function TrainFlow() {
         </Panel>
       )}
 
-      {(step === "quote" || step === "paying" || step === "starting") && quote && dataset && (
+      {(step === "quote" || step === "paying" || step === "starting") && dataset && (
         <Panel title={t("quoteTitle")} subtitle={t("quoteLead", { train: dataset.train_rows, test: dataset.test_rows })}>
-          <div className="space-y-5">
-            <dl className="grid gap-x-8 gap-y-2 text-sm sm:grid-cols-2">
-              <Row label={t("training")} value={rupees(quote.training_paise)} />
-              <Row label={t("gst")} value={rupees(quote.gst_paise)} />
-              <Row label={t("total")} value={rupees(quote.total_paise)} strong />
-              <Row label={t("eta")} value={t("minutes", { n: quote.eta_minutes })} />
-            </dl>
-            <div className="rounded-xl border border-line bg-surface-2 p-4 text-sm">
-              <p className="font-semibold text-ink">{t("qualityTitle")}</p>
-              <p className="mt-1 text-ink-2">{quote.quality_terms.plain_words}.</p>
-              <p className="mt-2 text-ink-2">{quote.refund_policy}</p>
-              {quote.prices_provisional && <p className="mt-2 text-muted">{t("provisional")}</p>}
-            </div>
-            <p className="text-sm text-ink-2">{t("testMode")}</p>
-            <button type="button" className={buttonStyles("primary", "lg")} disabled={busy || step !== "quote"} onClick={() => void pay()}>
-              {step === "starting" ? t("starting") : step === "paying" ? t("paying") : t("pay", { amount: rupees(quote.total_paise) })}
-            </button>
-          </div>
+          <QuoteCard
+            quote={quote}
+            payState={step === "quote" ? "idle" : step}
+            busy={busy}
+            onPay={() => void pay()}
+            onNewQuote={() => void newQuote()}
+          />
         </Panel>
       )}
     </div>
   );
 }
 
-function Row({ label, value, strong }: { label: string; value: string; strong?: boolean }) {
-  return (
-    <div className="flex justify-between gap-3 border-b border-line py-1.5">
-      <dt className="text-ink-2">{label}</dt>
-      <dd className={cx("tabular text-ink", strong && "font-semibold")}>{value}</dd>
-    </div>
-  );
-}
