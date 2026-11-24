@@ -1,5 +1,6 @@
 import { config } from "@/lib/config";
 import { PlatformError } from "@/lib/platform/api";
+import type { AssistantAnswer } from "@/lib/platform/assistant";
 
 /*
  * The customer journey on the Platform API: recipes, datasets, quotes, orders and jobs (tickets C9 and C12). The site
@@ -73,6 +74,9 @@ async function call<T>(method: "GET" | "POST", path: string, body?: unknown): Pr
 const id = encodeURIComponent;
 
 export const train = {
+  /** The job assistant (decision A1): picks a recipe from plain words. A conversation id carries the previous turn. */
+  assistant: (orgId: string, message: string, conversationId?: string) =>
+    call<AssistantAnswer>("POST", "/assistant/messages", { message, org_id: orgId, ...(conversationId ? { conversation_id: conversationId } : {}) }),
   recipes: () => call<Recipe[]>("GET", "/recipes"),
   upload: (orgId: string, body: { recipe_id: string; train: Record<string, string>[]; test: Record<string, string>[] }) =>
     call<Dataset>("POST", `/orgs/${id(orgId)}/datasets`, body),
