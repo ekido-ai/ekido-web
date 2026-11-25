@@ -768,7 +768,7 @@
     },
     "storage": {
       "aria": "Storage notice",
-      "text": "No cookies, no tracking. We only remember your theme and view in this browser.",
+      "text": "No tracking. If you sign in, one cookie keeps you signed in. Everything else stays in this browser.",
       "link": "What we store",
       "ok": "Got it"
     }
