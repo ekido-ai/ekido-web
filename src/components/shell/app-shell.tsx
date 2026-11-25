@@ -191,7 +191,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             {/* On a phone the marketing pages put sign-in in the Menu, so the link shows there only from sm up. */}
             <AccountLink path={path} hideOnPhone={landing} />
             {landing && (
-              <Link href="/train" className="press inline-flex h-9 items-center rounded-full bg-action px-4 text-sm font-semibold text-action-ink hover:bg-action-hover sm:ml-1">
+              <Link href="/dashboard" className="press inline-flex h-9 items-center rounded-full bg-action px-4 text-sm font-semibold text-action-ink hover:bg-action-hover sm:ml-1">
                 Open the app
               </Link>
             )}
