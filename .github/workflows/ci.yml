@@ -27,6 +27,7 @@ jobs:
       - name: Generate Next.js route types
         run: npx next typegen
       - run: npx tsc --noEmit
+      - run: npm run lint
       - run: npx vitest run
       - name: Production build
         run: npx next build

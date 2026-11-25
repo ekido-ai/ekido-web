@@ -13,8 +13,6 @@ import { cx } from "@/components/ui/cx";
 import { AnimatedNumber } from "@/components/motion/animated-number";
 import { BASE_SEPOLIA, STATES, readLedger, readWallet, type Ledger } from "@/lib/chain/read";
 import { journalCsv, short, usdc, type EscrowEvent } from "@/lib/chain/ledger";
-import { compareListings, type CoordinatorProvider } from "@/lib/chain/registry";
-import { config } from "@/lib/config";
 import { usePrivateListsReadable } from "@/lib/platform/signed-in";
 
 const scan = (kind: "address" | "tx" | "block", value: string) => `${BASE_SEPOLIA.explorer}/${kind}/${value}`;
@@ -133,12 +131,12 @@ export default function ChainPage() {
         </Panel>
       )}
 
-      {ledger && <LedgerView ledger={ledger} coordinatorReadable={indexReadable === true} />}
+      {ledger && <LedgerView ledger={ledger} />}
     </div>
   );
 }
 
-function LedgerView({ ledger, coordinatorReadable }: { ledger: Ledger; coordinatorReadable: boolean }) {
+function LedgerView({ ledger }: { ledger: Ledger }) {
   const t = useTranslations("demo.chain");
   const at = (block: bigint) => when(ledger.times.get(block.toString()), t("unknownTime"));
   // Contract state names in the reader's language; an index past the known list shows as its number.
@@ -147,6 +145,16 @@ function LedgerView({ ledger, coordinatorReadable }: { ledger: Ledger; coordinat
   const clients = new Set(ledger.jobs.map((j) => j.split.client.toLowerCase()));
   const owedProviders = [...ledger.withdrawableOf].filter(([a]) => !clients.has(a)).reduce((s, [, v]) => s + v, BigInt(0));
   const owedClients = counters.totalWithdrawable - owedProviders;
+  // Our site lists no provider and ties none to a wallet (ekido-ai/ekido-internal#99). The chain is public, so this hides
+  // nothing from it. Clients and the contract's role wallets stay, and "Check any wallet" lets an owner look up their own.
+  const named = new Set([...clients, ...[roles.coordinator, roles.arbiter, roles.owner, ...roles.verifiers].map((a) => a.toLowerCase())]);
+  const isNamed = (address: string) => named.has(address.toLowerCase());
+  const owedNamed = [...ledger.withdrawableOf].filter(([a]) => isNamed(a));
+  const owedUnnamed = [...ledger.withdrawableOf].filter(([a]) => !isNamed(a)).reduce((s, [, v]) => s + v, BigInt(0));
+  const withoutProvider = (account: string) => {
+    const [kind, value] = account.split(":");
+    return kind === "locked" || isNamed(value) ? account : `${kind}:provider`;
+  };
   const parts = [
     { key: "locked", label: t("parts.locked"), value: counters.totalLocked, cls: "bg-series-1" },
     { key: "prov", label: t("parts.prov"), value: owedProviders, cls: "bg-series-3" },
@@ -157,7 +165,7 @@ function LedgerView({ ledger, coordinatorReadable }: { ledger: Ledger; coordinat
   const allPassed = ledger.checks.every((c) => c.passed);
 
   function downloadCsv() {
-    const csv = journalCsv(book.entries.map((e) => ({ ...e, time: at(e.block) })));
+    const csv = journalCsv(book.entries.map((e) => ({ ...e, time: at(e.block), debit: withoutProvider(e.debit), credit: withoutProvider(e.credit) })));
     const url = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
     const a = document.createElement("a");
     a.href = url;
@@ -255,8 +263,6 @@ function LedgerView({ ledger, coordinatorReadable }: { ledger: Ledger; coordinat
         </ul>
       </Panel>
 
-      <RegistryPanel ledger={ledger} coordinatorReadable={coordinatorReadable} />
-
       <section className="space-y-4" aria-labelledby="jobs-h">
         <h2 id="jobs-h" className="font-serif text-2xl text-ink">
           {t("jobsTitle")} <span className="text-base font-normal text-ink-2">({ledger.jobs.length})</span>
@@ -291,7 +297,7 @@ function LedgerView({ ledger, coordinatorReadable }: { ledger: Ledger; coordinat
                       {s.payees.map((p, i) => (
                         <li key={p} className="flex items-center gap-2">
                           <span className="size-2.5 rounded-sm bg-series-3" aria-hidden />
-                          <Addr value={p} /> <span className="font-semibold text-ink tabular">{usdc(s.amounts[i])}</span>
+                          <span className="text-ink">{t("providerN", { n: i + 1 })}</span> <span className="font-semibold text-ink tabular">{usdc(s.amounts[i])}</span>
                           <span className="text-ink-2">{t("forAccepted")}</span>
                         </li>
                       ))}
@@ -360,8 +366,8 @@ function LedgerView({ ledger, coordinatorReadable }: { ledger: Ledger; coordinat
                 <tr key={`${e.tx}-${e.logIndex}-${e.debit}`} className="border-b border-line last:border-0">
                   <td className="whitespace-nowrap px-5 py-2 text-ink-2">{at(e.block)}</td>
                   <td className="px-3 py-2 text-ink">{t(`memo.${e.memoKey}`)}</td>
-                  <td className="px-3 py-2"><Account id={e.credit} clients={clients} /></td>
-                  <td className="px-3 py-2"><Account id={e.debit} clients={clients} /></td>
+                  <td className="px-3 py-2"><Account id={e.credit} clients={clients} isNamed={isNamed} /></td>
+                  <td className="px-3 py-2"><Account id={e.debit} clients={clients} isNamed={isNamed} /></td>
                   <td className="px-3 py-2 text-right font-semibold text-ink tabular">{usdc(e.amount)}</td>
                   <td className="px-5 py-2"><Tx hash={e.tx} /></td>
                 </tr>
@@ -377,7 +383,7 @@ function LedgerView({ ledger, coordinatorReadable }: { ledger: Ledger; coordinat
             <p className="text-ink-2">{t("nothingOwed")}</p>
           ) : (
             <ul className="divide-y divide-line">
-              {[...ledger.withdrawableOf].map(([a, v]) => (
+              {owedNamed.map(([a, v]) => (
                 <li key={a} className="flex items-center justify-between gap-3 py-2 first:pt-0 last:pb-0">
                   <span className="flex items-center gap-2">
                     <Wallet className="size-4 text-muted" aria-hidden />
@@ -387,6 +393,15 @@ function LedgerView({ ledger, coordinatorReadable }: { ledger: Ledger; coordinat
                   <span className="font-semibold text-ink tabular">{usdc(v)} USDC</span>
                 </li>
               ))}
+              {owedUnnamed > BigInt(0) && (
+                <li className="flex items-center justify-between gap-3 py-2 first:pt-0 last:pb-0">
+                  <span className="flex items-center gap-2">
+                    <Wallet className="size-4 text-muted" aria-hidden />
+                    <span className="text-ink">{t("providerEarningsAll")}</span>
+                  </span>
+                  <span className="font-semibold text-ink tabular">{usdc(owedUnnamed)} USDC</span>
+                </li>
+              )}
             </ul>
           )}
           <p className="mt-4 text-sm text-ink-2">
@@ -419,62 +434,7 @@ function LedgerView({ ledger, coordinatorReadable }: { ledger: Ledger; coordinat
   );
 }
 
-function RegistryPanel({ ledger, coordinatorReadable }: { ledger: Ledger; coordinatorReadable: boolean }) {
-  const t = useTranslations("demo.chain");
-  const [coord, setCoord] = useState<CoordinatorProvider[] | null | "down" | "private">(coordinatorReadable ? null : "private");
-  useEffect(() => {
-    // On a public server the list is private (operator only): don't ask for a 401 (ekido-ai/ekido-internal#93).
-    if (!coordinatorReadable) return;
-    fetch(`${config.coordinatorUrl}/providers`, { signal: AbortSignal.timeout(8000) })
-      .then((r) => (r.status === 401 || r.status === 403 ? "private" : r.ok ? r.json() : Promise.reject(r.status)))
-      .then((rows: CoordinatorProvider[] | "private") => setCoord(rows))
-      .catch(() => setCoord("down"));
-  }, [coordinatorReadable]);
-  const { listings, offChainOnly } = compareListings(ledger.registry, Array.isArray(coord) ? coord : null);
-  const tone = { matches: "good", differs: "critical", "not-listed": "warning" } as const;
-  return (
-    <Panel
-      title={t("providersTitle")}
-      subtitle={t("providersSubtitle")}
-      actions={<StatusPill tone="neutral">{t("onChain", { n: ledger.registry.length })}</StatusPill>}
-    >
-      {ledger.registry.length === 0 ? (
-        <p className="text-ink-2">
-          {t("noProviders")}
-        </p>
-      ) : (
-        <ul className="divide-y divide-line">
-          {listings.map((l) => (
-            <li key={l.wallet} className="flex flex-wrap items-center justify-between gap-3 py-2.5 first:pt-0 last:pb-0">
-              <span className="flex min-w-0 items-center gap-2">
-                <StatusIcon tone={coord === "down" || coord === "private" || coord === null ? "idle" : tone[l.status]} className="size-5 shrink-0" />
-                <span className="min-w-0">
-                  <span className="block font-medium text-ink">{l.coordinatorName ?? t("unknownName")}</span>
-                  <span className="flex flex-wrap items-center gap-x-3 text-xs text-muted">
-                    <Addr value={l.wallet} />
-                    <Tx hash={l.tx} />
-                    {l.updates > 0 && <span>{t("updated", { n: l.updates })}</span>}
-                  </span>
-                </span>
-              </span>
-              <span className="text-sm text-ink-2">{coord === "down" ? t("coordDown") : coord === "private" ? t("coordPrivate") : coord === null ? t("comparing") : t(`listing.${l.status}`)}</span>
-            </li>
-          ))}
-        </ul>
-      )}
-      {Array.isArray(coord) && (
-        <p className="mt-4 text-sm text-ink-2">
-          {offChainOnly === 0 ? t("allCommitted") : t("notCommitted", { n: offChainOnly })}
-        </p>
-      )}
-      <p className="mt-2 text-xs text-muted">
-        {t("listingNote")}
-      </p>
-    </Panel>
-  );
-}
-
-function Account({ id, clients }: { id: string; clients: Set<string> }) {
+function Account({ id, clients, isNamed }: { id: string; clients: Set<string>; isNamed: (address: string) => boolean }) {
   const t = useTranslations("demo.chain");
   const [kind, value] = id.split(":") as [string, string];
   if (kind === "locked") return <span className="inline-flex items-center gap-1 text-ink-2"><Lock className="size-3" aria-hidden />{t("escrowJob", { id: short(value) })}</span>;
@@ -482,7 +442,7 @@ function Account({ id, clients }: { id: string; clients: Set<string> }) {
   return (
     <span className="inline-flex flex-wrap items-center gap-1 text-ink-2">
       {t(kind === "owed" ? `owedTo.${who}` : `wallet.${who}`)}
-      <Addr value={value} />
+      {isNamed(value) && <Addr value={value} />}
     </span>
   );
 }
