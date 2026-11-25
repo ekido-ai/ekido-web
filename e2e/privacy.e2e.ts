@@ -2,7 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { loadIdentities, type Identities } from "./privacy/identities";
-import { assertRedacted, tag } from "./privacy/redact";
+import { assertRedacted } from "./privacy/redact";
 import { pageFindings, scanJson } from "./privacy/scan";
 import { REMOTE, ROUTES } from "./routes";
 
@@ -34,13 +34,7 @@ const LOADED: Record<string, RegExp> = {
  * still fails the test outright, so a new leak can't hide behind an old one. Once the page has loaded, the test is
  * marked test.fail() with the issue; when the bug is fixed it turns red as "unexpectedly passed": remove the entry.
  */
-const KNOWN_LEAKS: Record<string, { issue: string; expected: (finding: string) => boolean }> = {
-  // Payees in "Where the money went", "Journal" and "Waiting to be withdrawn", and the registry panel's list.
-  "/chain": {
-    issue: "ekido-ai/ekido-internal#99",
-    expected: (f) => /^names a provider \(wallet( \(shortened\))?, sha256 [0-9a-f]{6}\)$/.test(f) || f === `provider list: heading (${tag("Providers, as they committed themselves")})`,
-  },
-};
+const KNOWN_LEAKS: Record<string, { issue: string; expected: (finding: string) => boolean }> = {};
 
 const COORDINATOR = process.env.E2E_COORDINATOR_URL ?? `${(process.env.E2E_BASE_URL ?? "").replace(/\/$/, "")}/sepolia`;
 

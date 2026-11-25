@@ -1,4 +1,5 @@
 import { ExternalLink, Inbox, WifiOff } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { StatusIcon } from "./status";
 import { Button } from "./button";
 
@@ -73,11 +74,12 @@ export function ErrorState({
 }
 
 export function OfflineState({ since }: { since?: string }) {
+  const t = useTranslations("shell.states");
   return (
     <div className="flex items-center gap-3 rounded-lg border border-warning bg-surface-2 px-4 py-3" role="status">
       <WifiOff className="size-4 text-warning" aria-hidden />
       <span className="text-sm text-ink">
-        Lost connection to the coordinator{since ? ` at ${since}` : ""}. Reconnecting. What you see may be stale.
+        {since ? t("offlineSince", { since }) : t("offline")}
       </span>
     </div>
   );
@@ -96,7 +98,8 @@ export function TxStatus({
   href: string | null;
 }) {
   const tone = status === "confirmed" ? "good" : status === "failed" ? "critical" : "active";
-  const word = status === "confirmed" ? "Confirmed" : status === "failed" ? "Failed" : "Pending";
+  const t = useTranslations("shell.states");
+  const word = t(status === "confirmed" ? "confirmed" : status === "failed" ? "failed" : "pending");
   const short = `${hash.slice(0, 8)}…${hash.slice(-6)}`;
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
@@ -112,7 +115,7 @@ export function TxStatus({
         >
           {short}
           <ExternalLink className="size-3.5" aria-hidden />
-          <span className="sr-only">(opens block explorer)</span>
+          <span className="sr-only">{t("opensExplorer")}</span>
         </a>
       ) : (
         <span className="font-mono text-ink-2">{short}</span>

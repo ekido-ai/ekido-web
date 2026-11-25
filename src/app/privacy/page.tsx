@@ -7,7 +7,7 @@ export default function PrivacyPage() {
   return (
     <Doc
       title="Privacy"
-      updated="18 November 2026"
+      updated="25 November 2026"
       intro="Ekido runs on a public test network. We collect as little as we can, but a blockchain is public by design. This page explains both in plain words. It is a draft, pending legal review."
     >
       <Section title="The short version">
@@ -47,7 +47,13 @@ export default function PrivacyPage() {
       </Section>
 
       <Section id="cookies" title="Cookies and browser storage">
-        <p>We set no cookies. Your browser keeps a few small settings, only on your device:</p>
+        <p>
+          We set one cookie, and only when you sign in to an Ekido account with an email link: <code>ekido_session</code>. It keeps you signed in for up
+          to 30 days. It can&apos;t be read by the page&apos;s scripts (<code>HttpOnly</code>), is sent only over HTTPS (<code>Secure</code>) and isn&apos;t
+          sent with forms or background requests that other sites send to us (<code>SameSite=Lax</code>). Signing out ends the session on our server, so the cookie stops working.
+          We set no other cookies: none for ads, analytics or tracking.
+        </p>
+        <p>Your browser also keeps a few small settings, only on your device:</p>
         <ul>
           <li><code>ekido.theme</code>: light or dark.</li>
           <li><code>ekido.source</code>: whether the dashboard shows the live run or the recording.</li>

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { History, Radio, RotateCcw, SlidersHorizontal } from "lucide-react";
 import { useDashboard, usePlayerSnapshot, useSourceControl } from "@/lib/events/source-context";
 import { formatClock } from "@/lib/events/describe";
@@ -34,6 +35,7 @@ import { showsJob } from "@/lib/events/job-paths";
  * (or change) whether the screen shows a real job or a recording.
  */
 function ModeSwitch() {
+  const t = useTranslations("shell.app");
   const { mode, setMode } = useSourceControl();
   const { live } = useDashboard();
   const liveDot =
@@ -44,14 +46,14 @@ function ModeSwitch() {
       active ? "bg-surface text-ink shadow-sm" : "text-ink-2 hover:text-ink",
     );
   return (
-    <div role="radiogroup" aria-label="What to show" className="flex items-center rounded-lg border border-line bg-surface-2 p-0.5">
+    <div role="radiogroup" aria-label={t("modeAria")} className="flex items-center rounded-lg border border-line bg-surface-2 p-0.5">
       <button type="button" role="radio" aria-checked={mode === "live"} onClick={() => setMode("live")} className={item(mode === "live")}>
         <span className={cx("size-2 rounded-full", liveDot)} aria-hidden />
-        Live
+        {t("live")}
       </button>
       <button type="button" role="radio" aria-checked={mode === "replay"} onClick={() => setMode("replay")} className={item(mode === "replay")}>
         <History className="size-3.5" aria-hidden />
-        Recorded
+        {t("recorded")}
       </button>
     </div>
   );
@@ -62,6 +64,7 @@ function ModeSwitch() {
  * Offline is not a footnote: it gets the recovery card with working buttons.
  */
 function SourceBar() {
+  const t = useTranslations("shell.app");
   const view = useDashboard();
   const snap = usePlayerSnapshot();
   const { setMode, watchRecording } = useSourceControl();
@@ -81,20 +84,17 @@ function SourceBar() {
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 panel rounded-2xl border border-line px-4 py-2.5">
         <p className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink">
           <TruthBadge truth={recordingTruth(view.provenance) ?? "RECORDED"} />
-          <span>
-            <b className="font-semibold">You are watching a recording</b> of the 4 Nov run (RTX 3060, local chain). Nothing here is
-            happening right now.
-          </span>
+          <span>{t.rich("recording", { b: (c) => <b className="font-semibold">{c}</b> })}</span>
           <span className="tabular text-ink-2">
-            {snap.playing ? "Playing" : "Paused"} at {formatClock(snap.positionMs)}
+            {t(snap.playing ? "playing" : "paused", { clock: formatClock(snap.positionMs) })}
           </span>
         </p>
         <div className="flex flex-wrap gap-2">
           <button type="button" onClick={() => watchRecording(2)} className={buttonStyles("ghost", "sm")}>
-            <RotateCcw className="size-3.5" aria-hidden /> Play from start
+            <RotateCcw className="size-3.5" aria-hidden /> {t("playFromStart")}
           </button>
           <button type="button" onClick={() => setMode("live")} className={buttonStyles("secondary", "sm")}>
-            <Radio className="size-3.5" aria-hidden /> Switch to live
+            <Radio className="size-3.5" aria-hidden /> {t("switchToLive")}
           </button>
         </div>
       </div>
@@ -111,20 +111,18 @@ function SourceBar() {
             )}
           >
             <span className={cx("size-2 rounded-full", connected ? "bg-good" : "animate-pulse bg-ink-2 motion-reduce:animate-none")} aria-hidden />
-            {connected ? "Live" : "Connecting"}
+            {t(connected ? "live" : "connecting")}
           </span>
           <span>
-            {connected ? (
-              <>
-                <b className="font-semibold">Live</b> from the coordinator at <code className="font-mono">{config.coordinatorUrl}</code>
-              </>
-            ) : (
-              <>Connecting to the coordinator at <code className="font-mono">{config.coordinatorUrl}</code>…</>
-            )}
+            {t.rich(connected ? "liveFrom" : "connectingTo", {
+              url: config.coordinatorUrl,
+              b: (c) => <b className="font-semibold">{c}</b>,
+              code: (c) => <code className="font-mono">{c}</code>,
+            })}
           </span>
         </p>
         <button type="button" onClick={() => setMode("replay")} className={buttonStyles("ghost", "sm")}>
-          <History className="size-3.5" aria-hidden /> Watch the recording instead
+          <History className="size-3.5" aria-hidden /> {t("watchRecording")}
         </button>
       </div>
     );
@@ -139,17 +137,17 @@ function SourceBar() {
           {synthetic && (
             <span className="flex flex-wrap items-center gap-2">
               <TruthBadge truth="SYNTHETIC" />
-              <span className="hidden sm:inline">CPU fallback: a small workload through the same pipeline. Loss and accuracy are not the real model&apos;s.</span>
+              <span className="hidden sm:inline">{t("synthetic")}</span>
             </span>
           )}
           {local && (
             <span className="flex flex-wrap items-center gap-2">
               <TruthBadge truth="LOCAL_CHAIN" />
-              <span className="hidden sm:inline">Payments on a local Anvil chain, not Base Sepolia.</span>
+              <span className="hidden sm:inline">{t("localChain")}</span>
             </span>
           )}
           {mode === "live" && synthetic && local && (
-            <span>Local demos can use short dispute windows; check the job&apos;s on-chain terms.</span>
+            <span>{t("shortWindows")}</span>
           )}
         </div>
       )}
@@ -158,6 +156,7 @@ function SourceBar() {
 }
 
 export function AppShell({ children }: { children: React.ReactNode }) {
+  const t = useTranslations("shell.app");
   const path = usePathname();
   // The live/recorded controls and the coordinator banner belong to the screens that show a job.
   const dash = showsJob(path);
@@ -175,7 +174,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         href="#main"
         className="sr-only z-50 rounded-md bg-ink px-3 py-2 text-ink-inverse focus:not-sr-only focus:fixed focus:left-3 focus:top-3"
       >
-        Skip to content
+        {t("skip")}
       </a>
       <header className="header-ember sticky top-0 z-20 border-b border-line bg-bg/95 backdrop-blur-md">
         <div className="mx-auto flex max-w-[1840px] flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2.5 sm:gap-x-5 sm:px-6">
@@ -191,7 +190,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <AccountLink path={path} hideOnPhone={landing} />
             {landing && (
               <Link href="/dashboard" className="press inline-flex h-9 items-center rounded-full bg-action px-4 text-sm font-semibold text-action-ink hover:bg-action-hover sm:ml-1">
-                Open the app
+                {t("openApp")}
               </Link>
             )}
             {dash && <ModeSwitch />}
