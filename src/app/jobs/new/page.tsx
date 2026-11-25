@@ -107,7 +107,7 @@ export default function NewJobPage() {
   if (!config.signedJobs || config.chainId !== 84532 || !config.escrowAddress || !config.coordinatorUrl.startsWith("https://")) {
     return (
       <div className="space-y-6">
-        <PageHeader title="New job">Create and fund a signed job on Base Sepolia.</PageHeader>
+        <PageHeader title="New job" kicker="NEW JOB">Create and fund a signed job on Base Sepolia.</PageHeader>
         <Panel title="Funding is unavailable">
           <p className="text-sm text-ink-2">This deployment needs a Base Sepolia coordinator and trusted escrow configuration before it can accept signed jobs.</p>
         </Panel>
@@ -117,7 +117,7 @@ export default function NewJobPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="New job">Review your signed terms, fund the escrow with test USDC, and start the job.</PageHeader>
+      <PageHeader title="New job" kicker="NEW JOB">Review your signed terms, fund the escrow with test USDC, and start the job.</PageHeader>
       {!registered && (
         <Panel title="1. Import signed terms">
           <div className="space-y-4">

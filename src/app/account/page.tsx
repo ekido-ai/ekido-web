@@ -27,7 +27,7 @@ export default function AccountPage() {
   if (!session) {
     return (
       <div className="mx-auto max-w-2xl space-y-6 py-6">
-        <PageHeader title="Your account">Sign in with your wallet to see what you&apos;re owed, the jobs you paid for, and your listing as a provider.</PageHeader>
+        <PageHeader title="Your account" kicker="ACCOUNT">Sign in with your wallet to see what you&apos;re owed, the jobs you paid for, and your listing as a provider.</PageHeader>
         <Panel>
           <div className="flex flex-col items-start gap-4">
             <WalletButton />
