@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { ArrowRight, Download, ExternalLink, FileCheck2, Landmark, Lock, RefreshCw, ShieldCheck, Wallet } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { isAddress, type Address } from "viem";
 import { PageHeader } from "@/components/shell/page-header";
 import { Panel } from "@/components/ui/panel";
@@ -21,20 +22,9 @@ const eth = (wei: bigint) => {
   const s = (Number(wei) / 1e18).toFixed(9).replace(/0+$/, "").replace(/\.$/, "");
   return s === "0" ? "0" : s;
 };
-const when = (ms: number | undefined) => (ms ? new Date(ms).toISOString().replace("T", " ").slice(0, 16) + " UTC" : "unknown time");
-
-const EVENT_TEXT: Record<EscrowEvent["kind"], string> = {
-  created: "Budget locked in escrow",
-  activated: "Coordinator started the job",
-  anchor: "Recovery hash anchored",
-  attested: "2 of 3 verifiers signed the verdict",
-  disputed: "Client disputed with a bond",
-  resolved: "Arbiter resolved the dispute",
-  settled: "Dispute window closed, split finalized",
-  refunded: "Client refunded",
-  cancelled: "Client cancelled",
-  withdrawal: "Withdrawn",
-};
+const when = (ms: number | undefined, unknown: string) => (ms ? new Date(ms).toISOString().replace("T", " ").slice(0, 16) + " UTC" : unknown);
+// Each escrow event's words are in messages (demo.chain.events.<kind>).
+type EventKind = EscrowEvent["kind"];
 
 function Addr({ value, label }: { value: string; label?: string }) {
   return (
@@ -55,6 +45,7 @@ function Tx({ hash }: { hash: string }) {
 }
 
 export default function ChainPage() {
+  const t = useTranslations("demo.chain");
   const [ledger, setLedger] = useState<Ledger | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState<[number, number] | null>(null);
@@ -73,11 +64,11 @@ export default function ChainPage() {
     try {
       setLedger(await readLedger((done, total) => setProgress([done, total]), { useIndex: indexReadable === true }));
     } catch (e) {
-      setError(e instanceof Error ? e.message.split("\n")[0] : "The chain could not be read.");
+      setError(e instanceof Error ? e.message.split("\n")[0] : t("readFallback"));
     } finally {
       setBusy(false);
     }
-  }, [indexReadable]);
+  }, [indexReadable, t]);
 
   useEffect(() => {
     if (indexReadable !== true) return;
@@ -92,39 +83,37 @@ export default function ChainPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="On-chain ledger"
+        title={t("title")}
         aside={
           <div className="flex flex-wrap items-center gap-2">
             <StatusPill tone={ledger ? "good" : error ? "critical" : idle ? "neutral" : "active"} size="lg">
-              {ledger ? `${BASE_SEPOLIA.name} · block ${ledger.block.toLocaleString("en-US")}` : error ? "Chain unreachable" : idle ? "Not read yet" : "Reading the chain"}
+              {ledger ? t("statusBlock", { chain: BASE_SEPOLIA.name, block: ledger.block.toLocaleString("en-US") }) : t(error ? "unreachable" : idle ? "notRead" : "reading")}
             </StatusPill>
             {started && (
-              <Button onClick={load} disabled={busy} aria-label="Read the chain again">
+              <Button onClick={load} disabled={busy} aria-label={t("readAgainAria")}>
                 <RefreshCw className={cx("size-4", busy && "animate-spin")} aria-hidden />
-                Read again
+                {t("readAgain")}
               </Button>
             )}
           </div>
         }
       >
-        Your browser reads this page straight from {BASE_SEPOLIA.name} (chain {BASE_SEPOLIA.chainId}). It never asks our coordinator. The money is test USDC
-        held by our escrow contract, and anyone can check the same numbers on Basescan.
+        {t("lead", { chain: BASE_SEPOLIA.name, id: BASE_SEPOLIA.chainId })}
       </PageHeader>
 
       {error && !ledger && (
-        <ErrorState title="Couldn't read Base Sepolia" detail={`${error} Public RPCs sometimes limit requests, so wait a moment and try again.`} onRetry={load} />
+        <ErrorState title={t("errorTitle")} detail={t("errorDetail", { error })} onRetry={load} />
       )}
 
       {waiting && (
         <Panel>
           <div className="flex flex-wrap items-center justify-between gap-4">
             <p className="max-w-2xl text-ink-2">
-              Your browser reads the escrow&apos;s whole history from {BASE_SEPOLIA.name}&apos;s public servers, about 150 requests. Start it when you want
-              to check: nothing is read until you do.
+              {t("waiting", { chain: BASE_SEPOLIA.name })}
             </p>
             <Button variant="primary" onClick={load}>
               <ShieldCheck className="size-4" aria-hidden />
-              Check on chain
+              {t("check")}
             </Button>
           </div>
         </Panel>
@@ -134,8 +123,8 @@ export default function ChainPage() {
         <Panel>
           <div className="space-y-3" role="status" aria-live="polite">
             <p className="text-ink-2">
-              Reading the escrow&apos;s history from its deploy block, 50,000 blocks at a time
-              {progress ? `: ${progress[0]} of ${progress[1]} ranges` : "…"}
+              {t("progress")}
+              {progress ? t("progressRanges", { done: progress[0], total: progress[1] }) : "…"}
             </p>
             <div className="h-2 overflow-hidden rounded-full bg-surface-3">
               <div className="h-full rounded-full bg-ink transition-[width]" style={{ width: `${progress ? (progress[0] / progress[1]) * 100 : 4}%` }} />
@@ -150,21 +139,23 @@ export default function ChainPage() {
 }
 
 function LedgerView({ ledger, coordinatorReadable }: { ledger: Ledger; coordinatorReadable: boolean }) {
+  const t = useTranslations("demo.chain");
+  const at = (block: bigint) => when(ledger.times.get(block.toString()), t("unknownTime"));
   const { reserves: r, counters, roles, book } = ledger;
   const clients = new Set(ledger.jobs.map((j) => j.split.client.toLowerCase()));
   const owedProviders = [...ledger.withdrawableOf].filter(([a]) => !clients.has(a)).reduce((s, [, v]) => s + v, BigInt(0));
   const owedClients = counters.totalWithdrawable - owedProviders;
   const parts = [
-    { key: "locked", label: "Locked in running jobs", value: counters.totalLocked, cls: "bg-series-1" },
-    { key: "prov", label: "Owed to providers", value: owedProviders, cls: "bg-series-3" },
-    { key: "cli", label: "Owed back to clients", value: owedClients, cls: "bg-series-4" },
-    { key: "surplus", label: "Not owed to anyone", value: r.surplus > BigInt(0) ? r.surplus : BigInt(0), cls: "bg-surface-3" },
+    { key: "locked", label: t("parts.locked"), value: counters.totalLocked, cls: "bg-series-1" },
+    { key: "prov", label: t("parts.prov"), value: owedProviders, cls: "bg-series-3" },
+    { key: "cli", label: t("parts.cli"), value: owedClients, cls: "bg-series-4" },
+    { key: "surplus", label: t("parts.surplus"), value: r.surplus > BigInt(0) ? r.surplus : BigInt(0), cls: "bg-surface-3" },
   ].filter((p) => p.value > BigInt(0));
   const totalGas = [...ledger.costs.values()].reduce((s, c) => s + c.feeWei, BigInt(0));
   const allPassed = ledger.checks.every((c) => c.passed);
 
   function downloadCsv() {
-    const csv = journalCsv(book.entries.map((e) => ({ ...e, time: when(ledger.times.get(e.block.toString())) })));
+    const csv = journalCsv(book.entries.map((e) => ({ ...e, time: at(e.block) })));
     const url = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
     const a = document.createElement("a");
     a.href = url;
@@ -178,25 +169,25 @@ function LedgerView({ ledger, coordinatorReadable }: { ledger: Ledger; coordinat
       {/* Proof of reserves: the one thing a finance reader checks first. */}
       <section id="reserves" className="grid scroll-mt-24 gap-4 lg:grid-cols-[1.4fr_1fr]">
         <Panel
-          title="Proof of reserves"
-          subtitle="What the escrow holds, against everything it has promised to pay"
-          actions={<StatusPill tone={r.solvent ? "good" : "critical"}>{r.solvent ? "Fully covered" : "Short"}</StatusPill>}
+          title={t("reserves")}
+          subtitle={t("reservesSubtitle")}
+          actions={<StatusPill tone={r.solvent ? "good" : "critical"}>{t(r.solvent ? "covered" : "short")}</StatusPill>}
         >
           <div className="flex flex-wrap items-end gap-x-10 gap-y-4">
             <div>
-              <div className="text-sm text-ink-2">USDC held by the escrow</div>
+              <div className="text-sm text-ink-2">{t("held")}</div>
               <div className="font-serif text-5xl text-trust trust-glow"><AnimatedNumber value={Number(r.held) / 1e6} format={(n) => n.toFixed(6).replace(/0+$/, "").replace(/\.$/, "")} /></div>
               <div className="mt-1 text-xs text-muted">USDC.balanceOf(escrow)</div>
             </div>
             <div>
-              <div className="text-sm text-ink-2">Locked or owed</div>
+              <div className="text-sm text-ink-2">{t("owed")}</div>
               <div className="font-serif text-5xl text-ink"><AnimatedNumber value={Number(r.liabilities) / 1e6} format={(n) => n.toFixed(6).replace(/0+$/, "").replace(/\.$/, "")} /></div>
               <div className="mt-1 text-xs text-muted">totalLocked() + totalWithdrawable()</div>
             </div>
             <div>
-              <div className="text-sm text-ink-2">Coverage</div>
+              <div className="text-sm text-ink-2">{t("coverage")}</div>
               <div className="font-serif text-5xl text-ink"><AnimatedNumber value={r.coverageBps / 100} format={(n) => `${n.toFixed(r.coverageBps % 100 ? 2 : 0)}%`} /></div>
-              <div className="mt-1 text-xs text-muted">Read at block {ledger.block.toLocaleString("en-US")}</div>
+              <div className="mt-1 text-xs text-muted">{t("readAtBlock", { block: ledger.block.toLocaleString("en-US") })}</div>
             </div>
           </div>
           {parts.length > 0 && (
@@ -218,16 +209,16 @@ function LedgerView({ ledger, coordinatorReadable }: { ledger: Ledger; coordinat
             </div>
           )}
           <p className="mt-5 text-sm text-ink-2">
-            Money leaves only when the person it&apos;s owed to calls <code className="font-mono text-xs">withdraw()</code>. Nobody else can move it, us included.
+            {t.rich("withdrawOnly", { code: (c) => <code className="font-mono text-xs">{c}</code> })}
           </p>
         </Panel>
 
-        <Panel title="The contracts" subtitle="Deployed on Base Sepolia on 7 Nov 2026">
+        <Panel title={t("contracts")} subtitle={t("contractsSubtitle")}>
           <dl className="space-y-3 text-sm">
             {[
-              { k: "Escrow", v: BASE_SEPOLIA.escrow, d: "Holds budgets, checks verifier signatures, pays out" },
-              { k: "Provider registry", v: BASE_SEPOLIA.registry, d: "Public sign-up for providers, holds no money" },
-              { k: "Token", v: BASE_SEPOLIA.usdc, d: "Circle's test USDC, 6 decimals" },
+              { k: t("escrow"), v: BASE_SEPOLIA.escrow, d: t("escrowWhat") },
+              { k: t("registry"), v: BASE_SEPOLIA.registry, d: t("registryWhat") },
+              { k: t("token"), v: BASE_SEPOLIA.usdc, d: t("tokenWhat") },
             ].map((row) => (
               <div key={row.k}>
                 <dt className="flex flex-wrap items-center justify-between gap-2">
@@ -239,15 +230,15 @@ function LedgerView({ ledger, coordinatorReadable }: { ledger: Ledger; coordinat
             ))}
           </dl>
           <p className="mt-4 rounded-lg border border-line bg-surface-2 p-3 text-xs text-ink-2">
-            Unaudited and testnet only. It enforces who gets paid. It does not prove the training happened, which is the Quality Guard&apos;s job.
+            {t("unaudited")}
           </p>
         </Panel>
       </section>
 
       <Panel
-        title="Reconciliation"
-        subtitle={`Three independent sources must agree: the replayed events, the contract's own totals, and each wallet's balance. ${ledger.source === "index" ? "Event history came from our index in one request and passed these checks; if it hadn't, your browser would have scanned the chain itself." : "Event history was scanned straight from the chain."}`}
-        actions={<StatusPill tone={allPassed ? "good" : "critical"}>{allPassed ? `${ledger.checks.length} of ${ledger.checks.length} agree` : "Mismatch found"}</StatusPill>}
+        title={t("reconciliation")}
+        subtitle={t(ledger.source === "index" ? "reconciliationIndex" : "reconciliationChain")}
+        actions={<StatusPill tone={allPassed ? "good" : "critical"}>{allPassed ? t("agree", { n: ledger.checks.length }) : t("mismatch")}</StatusPill>}
       >
         <ul className="divide-y divide-line">
           {ledger.checks.map((c) => (
@@ -266,31 +257,31 @@ function LedgerView({ ledger, coordinatorReadable }: { ledger: Ledger; coordinat
 
       <section className="space-y-4" aria-labelledby="jobs-h">
         <h2 id="jobs-h" className="font-serif text-2xl text-ink">
-          Jobs on the chain <span className="text-base font-normal text-ink-2">({ledger.jobs.length})</span>
+          {t("jobsTitle")} <span className="text-base font-normal text-ink-2">({ledger.jobs.length})</span>
         </h2>
-        {ledger.jobs.length === 0 && <p className="text-ink-2">No job has been funded on this escrow yet.</p>}
+        {ledger.jobs.length === 0 && <p className="text-ink-2">{t("noJobs")}</p>}
         {ledger.jobs.map((job) => {
           const s = job.split;
-          const gas = [...new Set(job.events.map((e) => e.tx.toLowerCase()))].reduce((sum, t) => sum + (ledger.costs.get(t)?.feeWei ?? BigInt(0)), BigInt(0));
+          const gas = [...new Set(job.events.map((e) => e.tx.toLowerCase()))].reduce((sum, tx) => sum + (ledger.costs.get(tx)?.feeWei ?? BigInt(0)), BigInt(0));
           const paid = s.amounts.reduce((a, b) => a + b, BigInt(0));
           return (
             <Panel
               key={job.jobId}
-              title={<span className="font-mono">Job {short(job.jobId)}</span>}
-              subtitle={`${usdc(s.budget)} USDC budget · state ${STATES[s.state] ?? s.state} · settlement gas ${eth(gas)} ETH`}
+              title={<span className="font-mono">{t("job", { id: short(job.jobId) })}</span>}
+              subtitle={t("jobSubtitle", { budget: usdc(s.budget), state: STATES[s.state] ?? String(s.state), gas: eth(gas) })}
               actions={<StatusPill tone={STATES[s.state] === "Settled" ? "good" : STATES[s.state] === "Refunded" ? "neutral" : "active"}>{STATES[s.state]}</StatusPill>}
             >
               <div className="grid gap-6 lg:grid-cols-[1fr_1fr]">
                 <div>
-                  <h3 className="mb-3 text-sm font-semibold text-ink">Where the money went</h3>
+                  <h3 className="mb-3 text-sm font-semibold text-ink">{t("whereMoney")}</h3>
                   <div className="flex flex-wrap items-center gap-3 text-sm">
                     <div className="rounded-lg border border-line bg-surface-2 px-3 py-2">
-                      <div className="text-xs text-muted">Client</div>
+                      <div className="text-xs text-muted">{t("client")}</div>
                       <Addr value={s.client} />
                     </div>
                     <ArrowRight className="size-4 text-muted" aria-hidden />
                     <div className="rounded-lg border border-line-strong bg-surface-2 px-3 py-2">
-                      <div className="flex items-center gap-1 text-xs text-muted"><Lock className="size-3" aria-hidden />Escrow</div>
+                      <div className="flex items-center gap-1 text-xs text-muted"><Lock className="size-3" aria-hidden />{t("escrow")}</div>
                       <div className="font-semibold text-ink tabular">{usdc(s.budget)} USDC</div>
                     </div>
                     <ArrowRight className="size-4 text-muted" aria-hidden />
@@ -299,35 +290,35 @@ function LedgerView({ ledger, coordinatorReadable }: { ledger: Ledger; coordinat
                         <li key={p} className="flex items-center gap-2">
                           <span className="size-2.5 rounded-sm bg-series-3" aria-hidden />
                           <Addr value={p} /> <span className="font-semibold text-ink tabular">{usdc(s.amounts[i])}</span>
-                          <span className="text-ink-2">for accepted steps</span>
+                          <span className="text-ink-2">{t("forAccepted")}</span>
                         </li>
                       ))}
                       {s.refund > BigInt(0) && (
                         <li className="flex items-center gap-2">
                           <span className="size-2.5 rounded-sm bg-series-4" aria-hidden />
-                          <span className="text-ink-2">Client refund</span> <span className="font-semibold text-ink tabular">{usdc(s.refund)}</span>
+                          <span className="text-ink-2">{t("clientRefund")}</span> <span className="font-semibold text-ink tabular">{usdc(s.refund)}</span>
                         </li>
                       )}
                     </ul>
                   </div>
                   <p className="mt-3 text-sm text-ink-2">
-                    {usdc(paid)} paid + {usdc(s.refund)} refunded = {usdc(paid + s.refund)} USDC, the whole budget. The contract rejects any split that doesn&apos;t add up.
+                    {t("sum", { paid: usdc(paid), refund: usdc(s.refund), total: usdc(paid + s.refund) })}
                   </p>
                 </div>
                 <div>
-                  <h3 className="mb-3 text-sm font-semibold text-ink">Every step, as recorded on-chain</h3>
+                  <h3 className="mb-3 text-sm font-semibold text-ink">{t("everyStep")}</h3>
                   <ol className="relative space-y-3 border-l border-line pl-5">
                     {job.events.map((e) => (
                       <li key={`${e.tx}-${e.logIndex}`} className="relative">
                         <span className="absolute -left-[25px] top-1.5 size-2.5 rounded-full border-2 border-bg bg-ink" aria-hidden />
-                        <div className="text-sm font-medium text-ink">{EVENT_TEXT[e.kind]}</div>
+                        <div className="text-sm font-medium text-ink">{t(`events.${e.kind as EventKind}`)}</div>
                         <div className="flex flex-wrap items-center gap-x-3 text-xs text-muted">
-                          <span>{when(ledger.times.get(e.block.toString()))}</span>
+                          <span>{at(e.block)}</span>
                           <a className="underline decoration-line-strong underline-offset-2 hover:text-ink" href={scan("block", e.block.toString())} target="_blank" rel="noreferrer">
-                            block {e.block.toLocaleString("en-US")}
+                            {t("block", { block: e.block.toLocaleString("en-US") })}
                           </a>
                           <Tx hash={e.tx} />
-                          {ledger.costs.get(e.tx.toLowerCase()) && <span>{ledger.costs.get(e.tx.toLowerCase())!.gasUsed.toLocaleString("en-US")} gas</span>}
+                          {ledger.costs.get(e.tx.toLowerCase()) && <span>{t("gas", { gas: ledger.costs.get(e.tx.toLowerCase())!.gasUsed.toLocaleString("en-US") })}</span>}
                         </div>
                       </li>
                     ))}
@@ -340,12 +331,12 @@ function LedgerView({ ledger, coordinatorReadable }: { ledger: Ledger; coordinat
       </section>
 
       <Panel
-        title="Journal"
-        subtitle="Double-entry: each row moves one amount from one account to another, so the books always balance"
+        title={t("journal")}
+        subtitle={t("journalSubtitle")}
         actions={
           <Button size="sm" onClick={downloadCsv}>
             <Download className="size-4" aria-hidden />
-            Download CSV
+            {t("downloadCsv")}
           </Button>
         }
         bodyClassName="p-0"
@@ -354,18 +345,18 @@ function LedgerView({ ledger, coordinatorReadable }: { ledger: Ledger; coordinat
           <table className="w-full min-w-[760px] text-sm">
             <thead className="text-left text-xs text-muted">
               <tr className="border-b border-line">
-                <th className="px-5 py-2 font-medium">When</th>
-                <th className="px-3 py-2 font-medium">Entry</th>
-                <th className="px-3 py-2 font-medium">From</th>
-                <th className="px-3 py-2 font-medium">To</th>
+                <th className="px-5 py-2 font-medium">{t("colWhen")}</th>
+                <th className="px-3 py-2 font-medium">{t("colEntry")}</th>
+                <th className="px-3 py-2 font-medium">{t("colFrom")}</th>
+                <th className="px-3 py-2 font-medium">{t("colTo")}</th>
                 <th className="px-3 py-2 text-right font-medium">USDC</th>
-                <th className="px-5 py-2 font-medium">Transaction</th>
+                <th className="px-5 py-2 font-medium">{t("colTx")}</th>
               </tr>
             </thead>
             <tbody>
               {book.entries.map((e) => (
                 <tr key={`${e.tx}-${e.logIndex}-${e.debit}`} className="border-b border-line last:border-0">
-                  <td className="whitespace-nowrap px-5 py-2 text-ink-2">{when(ledger.times.get(e.block.toString()))}</td>
+                  <td className="whitespace-nowrap px-5 py-2 text-ink-2">{at(e.block)}</td>
                   <td className="px-3 py-2 text-ink">{e.memo}</td>
                   <td className="px-3 py-2"><Account id={e.credit} clients={clients} /></td>
                   <td className="px-3 py-2"><Account id={e.debit} clients={clients} /></td>
@@ -379,9 +370,9 @@ function LedgerView({ ledger, coordinatorReadable }: { ledger: Ledger; coordinat
       </Panel>
 
       <section className="grid gap-4 lg:grid-cols-2">
-        <Panel title="Waiting to be withdrawn" subtitle="Each balance read one by one from withdrawable(address)">
+        <Panel title={t("waitingWithdraw")} subtitle={t("waitingWithdrawSubtitle")}>
           {ledger.withdrawableOf.size === 0 ? (
-            <p className="text-ink-2">Nothing is owed. Every credit has been withdrawn.</p>
+            <p className="text-ink-2">{t("nothingOwed")}</p>
           ) : (
             <ul className="divide-y divide-line">
               {[...ledger.withdrawableOf].map(([a, v]) => (
@@ -389,7 +380,7 @@ function LedgerView({ ledger, coordinatorReadable }: { ledger: Ledger; coordinat
                   <span className="flex items-center gap-2">
                     <Wallet className="size-4 text-muted" aria-hidden />
                     <Addr value={a} />
-                    <span className="text-xs text-muted">{clients.has(a) ? "client refund" : "provider earnings"}</span>
+                    <span className="text-xs text-muted">{t(clients.has(a) ? "clientRefundKind" : "providerEarningsKind")}</span>
                   </span>
                   <span className="font-semibold text-ink tabular">{usdc(v)} USDC</span>
                 </li>
@@ -397,29 +388,29 @@ function LedgerView({ ledger, coordinatorReadable }: { ledger: Ledger; coordinat
             </ul>
           )}
           <p className="mt-4 text-sm text-ink-2">
-            Network fees for all {ledger.costs.size} escrow transactions so far: <span className="font-semibold text-ink">{eth(totalGas)} ETH</span> at testnet gas prices.
+            {t.rich("fees", { n: ledger.costs.size, gas: eth(totalGas), b: (c) => <span className="font-semibold text-ink">{c}</span> })}
           </p>
         </Panel>
         <WalletCheck />
       </section>
 
-      <Panel title="Who can do what" subtitle="Read from the contract now. These powers are written into the code and can't be stretched">
+      <Panel title={t("roles")} subtitle={t("rolesSubtitle")}>
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <Role icon={ShieldCheck} name={`Verifiers, ${roles.quorum} of ${roles.verifiers.length} must sign`} can="Sign the quality verdict and the payout split" cannot="Pay anyone alone, or reuse a verdict on another job or chain">
+          <Role icon={ShieldCheck} name={t("verifiers", { quorum: String(roles.quorum), total: roles.verifiers.length })} can={t("verifiersCan")} cannot={t("verifiersCannot")}>
             <div className="flex flex-col gap-1">{roles.verifiers.map((v) => <Addr key={v} value={v} />)}</div>
           </Role>
-          <Role icon={Landmark} name="Coordinator" can="Start a funded job and anchor recovery hashes" cannot="Move any money. A refund opens to anyone once the deadline passes">
+          <Role icon={Landmark} name={t("coordinator")} can={t("coordinatorCan")} cannot={t("coordinatorCannot")}>
             <Addr value={roles.coordinator} />
           </Role>
-          <Role icon={FileCheck2} name="Arbiter" can={`Decide a dispute, where the client posts a ${usdc(roles.bond)} USDC bond`} cannot="Act on undisputed jobs. If silent for 3 days, the verdict stands and the bond goes back">
+          <Role icon={FileCheck2} name={t("arbiter")} can={t("arbiterCan", { bond: usdc(roles.bond) })} cannot={t("arbiterCannot")}>
             <Addr value={roles.arbiter} />
           </Role>
-          <Role icon={Lock} name="Owner" can="Name a new verifier set or arbiter for future jobs" cannot="Change the rules of a job already funded. Each job keeps the set it started with">
+          <Role icon={Lock} name={t("owner")} can={t("ownerCan")} cannot={t("ownerCannot")}>
             <Addr value={roles.owner} />
           </Role>
         </div>
         <p className="mt-4 text-sm text-ink-2">
-          All four roles are run by our team today, so this is a permissioned system, not a trustless one. What the chain adds is that the rules are public and money only moves the way they allow.
+          {t("rolesNote")}
         </p>
       </Panel>
     </>
@@ -427,6 +418,7 @@ function LedgerView({ ledger, coordinatorReadable }: { ledger: Ledger; coordinat
 }
 
 function RegistryPanel({ ledger, coordinatorReadable }: { ledger: Ledger; coordinatorReadable: boolean }) {
+  const t = useTranslations("demo.chain");
   const [coord, setCoord] = useState<CoordinatorProvider[] | null | "down" | "private">(coordinatorReadable ? null : "private");
   useEffect(() => {
     // On a public server the list is private (operator only): don't ask for a 401 (ekido-ai/ekido-internal#93).
@@ -437,17 +429,16 @@ function RegistryPanel({ ledger, coordinatorReadable }: { ledger: Ledger; coordi
       .catch(() => setCoord("down"));
   }, [coordinatorReadable]);
   const { listings, offChainOnly } = compareListings(ledger.registry, Array.isArray(coord) ? coord : null);
-  const label = { matches: "Coordinator shows exactly these terms", differs: "Coordinator shows different terms", "not-listed": "Not listed by the coordinator" } as const;
   const tone = { matches: "good", differs: "critical", "not-listed": "warning" } as const;
   return (
     <Panel
-      title="Providers, as they committed themselves"
-      subtitle="Each provider's own wallet registered a hash of its name, price and memory in ProviderRegistry. Your browser recomputes that hash from what our coordinator publishes."
-      actions={<StatusPill tone="neutral">{ledger.registry.length} on-chain</StatusPill>}
+      title={t("providersTitle")}
+      subtitle={t("providersSubtitle")}
+      actions={<StatusPill tone="neutral">{t("onChain", { n: ledger.registry.length })}</StatusPill>}
     >
       {ledger.registry.length === 0 ? (
         <p className="text-ink-2">
-          No provider has listed on-chain yet. The provider kit does it automatically when the wallet has a little test ETH for gas.
+          {t("noProviders")}
         </p>
       ) : (
         <ul className="divide-y divide-line">
@@ -456,55 +447,58 @@ function RegistryPanel({ ledger, coordinatorReadable }: { ledger: Ledger; coordi
               <span className="flex min-w-0 items-center gap-2">
                 <StatusIcon tone={coord === "down" || coord === "private" || coord === null ? "idle" : tone[l.status]} className="size-5 shrink-0" />
                 <span className="min-w-0">
-                  <span className="block font-medium text-ink">{l.coordinatorName ?? "Unknown name"}</span>
+                  <span className="block font-medium text-ink">{l.coordinatorName ?? t("unknownName")}</span>
                   <span className="flex flex-wrap items-center gap-x-3 text-xs text-muted">
                     <Addr value={l.wallet} />
                     <Tx hash={l.tx} />
-                    {l.updates > 0 && <span>updated {l.updates}×</span>}
+                    {l.updates > 0 && <span>{t("updated", { n: l.updates })}</span>}
                   </span>
                 </span>
               </span>
-              <span className="text-sm text-ink-2">{coord === "down" ? "Coordinator unreachable, can't compare" : coord === "private" ? "This network keeps its provider list private, so there is nothing to compare" : coord === null ? "Comparing…" : label[l.status]}</span>
+              <span className="text-sm text-ink-2">{coord === "down" ? t("coordDown") : coord === "private" ? t("coordPrivate") : coord === null ? t("comparing") : t(`listing.${l.status}`)}</span>
             </li>
           ))}
         </ul>
       )}
       {Array.isArray(coord) && (
         <p className="mt-4 text-sm text-ink-2">
-          {offChainOnly === 0 ? "Every provider the coordinator lists has also committed on-chain." : `${offChainOnly} provider${offChainOnly === 1 ? "" : "s"} the coordinator lists ${offChainOnly === 1 ? "hasn't" : "haven't"} committed on-chain yet, so only our word stands behind ${offChainOnly === 1 ? "its" : "their"} terms.`}
+          {offChainOnly === 0 ? t("allCommitted") : t("notCommitted", { n: offChainOnly })}
         </p>
       )}
       <p className="mt-2 text-xs text-muted">
-        A listing proves the provider chose these terms. It says nothing about its hardware, which stays self-reported.
+        {t("listingNote")}
       </p>
     </Panel>
   );
 }
 
 function Account({ id, clients }: { id: string; clients: Set<string> }) {
+  const t = useTranslations("demo.chain");
   const [kind, value] = id.split(":") as [string, string];
-  if (kind === "locked") return <span className="inline-flex items-center gap-1 text-ink-2"><Lock className="size-3" aria-hidden />Escrow, job {short(value)}</span>;
+  if (kind === "locked") return <span className="inline-flex items-center gap-1 text-ink-2"><Lock className="size-3" aria-hidden />{t("escrowJob", { id: short(value) })}</span>;
   const who = clients.has(value) ? "client" : "provider";
   return (
     <span className="inline-flex flex-wrap items-center gap-1 text-ink-2">
-      {kind === "owed" ? `Owed to ${who}` : `${who[0].toUpperCase()}${who.slice(1)} wallet`}
+      {t(kind === "owed" ? `owedTo.${who}` : `wallet.${who}`)}
       <Addr value={value} />
     </span>
   );
 }
 
 function Role({ icon: Icon, name, can, cannot, children }: { icon: typeof Lock; name: string; can: string; cannot: string; children: React.ReactNode }) {
+  const t = useTranslations("demo.chain");
   return (
     <div className="rounded-lg border border-line bg-surface-2 p-4">
       <div className="flex items-center gap-2 font-semibold text-ink"><Icon className="size-4" aria-hidden />{name}</div>
       <div className="mt-2">{children}</div>
-      <p className="mt-3 text-sm text-ink"><span className="text-good">Can:</span> {can}</p>
-      <p className="mt-1 text-sm text-ink-2"><span className="text-critical">Can&apos;t:</span> {cannot}</p>
+      <p className="mt-3 text-sm text-ink"><span className="text-good">{t("can")}</span> {can}</p>
+      <p className="mt-1 text-sm text-ink-2"><span className="text-critical">{t("cannot")}</span> {cannot}</p>
     </div>
   );
 }
 
 function WalletCheck() {
+  const t = useTranslations("demo.chain");
   const [value, setValue] = useState("");
   const [result, setResult] = useState<{ usdc: bigint; owed: bigint; eth: bigint } | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -520,37 +514,37 @@ function WalletCheck() {
     try {
       setResult(await readWallet(value.trim() as Address));
     } catch (err) {
-      setError(err instanceof Error ? err.message.split("\n")[0] : "The wallet couldn't be read.");
+      setError(err instanceof Error ? err.message.split("\n")[0] : t("walletFallback"));
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <Panel title="Check any wallet" subtitle="A provider can see what they're owed without asking us">
+    <Panel title={t("walletTitle")} subtitle={t("walletSubtitle")}>
       <form onSubmit={check} className="flex flex-wrap gap-2">
-        <label htmlFor="wallet-check" className="sr-only">Wallet address</label>
+        <label htmlFor="wallet-check" className="sr-only">{t("walletLabel")}</label>
         <input
           id="wallet-check"
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          placeholder="0x… wallet address"
+          placeholder={t("walletPlaceholder")}
           spellCheck={false}
           autoComplete="off"
           className="min-w-0 flex-1 rounded-lg border border-line-strong bg-surface-2 px-3 py-2 font-mono text-sm text-ink placeholder:text-muted"
         />
-        <Button type="submit" variant="primary" disabled={!valid || busy}>{busy ? "Reading" : "Check wallet"}</Button>
+        <Button type="submit" variant="primary" disabled={!valid || busy}>{t(busy ? "readingShort" : "checkWallet")}</Button>
       </form>
-      {value && !valid && <p className="mt-2 text-sm text-ink-2">Enter a full address: 0x and 40 hex characters.</p>}
+      {value && !valid && <p className="mt-2 text-sm text-ink-2">{t("walletInvalid")}</p>}
       {error && <p className="mt-2 text-sm text-critical">{error}</p>}
       {result && (
         <dl className="mt-4 grid grid-cols-3 gap-3 text-sm" aria-live="polite">
-          <div><dt className="text-ink-2">Owed by the escrow</dt><dd className="text-xl font-semibold text-ink tabular">{usdc(result.owed)} <span className="text-sm font-normal text-ink-2">USDC</span></dd></div>
-          <div><dt className="text-ink-2">USDC in the wallet</dt><dd className="text-xl font-semibold text-ink tabular">{usdc(result.usdc)}</dd></div>
-          <div><dt className="text-ink-2">ETH for gas</dt><dd className="text-xl font-semibold text-ink tabular">{eth(result.eth)}</dd></div>
+          <div><dt className="text-ink-2">{t("owedByEscrow")}</dt><dd className="text-xl font-semibold text-ink tabular">{usdc(result.owed)} <span className="text-sm font-normal text-ink-2">USDC</span></dd></div>
+          <div><dt className="text-ink-2">{t("usdcInWallet")}</dt><dd className="text-xl font-semibold text-ink tabular">{usdc(result.usdc)}</dd></div>
+          <div><dt className="text-ink-2">{t("ethForGas")}</dt><dd className="text-xl font-semibold text-ink tabular">{eth(result.eth)}</dd></div>
         </dl>
       )}
-      <p className="mt-4 text-xs text-muted">Nothing is signed or sent. The address is only used for these three reads.</p>
+      <p className="mt-4 text-xs text-muted">{t("walletNote")}</p>
     </Panel>
   );
 }

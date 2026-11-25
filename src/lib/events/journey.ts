@@ -11,12 +11,21 @@ import { momentsOf, type Moment } from "./moments";
 export type StepKey = "train" | "lost" | "resumed" | "refused" | "checked" | "paid";
 export type StepStatus = "done" | "active" | "waiting" | "skipped";
 
+/** The line under a step, as a message key (messages: demo.journey.note.<key>) and the provider it names, if any. */
+export type NoteKey =
+  | "on" | "starting" | "noJob" | "who" | "noFailure" | "pressKill" | "fromCheckpoint" | "findingReplacement" | "afterFailure"
+  | "notNeeded" | "refusedWho" | "nothingRefused" | "ifCheckFails" | "verifiersAccepted" | "verifiersChecking" | "verifiersSignOff"
+  | "acceptedOnly" | "disputeWindow" | "escrowPays";
+export type Note = { key: NoteKey; who?: string };
+
 export interface JourneyStep {
   key: StepKey;
   label: string;
   status: StepStatus;
   /** One short line under the label, e.g. "Provider A". The time is shown from atMs. */
   detail: string;
+  /** The same line for the translation layer; `detail` is its English. */
+  note: Note;
   /** Offset from the first event, on the replay player's clock. Null until it happened. */
   atMs: number | null;
 }
@@ -55,50 +64,54 @@ export function journey(s: DashboardState): JourneyStep[] {
     label: "Training",
     status: firstProgress ? "done" : s.jobState === "RUNNING" || s.jobState === "ASSIGNED" ? "active" : "waiting",
     detail: firstProgress ? `On ${who(firstProgress.provider_id)}` : s.jobState ? "Starting" : "No job yet",
+    note: firstProgress ? { key: "on", who: who(firstProgress.provider_id) } : { key: s.jobState ? "starting" : "noJob" },
     atMs: firstProgress ? Date.parse(firstProgress.ts) - t0 : null,
   };
   if (firstProgress && s.jobState === "RUNNING" && !times.lost) train.status = "active";
 
   const lost: JourneyStep = times.lost
-    ? { key: "lost", label: "Device lost", status: "done", detail: who(times.lost.providerId), atMs: times.lost.offsetMs }
-    : { key: "lost", label: "Device lost", status: finished ? "skipped" : "waiting", detail: finished ? "No failure this run" : "Press Kill to test", atMs: null };
+    ? { key: "lost", label: "Device lost", status: "done", detail: who(times.lost.providerId), note: { key: "who", who: who(times.lost.providerId) }, atMs: times.lost.offsetMs }
+    : { key: "lost", label: "Device lost", status: finished ? "skipped" : "waiting", detail: finished ? "No failure this run" : "Press Kill to test", note: { key: finished ? "noFailure" : "pressKill" }, atMs: null };
 
   let resumed: JourneyStep;
   if (times.resumed) {
-    resumed = { key: "resumed", label: "Resumed", status: "done", detail: "From a checkpoint", atMs: times.resumed.offsetMs };
+    resumed = { key: "resumed", label: "Resumed", status: "done", detail: "From a checkpoint", note: { key: "fromCheckpoint" }, atMs: times.resumed.offsetMs };
   } else if (times.lost && s.jobState === "RECOVERING") {
-    resumed = { key: "resumed", label: "Resumed", status: "active", detail: "Finding a replacement", atMs: null };
+    resumed = { key: "resumed", label: "Resumed", status: "active", detail: "Finding a replacement", note: { key: "findingReplacement" }, atMs: null };
   } else {
-    resumed = { key: "resumed", label: "Resumed", status: times.lost || !finished ? "waiting" : "skipped", detail: times.lost || !finished ? "After a failure" : "Not needed", atMs: null };
+    resumed = { key: "resumed", label: "Resumed", status: times.lost || !finished ? "waiting" : "skipped", detail: times.lost || !finished ? "After a failure" : "Not needed", note: { key: times.lost || !finished ? "afterFailure" : "notNeeded" }, atMs: null };
   }
 
   const refused: JourneyStep = times.refused
-    ? { key: "refused", label: "Work refused", status: "done", detail: `${who(times.refused.providerId)}, not paid`, atMs: times.refused.offsetMs }
+    ? { key: "refused", label: "Work refused", status: "done", detail: `${who(times.refused.providerId)}, not paid`, note: { key: "refusedWho", who: who(times.refused.providerId) }, atMs: times.refused.offsetMs }
     : {
         key: "refused",
         label: "Work refused",
         status: finished ? "skipped" : "waiting",
         detail: finished ? "Nothing refused" : "If a check fails",
+        note: { key: finished ? "nothingRefused" : "ifCheckFails" },
         atMs: null,
       };
 
   const checked: JourneyStep = times.checked
-    ? { key: "checked", label: "Final check", status: "done", detail: "Verifiers accepted", atMs: times.checked.offsetMs }
+    ? { key: "checked", label: "Final check", status: "done", detail: "Verifiers accepted", note: { key: "verifiersAccepted" }, atMs: times.checked.offsetMs }
     : {
         key: "checked",
         label: "Final check",
         status: s.jobState === "VALIDATING" ? "active" : s.jobState === "FAILED" || s.jobState === "CANCELLED" ? "skipped" : "waiting",
         detail: s.jobState === "VALIDATING" ? "Verifiers checking" : "Verifiers sign off",
+        note: { key: s.jobState === "VALIDATING" ? "verifiersChecking" : "verifiersSignOff" },
         atMs: null,
       };
 
   const paid: JourneyStep = times.paid
-    ? { key: "paid", label: "Paid", status: "done", detail: "Accepted work only", atMs: times.paid.offsetMs }
+    ? { key: "paid", label: "Paid", status: "done", detail: "Accepted work only", note: { key: "acceptedOnly" }, atMs: times.paid.offsetMs }
     : {
         key: "paid",
         label: "Paid",
         status: s.jobState === "COMPLETED" ? "active" : s.jobState === "REFUNDED" || s.jobState === "FAILED" || s.jobState === "CANCELLED" ? "skipped" : "waiting",
         detail: s.jobState === "COMPLETED" ? "Dispute window open" : "Escrow pays out",
+        note: { key: s.jobState === "COMPLETED" ? "disputeWindow" : "escrowPays" },
         atMs: null,
       };
 
