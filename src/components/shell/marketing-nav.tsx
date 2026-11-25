@@ -114,7 +114,7 @@ export function MarketingNav() {
               );
             })}
           </div>
-          <Link href="/#products" onClick={close} className="mt-2 block rounded-2xl bg-surface-2 px-4 py-3 text-sm font-semibold text-ink hover:bg-surface-3">
+          <Link href="/products" onClick={close} className="mt-2 block rounded-2xl bg-surface-2 px-4 py-3 text-sm font-semibold text-ink hover:bg-surface-3">
             {t("wholePlatform")}
           </Link>
           </div>

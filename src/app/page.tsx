@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, Check, ChevronDown, X } from "lucide-react";
+import { ArrowRight, ArrowUpRight, BadgeCheck, Check, ChevronDown, MessageSquareText, Server, Upload, X } from "lucide-react";
 import { DashboardLink } from "@/components/nexora/dashboard-link";
 import { LogoMark } from "@/components/gpu/logo-mark";
 import { RelayHero } from "@/components/landing/relay-hero";
-import { ProductPreview, Quote, Result } from "@/components/landing/product-preview";
+import { HeroArt } from "@/components/landing/hero-art";
+import { Quote, Result } from "@/components/landing/product-preview";
 import { ProductCatalog } from "@/components/landing/platform-sections";
 import { buttonStyles } from "@/components/ui/button-styles";
 import { getTranslations } from "next-intl/server";
@@ -68,30 +69,29 @@ export default async function Landing() {
   return (
     <div className="landing -mx-4 -mt-5 overflow-x-clip text-ink sm:-mx-6">
       {/* ── Hero: centred statement, the product right under it ── */}
-      <section className="dot-grid relative border-b border-line">
-        <div className={`${wrap} pb-20 pt-20 text-center lg:pt-24`}>
-          <Link href="/status" className="mb-7 inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 text-sm text-ink-2 hover:text-ink">
-            <span className="size-2 rounded-full bg-success" />
-            {t("live")}
-            <ArrowUpRight className="size-3.5" aria-hidden />
-          </Link>
-          <h1 className="mx-auto max-w-4xl text-ink">
-            {t("title")} <span className="text-muted">{t("titleMuted")}</span>
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-ink-2">
-            {t("lead")}
-          </p>
-          <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-            <DashboardLink mode="recorded" className={`${buttonStyles("primary", "lg")} press rounded-full`}>
-              {t("ctaRun")} <ArrowRight className="nudge size-4" aria-hidden />
-            </DashboardLink>
-            <Link href="/products/devices" className={`${buttonStyles("secondary", "lg")} press rounded-full`}>
-              {t("ctaEarn")}
+      <section className="relative overflow-hidden border-b border-line">
+        <div className="pointer-events-none absolute! inset-x-0 top-0 h-[36rem] bg-[radial-gradient(50%_60%_at_75%_5%,rgba(254,80,0,0.10),transparent_70%)]" aria-hidden />
+        <div className={`${wrap} relative grid items-center gap-6 py-14 lg:grid-cols-[1fr_1fr] lg:py-20`}>
+          <div>
+            <Link href="/status" className="mb-6 inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 text-sm text-ink-2 hover:text-ink">
+              <span className="size-2 rounded-full bg-success" />
+              {t("live")}
+              <ArrowUpRight className="size-3.5" aria-hidden />
             </Link>
+            <h1 className="max-w-xl text-ink text-[clamp(2.3rem,3.7vw,3.3rem)]! leading-[1.07]!">
+              {t("title")} <span className="text-muted">{t("titleMuted")}</span>
+            </h1>
+            <p className="mt-6 max-w-lg text-lg leading-relaxed text-ink-2">{t("lead")}</p>
+            <div className="mt-9 flex flex-wrap items-center gap-3">
+              <DashboardLink mode="recorded" className={`${buttonStyles("primary", "lg")} press rounded-full`}>
+                {t("ctaRun")} <ArrowRight className="nudge size-4" aria-hidden />
+              </DashboardLink>
+              <Link href="/products/devices" className={`${buttonStyles("secondary", "lg")} press rounded-full`}>
+                {t("ctaEarn")}
+              </Link>
+            </div>
           </div>
-          <div className="mx-auto mt-16 max-w-5xl text-left">
-            <ProductPreview />
-          </div>
+          <div className="lg:-mr-12"><HeroArt labels={t.raw("art") as { pc: string; laptop: string; phone: string; check: string; model: string }} /></div>
         </div>
       </section>
 
@@ -104,6 +104,35 @@ export default async function Landing() {
           ))}
         </div>
       </div>
+
+      {/* ── How it works: four steps ── */}
+      <section className="border-b border-line">
+        <div className={`${wrap} py-24`}>
+          <div className="max-w-2xl">
+            <Eyebrow>{t("how.eyebrow")}</Eyebrow>
+            <h2 className="text-ink">{t("how.title")}</h2>
+          </div>
+          <ol className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {(t.raw("how.steps") as { title: string; body: string }[]).map((s, i) => {
+              const Icon = [MessageSquareText, Upload, BadgeCheck, Server][i] ?? Check;
+              return (
+                <li key={s.title} className="relative">
+                  <Link href={["/products/assistant", "/products/train", "/products/verify", "/products/host"][i]} className="artifact lift block h-full p-6">
+                  <span className="flex items-center justify-between">
+                    <span className="grid size-11 place-items-center rounded-xl bg-ink text-ink-inverse">
+                      <Icon className="size-5" aria-hidden />
+                    </span>
+                    <span className="figure text-3xl leading-none text-line-strong">{i + 1}</span>
+                  </span>
+                  <h3 className="mt-5 text-ink">{s.title}</h3>
+                  <p className="mt-2 text-[15px] leading-relaxed text-ink-2">{s.body}</p>
+                  </Link>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+      </section>
 
       {/* ── Feature rows ── */}
       <section className={`${wrap} space-y-28 py-28`}>
@@ -129,8 +158,8 @@ export default async function Landing() {
       </section>
 
       {/* ── Metrics band ── */}
-      <section className="border-y border-line bg-surface-2/60">
-        <div className={`${wrap} py-16`}>
+      <section className="theme-dark ink-band border-y border-line">
+        <div className={`${wrap} py-20`}>
           <div className="flex flex-wrap items-end justify-between gap-4">
             <h2 className="max-w-xl text-ink">{t("metricsTitle")}</h2>
             <DashboardLink mode="recorded" className="inline-flex items-center gap-1.5 font-semibold text-ink hover:text-accent-text">
@@ -140,7 +169,7 @@ export default async function Landing() {
           <dl className="mt-10 grid grid-cols-2 gap-8 lg:grid-cols-4">
             {metrics.map((m) => (
               <div key={m.label} className="border-l-2 border-accent pl-5">
-                <dt className="figure text-[clamp(2rem,3.4vw,2.8rem)] leading-none text-ink">{m.value}</dt>
+                <dt className="figure text-[clamp(2.4rem,4.4vw,3.6rem)] leading-none text-ink">{m.value}</dt>
                 <dd className="mt-2 text-sm text-ink-2">{m.label}</dd>
               </div>
             ))}
@@ -212,8 +241,8 @@ export default async function Landing() {
       </section>
 
       {/* ── Closing call to action ── */}
-      <section className="theme-dark ink-band">
-        <div className={`${wrap} flex flex-wrap items-center justify-between gap-8 py-20`}>
+      <section className="theme-dark ink-band relative overflow-hidden">
+        <div className={`${wrap} relative flex flex-wrap items-center justify-between gap-8 py-24`}>
           <div>
             <h2 className="max-w-2xl text-ink">{t("closeTitle")}</h2>
             <p className="mt-3 text-lg text-ink-2">{t("closeLead")}</p>

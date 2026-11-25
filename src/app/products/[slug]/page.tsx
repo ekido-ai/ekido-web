@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowUpRight, Check, CircleDashed } from "lucide-react";
+import { ProductScene } from "@/components/brand/scenes";
+import { ServiceFlow, ServiceStep } from "@/components/brand/service-flow";
 import { MarketingPage, PageHero, PageSection } from "@/components/landing/page-hero";
 import { StatusBadge } from "@/components/shell/marketing-nav";
 import { buttonStyles } from "@/components/ui/button-styles";
@@ -25,12 +27,17 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const p = products.find((x) => x.key === slug);
   if (!p) notFound();
   const t = await getTranslations("productPage");
-  const others = products.filter((x) => x.key !== p.key);
+  const tf = await getTranslations("flow");
+  const scenes = (await getTranslations("scenes")).raw(slug) as string[];
   return (
     <MarketingPage>
-      <PageHero kicker={p.name} title={p.headline} sub={p.line}>
+      <PageHero kicker={p.name} title={p.headline} sub={p.line} art={<ProductScene name={slug} labels={scenes} title={p.name} />}>
         <StatusBadge status={p.status} />
       </PageHero>
+
+      <PageSection title={tf("title")} sub={tf("sub")}>
+        <ServiceFlow current={slug} />
+      </PageSection>
 
       <PageSection title={t("does")}>
         <ul className="grid gap-4 sm:grid-cols-2">
@@ -75,15 +82,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         )}
       </PageSection>
 
-      <PageSection title={t("rest")}>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-          {others.map((o) => (
-            <Link key={o.key} href={o.href} className="artifact lift p-4">
-              <span className="block text-sm font-semibold text-ink">{o.name}</span>
-              <span className="mt-1 block text-[13px] leading-snug text-ink-2">{o.line}</span>
-            </Link>
-          ))}
-        </div>
+      <PageSection>
+        <ServiceStep current={slug} />
       </PageSection>
     </MarketingPage>
   );

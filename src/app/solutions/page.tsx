@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SceneArt } from "@/components/brand/scene-art";
+import { ServiceFlow } from "@/components/brand/service-flow";
 import { MarketingPage, PageHero, PageSection } from "@/components/landing/page-hero";
 import { JobArtifacts } from "@/components/landing/job-artifacts";
 import { getSolutions } from "@/lib/landing/products-server";
@@ -10,9 +12,10 @@ export const metadata: Metadata = { title: "Solutions", description: "Small AI m
 export default async function SolutionsPage() {
   const SOLUTIONS = await getSolutions();
   const t = await getTranslations("pages.solutions");
+  const tf = await getTranslations("flow");
   return (
     <MarketingPage>
-      <PageHero kicker={t("kicker")} title={t("title")} sub={t("sub")} />
+      <PageHero kicker={t("kicker")} title={t("title")} sub={t("sub")} art={<SceneArt name="assistant" title="Ekido Assistant" />} />
       <PageSection title={t("byIndustry")}>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {SOLUTIONS.industries.map((s) => (
@@ -35,6 +38,9 @@ export default async function SolutionsPage() {
             </Link>
           ))}
         </div>
+      </PageSection>
+      <PageSection title={tf("title")} sub={tf("sub")}>
+        <ServiceFlow />
       </PageSection>
     </MarketingPage>
   );
