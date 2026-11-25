@@ -1,4 +1,5 @@
 import { Cpu, Server } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { DashboardState } from "@/lib/events/reduce";
 import type { EventPayloads, ProviderStatus } from "@/lib/events/types";
 import { freshTelemetry, providerNotes } from "@/lib/events/derive";
@@ -113,9 +114,10 @@ function ProviderCard({ p, state }: { p: Provider; state: DashboardState }) {
  * profiles are the same hardware (plan.md: "say this out loud in the demo").
  */
 export function ProviderGrid({ state }: { state: DashboardState }) {
+  const t = useTranslations("demo.shared");
   const providers = Object.values(state.providers);
   if (providers.length === 0) {
-    return <EmptyState title="No providers online">Start an agent, or play the replay to see the sample network.</EmptyState>;
+    return <EmptyState title={t("noProvidersTitle")}>{t("noProviders")}</EmptyState>;
   }
   const groups = new Map<string, Provider[]>();
   for (const p of providers) groups.set(p.physical_gpu_id, [...(groups.get(p.physical_gpu_id) ?? []), p]);
