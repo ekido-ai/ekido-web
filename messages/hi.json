@@ -797,7 +797,9 @@
       "confirmed": "Confirmed",
       "failed": "Failed",
       "pending": "Pending",
-      "opensExplorer": "(opens block explorer)"
+      "opensExplorer": "(opens block explorer)",
+      "waitingFor": "Waiting for {what}…",
+      "retry": "Retry"
     },
     "truth": {
       "REAL": {
@@ -1198,5 +1200,84 @@
     "callLead": "Create a key with Run models in Settings, then:",
     "timelineLabel": "Where your training is",
     "percent": "{n}% trained"
+  },
+  "kit": {
+    "title": "Component kit",
+    "lead": "Every building block in every state. Color is reserved for meaning: status, provider identity, and caution badges. Status always pairs an icon with a word.",
+    "truthBadges": "Truth badges",
+    "status": "Status",
+    "tones": {
+      "good": "Accepted",
+      "warning": "Recovering",
+      "serious": "Injected fault",
+      "critical": "Rejected",
+      "active": "Training",
+      "neutral": "Online",
+      "idle": "Offline"
+    },
+    "statusLong": "Provider A stopped responding. Recovering",
+    "identity": "Provider identity",
+    "identityNote": "Fixed slot per provider id, never by rank. P (the injected-fault trainer) stays neutral so it never looks like a real series.",
+    "numbers": "Numbers: unit, source, and unknown",
+    "throughput": "Throughput",
+    "stepsPerS": "steps/s",
+    "measuredRuntime": "Measured by runtime",
+    "gpuTemp": "GPU temperature",
+    "hostNvml": "Host NVML",
+    "power": "Power",
+    "recoveryTime": "Recovery time",
+    "sampleData": "Sample data",
+    "vram": "VRAM · Provider {id}",
+    "vramCap": "VRAM · Provider {id} (cap)",
+    "buttons": "Buttons",
+    "submitJob": "Submit job",
+    "secondary": "Secondary",
+    "ghost": "Ghost",
+    "disabled": "Disabled",
+    "pressToKill": "Press again to kill",
+    "kill": "Kill Provider A",
+    "killNote": "Kill needs a second press within 3 s. No browser dialog. Confirmed {n, plural, one {# time} other {# times}} here.",
+    "timeline": "Timeline",
+    "tl": {
+      "stoppedTitle": "Provider A stopped",
+      "stoppedDetail": "Container killed from the dashboard (docker kill)",
+      "fencedTitle": "Old worker fenced",
+      "fencedDetail": "Fencing token 1 → 2. Writes from the old worker are now rejected",
+      "chosenTitle": "Checkpoint chosen",
+      "chosenDetail": "Step 100, accepted. 12 steps lost",
+      "replacing": "Finding a replacement"
+    },
+    "states": "States",
+    "noProvidersTitle": "No providers online",
+    "noProviders": "Start an agent, or play the replay to see the sample network.",
+    "heartbeat": "the first heartbeat from Provider B",
+    "checkpointsError": "Couldn't load checkpoints",
+    "platform": {
+      "quote": "Quote card",
+      "ready": "Ready",
+      "expiringSoon": "Expiring soon",
+      "expired": "Expired",
+      "loadingError": "Loading and error",
+      "quoteError": "The examples were removed from your team. Upload them again.",
+      "timeline": "Progress timeline",
+      "jobs": {
+        "queued": "Queued",
+        "training": "Training",
+        "moved": "A device moved",
+        "checking": "Checking quality",
+        "passed": "Passed",
+        "refunded": "Missed, refunded",
+        "cancelled": "Cancelled"
+      },
+      "keys": "API-key list",
+      "severalKeys": "Several keys (owner)",
+      "readOnly": "Read-only (member)",
+      "empty": "Empty",
+      "loadingLoadError": "Loading and load error",
+      "drop": "Upload drop zone",
+      "idle": "Idle (drag a file over it, or choose a wrong one, to see the other states)",
+      "reading": "Reading",
+      "chosen": "Chosen"
+    }
   }
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Panel } from "@/components/ui/panel";
 import type { ApiKey } from "@/lib/platform/api";
 import type { CustomerJob, Quote } from "@/lib/platform/train";
@@ -45,17 +46,18 @@ const job = (over: Partial<CustomerJob>): CustomerJob => ({
   ...over,
 });
 
+// The first item is the state's id (messages: kit.platform.jobs.<id>).
 const JOBS: [string, CustomerJob][] = [
-  ["Queued", job({ stage: "starting", state: "QUEUED" })],
-  ["Training", job({ steps_done: 84 })],
-  ["A device moved", job({ steps_done: 132, moved_devices: 1 })],
-  ["Checking quality", job({ stage: "checking", steps_done: 200 })],
-  ["Passed", job({ stage: "passed", steps_done: 200, quality: { metric: "accuracy", floor: 0.85, score: 0.91, passed: true }, model_ready: true })],
+  ["queued", job({ stage: "starting", state: "QUEUED" })],
+  ["training", job({ steps_done: 84 })],
+  ["moved", job({ steps_done: 132, moved_devices: 1 })],
+  ["checking", job({ stage: "checking", steps_done: 200 })],
+  ["passed", job({ stage: "passed", steps_done: 200, quality: { metric: "accuracy", floor: 0.85, score: 0.91, passed: true }, model_ready: true })],
   [
-    "Missed, refunded",
+    "refunded",
     job({ stage: "refunded", steps_done: 200, quality: { metric: "accuracy", floor: 0.85, score: 0.71, passed: false }, payment: { order_id: "kit", status: "REFUNDED", amount_paise: 1_23_456_00 } }),
   ],
-  ["Cancelled", job({ stage: "cancelled" })],
+  ["cancelled", job({ stage: "cancelled" })],
 ];
 
 const KEYS: ApiKey[] = [
@@ -63,9 +65,10 @@ const KEYS: ApiKey[] = [
   { key_id: "b", name: "Staging tests", mode: "test", prefix: "ek_test_Lm3x", scopes: ["jobs"], created_at: "2026-11-22T10:00:00Z", last_used_at: null },
 ];
 
-function State({ name, children }: { name: string; children: React.ReactNode }) {
+/** `id` stays the same in every language (data-kit-state); `name` is what is shown. */
+function State({ id, name, children }: { id: string; name: string; children: React.ReactNode }) {
   return (
-    <section data-kit-state={name} className="space-y-2">
+    <section data-kit-state={id} className="space-y-2">
       <p className="kicker text-[0.7rem]">{name}</p>
       {children}
     </section>
@@ -73,50 +76,51 @@ function State({ name, children }: { name: string; children: React.ReactNode }) 
 }
 
 export function PlatformKit() {
+  const t = useTranslations("kit.platform");
   return (
     <>
-      <Panel title="Quote card">
+      <Panel title={t("quote")}>
         <div data-kit="quote" className="grid gap-8 lg:grid-cols-2">
-          <State name="Ready">
+          <State id="ready" name={t("ready")}>
             <QuoteCard quote={quote(30)} onPay={nothing} onNewQuote={nothing} now={NOW} />
           </State>
-          <State name="Expiring soon">
+          <State id="expiring-soon" name={t("expiringSoon")}>
             <QuoteCard quote={quote(3.5)} onPay={nothing} onNewQuote={nothing} now={NOW} />
           </State>
-          <State name="Expired">
+          <State id="expired" name={t("expired")}>
             <QuoteCard quote={quote(-1)} onPay={nothing} onNewQuote={nothing} now={NOW} />
           </State>
-          <State name="Loading and error">
+          <State id="loading-error" name={t("loadingError")}>
             <div className="space-y-4">
               <QuoteCard quote={null} onPay={nothing} onNewQuote={nothing} now={NOW} />
-              <QuoteCard quote={null} error="The examples were removed from your team. Upload them again." onPay={nothing} onNewQuote={nothing} now={NOW} />
+              <QuoteCard quote={null} error={t("quoteError")} onPay={nothing} onNewQuote={nothing} now={NOW} />
             </div>
           </State>
         </div>
       </Panel>
 
-      <Panel title="Progress timeline">
+      <Panel title={t("timeline")}>
         <div data-kit="timeline" className="grid gap-8 sm:grid-cols-2 xl:grid-cols-4">
-          {JOBS.map(([name, j]) => (
-            <State key={name} name={name}>
+          {JOBS.map(([id, j]) => (
+            <State key={id} id={id} name={t(`jobs.${id}`)}>
               <JobProgress job={j} />
             </State>
           ))}
         </div>
       </Panel>
 
-      <Panel title="API-key list">
+      <Panel title={t("keys")}>
         <div data-kit="keys" className="grid gap-8 lg:grid-cols-2">
-          <State name="Several keys (owner)">
+          <State id="several-keys" name={t("severalKeys")}>
             <ApiKeyList keys={KEYS} manage onRevoke={nothing} />
           </State>
-          <State name="Read-only (member)">
+          <State id="read-only" name={t("readOnly")}>
             <ApiKeyList keys={KEYS} manage={false} onRevoke={nothing} />
           </State>
-          <State name="Empty">
+          <State id="empty" name={t("empty")}>
             <ApiKeyList keys={[]} manage onRevoke={nothing} />
           </State>
-          <State name="Loading and load error">
+          <State id="loading-load-error" name={t("loadingLoadError")}>
             <div className="space-y-4">
               <ApiKeyList keys={null} manage onRevoke={nothing} />
               <ApiKeyList keys={null} manage onRevoke={nothing} error="HTTP 500 from /v1/orgs/…/api-keys" onRetry={nothing} />
@@ -125,15 +129,15 @@ export function PlatformKit() {
         </div>
       </Panel>
 
-      <Panel title="Upload drop zone">
+      <Panel title={t("drop")}>
         <div data-kit="drop" className="grid gap-8 lg:grid-cols-3">
-          <State name="Idle (drag a file over it, or choose a wrong one, to see the other states)">
+          <State id="idle" name={t("idle")}>
             <DropZone accept={[".csv"]} maxBytes={20 * 1024 * 1024} onFile={nothing} />
           </State>
-          <State name="Reading">
+          <State id="reading" name={t("reading")}>
             <DropZone accept={[".csv"]} maxBytes={20 * 1024 * 1024} onFile={nothing} reading="support-tickets.csv" />
           </State>
-          <State name="Chosen">
+          <State id="chosen" name={t("chosen")}>
             <DropZone accept={[".csv"]} maxBytes={20 * 1024 * 1024} onFile={nothing} chosen={{ name: "support-tickets.csv", size: 48_312 }} />
           </State>
         </div>
