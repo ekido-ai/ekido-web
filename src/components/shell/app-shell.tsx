@@ -166,7 +166,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const landing =
     path === "/" ||
     path === "/products" ||
-    ["/products/", "/solutions", "/developers", "/pricing", "/trust", "/roadmap", "/provide", "/help", "/status", "/security", "/privacy", "/terms", "/acceptable-use", "/login"].some((p) => path.startsWith(p));
+    ["/products/", "/solutions", "/developers", "/pricing", "/trust", "/roadmap", "/provide", "/help", "/security", "/privacy", "/terms", "/acceptable-use", "/login"].some((p) => path.startsWith(p));
   // A customer's own screens (train a model, a job, settings) are a normal SaaS app: no chain status and no wallet button in the header.
   // They pay in rupees; the chain is a proof layer, shown on the pages that are about it.
   const customer = ["/train", "/settings", "/prepare"].some((p) => path.startsWith(p)) || (path.startsWith("/jobs/") && !path.startsWith("/jobs/new"));
