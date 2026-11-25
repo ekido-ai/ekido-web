@@ -1144,6 +1144,7 @@
     "starting": "Payment received. Starting your training…",
     "paymentFailed": "The payment didn't go through. Nothing was charged; try again.",
     "paymentSlow": "We haven't heard from Razorpay yet. If you paid, your training starts as soon as it confirms; check back in a minute.",
+    "startSlow": "Starting is taking longer than usual. Your payment is safe: look for the job under My models in a few minutes.",
     "quoteError": "Couldn't get a price",
     "heldFor": "{n, plural, one {This price is held for 1 more minute.} other {This price is held for # more minutes.}}",
     "expired": "This price has expired. Get a new one; your examples are kept.",
