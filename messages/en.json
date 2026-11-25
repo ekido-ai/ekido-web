@@ -846,7 +846,8 @@
         "terms": "Terms",
         "acceptableUse": "Acceptable use",
         "security": "Security"
-      }
+      },
+      "contactFallback": "the Ekido team"
     }
   },
   "auth": {
@@ -1779,5 +1780,153 @@
       "noProvidersTitle": "No providers online",
       "noProviders": "Start an agent, or play the replay to see the sample network."
     }
+  },
+  "help": {
+    "metaDescription": "How to rent out a GPU, submit a job, check a payout on-chain, and what every badge means.",
+    "title": "Help",
+    "updated": "9 November 2026",
+    "intro": "Answers to the common questions, what each badge means, and the words we use.",
+    "questions": "Questions",
+    "faq": {
+      "what": {
+        "q": "What is Ekido, in one line?",
+        "a": "A network where a training job survives its GPU dying, bad results get refused, and an escrow contract pays each provider only for the work that made it into the final model."
+      },
+      "blockchain": {
+        "q": "Why does it need a blockchain?",
+        "a": "A client and a provider who don't know each other need someone neutral to hold the money and follow the agreed rules, even if we disappear. The escrow contract is that neutral party: the budget is locked before work starts, and it pays out only with verifier signatures. You can check all of it yourself on the <chain>On-chain page</chain>. It doesn't make the computing itself trustworthy. That's what the Quality Guard is for."
+      },
+      "money": {
+        "q": "Is this real money?",
+        "a": "No. Everything runs on Base Sepolia, a test network, with test USDC that has no value. Never send real funds."
+      },
+      "rent": {
+        "q": "How do I rent out my GPU?",
+        "a": "Open <provide>Provide compute</provide>, set a name and a price per step, and copy the one command it shows. It creates a provider key on your machine, registers your device, and starts taking work. It works on an NVIDIA GPU or on a CPU."
+      },
+      "paid": {
+        "q": "How do I get paid?",
+        "a": "After a job settles, your share sits in the escrow under your wallet. Call <code>withdraw()</code> on the escrow from that wallet whenever you like. Type your address into \"Check any wallet\" on the <chain>On-chain page</chain> to see what you're owed."
+      },
+      "dropout": {
+        "q": "What happens if my GPU drops out halfway?",
+        "a": "The coordinator notices, blocks your old worker from writing, and moves the job to another provider from the last trusted checkpoint. You're still paid for your accepted steps up to that checkpoint."
+      },
+      "nothing": {
+        "q": "Why did a provider earn nothing?",
+        "a": "Either its work was refused by the Quality Guard, or it never saved a checkpoint that was accepted. Only accepted steps are paid."
+      },
+      "disagree": {
+        "q": "What if I disagree with a payout?",
+        "a": "The client can dispute during the dispute window by posting a bond. The arbiter decides. If the arbiter stays silent for 3 days, the verdict stands and the bond is returned."
+      },
+      "custom": {
+        "q": "Can I run my own training code?",
+        "a": "Not yet. Only approved workload templates run today, to protect providers' machines. Sandboxed custom code is on the roadmap."
+      }
+    },
+    "badgesTitle": "What the badges mean",
+    "badges": {
+      "real": {
+        "name": "Real GPU",
+        "means": "A physical GPU doing the work live."
+      },
+      "separate": {
+        "name": "Real, separate machine",
+        "means": "A physical GPU on another computer, often a teammate's."
+      },
+      "capped": {
+        "name": "Capped profile",
+        "means": "The same physical GPU with a memory limit, to show the job adapting to a smaller card."
+      },
+      "fault": {
+        "name": "Injected fault",
+        "means": "A provider we made misbehave on purpose, to show bad work being refused."
+      },
+      "recorded": {
+        "name": "Recorded",
+        "means": "Played back from a saved real run, not happening now."
+      },
+      "local": {
+        "name": "Local chain",
+        "means": "Settled on a chain running on this laptop, not on Base Sepolia."
+      },
+      "synthetic": {
+        "name": "Synthetic",
+        "means": "A small CPU workload standing in when the GPU isn't available."
+      }
+    },
+    "wordsTitle": "Words we use",
+    "words": {
+      "escrow": {
+        "word": "Escrow",
+        "means": "The contract that holds a job's budget until the verdict decides who gets what."
+      },
+      "verifier": {
+        "word": "Verifier",
+        "means": "An independent process that evaluates the model and signs the verdict. 2 of 3 must agree."
+      },
+      "checkpoint": {
+        "word": "Checkpoint",
+        "means": "A saved copy of the training state. A job resumes from the last accepted one."
+      },
+      "step": {
+        "word": "Logical step",
+        "means": "One unit of training that means the same on every GPU, however it's split into smaller batches."
+      },
+      "fencing": {
+        "word": "Fencing token",
+        "means": "A counter that stops an old, disconnected worker from writing after the job moved on."
+      },
+      "window": {
+        "word": "Dispute window",
+        "means": "The time after a verdict when the client can still challenge it."
+      },
+      "reserves": {
+        "word": "Proof of reserves",
+        "means": "A live check that the escrow holds at least as much USDC as it owes."
+      }
+    },
+    "troubleTitle": "Something isn't working",
+    "trouble": {
+      "coordinator": "<b>\"Coordinator offline\":</b> the scheduling server isn't reachable. Switch to the recorded run from the top bar, or check <status>Status</status>.",
+      "chain": "<b>\"Chain unreachable\":</b> the public Base Sepolia RPC is limiting requests. Wait a few seconds and read again.",
+      "provider": "<b>A provider command fails:</b> it needs Python 3.12 and the Ekido agent installed. The page shows the exact command for this network.",
+      "keys": "<b>Keyboard shortcuts:</b> press <kbd>?</kbd> on the dashboard to see them."
+    }
+  },
+  "statusPage": {
+    "title": "Status",
+    "updated": "live",
+    "intro": "Each check runs from your browser right now, so it shows what you can reach, not what we say.",
+    "unreachable": "Unreachable",
+    "coordinator": {
+      "name": "Coordinator",
+      "what": "Schedules jobs and streams progress",
+      "busy": "Busy: it asked this page to slow down, answered in {ms} ms",
+      "notReady": "Not ready (answered {status})",
+      "ready": "Ready, answered in {ms} ms"
+    },
+    "rpc": {
+      "name": "{chain} RPC",
+      "what": "Reads balances and contract state"
+    },
+    "logs": {
+      "name": "Event history RPC",
+      "what": "Reads the escrow's past events"
+    },
+    "block": "Block {block}, answered in {ms} ms",
+    "escrow": {
+      "name": "Escrow contract",
+      "what": "Holds budgets and pays out",
+      "noCode": "No contract code at the escrow address",
+      "deployed": "Deployed, {bytes} bytes of code"
+    },
+    "down": "{down} of {total} parts unreachable",
+    "allUp": "Everything reachable",
+    "checking": "Checking",
+    "running": "Running four checks…",
+    "again": "Check again",
+    "lastChecked": "Last checked {at}"
   }
 }
