@@ -9,7 +9,7 @@ import { useTranslations } from "next-intl";
 const KEY = "ekido.notice";
 
 /**
- * An honest storage notice: there are no cookies or trackers, so there's nothing to accept or refuse.
+ * An honest storage notice: no trackers, and the only cookie is the sign-in session, so there's nothing to accept or refuse.
  * It says what is kept and goes away for good after one click.
  */
 const noSubscribe = () => () => {};

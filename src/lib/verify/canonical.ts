@@ -16,7 +16,9 @@ export function canonicalJson(value: unknown): string {
 
 /** SHA-256 hex of the canonical document, without top-level signature fields, as document_hash does. */
 export async function documentHash(doc: Record<string, unknown>): Promise<string> {
-  const { signature: _s, sig: _g, ...rest } = doc;
+  const rest = { ...doc };
+  delete rest.signature;
+  delete rest.sig;
   const bytes = new TextEncoder().encode(canonicalJson(rest));
   const digest = await crypto.subtle.digest("SHA-256", bytes);
   return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, "0")).join("");

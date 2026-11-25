@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { FundStep } from "@/components/jobs/fund-step";
 import { PageHeader } from "@/components/shell/page-header";
@@ -14,6 +14,8 @@ import { readJobFile } from "@/lib/jobs/upload";
 import { loadToken, saveToken } from "@/lib/jobs/token-store";
 import { post } from "@/lib/live/api";
 
+const noSubscribe = () => () => {};
+
 export default function NewJobPage() {
   const router = useRouter();
   const { followJob } = useSourceControl();
@@ -21,7 +23,11 @@ export default function NewJobPage() {
   // JSON pasted before the script loaded would leave "Verify signed terms" disabled (ekido-ai/ekido-core#125).
   const textField = useRef<HTMLTextAreaElement>(null);
   useTypedBeforeHydration(textField, setText);
-  const [token, setToken] = useState("");
+  // The token is kept for this tab only, so it is pasted once per visit. It is read after hydration, and what the
+  // person types replaces it.
+  const savedToken = useSyncExternalStore(noSubscribe, loadToken, () => "");
+  const [typedToken, setToken] = useState<string | null>(null);
+  const token = typedToken ?? savedToken;
   const [prepared, setPrepared] = useState<PreparedSignedRequest | null>(null);
   const [registered, setRegistered] = useState(false);
   const [funded, setFunded] = useState(false);
@@ -31,11 +37,6 @@ export default function NewJobPage() {
   // as soon as the escrow is verified.
   const [autoStart, setAutoStart] = useState(false);
   const started = useRef(false);
-
-  // The token is kept for this tab only, so it is pasted once per visit.
-  useEffect(() => {
-    setToken(loadToken());
-  }, []);
 
   async function run(action: () => Promise<void>) {
     setBusy(true);

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import type { DashboardState } from "@/lib/events/reduce";
 import { checkpointMarks, lossSegments, providerName, type LossSegment } from "@/lib/events/derive";
 import { cx } from "@/components/ui/cx";
@@ -48,6 +49,7 @@ function pointAt(seg: LossSegment, step: number) {
 }
 
 export function LossChart({ state, showTable = false }: { state: DashboardState; showTable?: boolean }) {
+  const t = useTranslations("demo.loss");
   const [wrapRef, width] = useWidth<HTMLDivElement>();
   const [cursor, setCursor] = useState<number | null>(null);
   const segs = useMemo(() => lossSegments(state), [state]);
@@ -78,7 +80,7 @@ export function LossChart({ state, showTable = false }: { state: DashboardState;
   if (segs.length === 0) {
     return (
       <div className="flex h-[220px] items-center justify-center rounded-lg border border-dashed border-line-strong text-ink-2">
-        No training steps yet
+        {t("empty")}
       </div>
     );
   }
@@ -86,7 +88,7 @@ export function LossChart({ state, showTable = false }: { state: DashboardState;
   return (
     <div>
       {/* Legend: mirrors the marks (line keys), always present for ≥ 2 series. */}
-      <ul className="mb-2 flex flex-wrap gap-x-5 gap-y-1 text-sm text-ink-2" aria-label="Legend">
+      <ul className="mb-2 flex flex-wrap gap-x-5 gap-y-1 text-sm text-ink-2" aria-label={t("legend")}>
         {providersInChart.map((s) => (
           <li key={s.providerId} className="flex items-center gap-2">
             <svg width="20" height="8" aria-hidden>
@@ -94,20 +96,20 @@ export function LossChart({ state, showTable = false }: { state: DashboardState;
                 strokeDasharray={s.rejected ? "4 3" : undefined} />
             </svg>
             {providerName(state, s.providerId)}
-            {s.rejected && <span className="text-muted">(rejected, dashed)</span>}
+            {s.rejected && <span className="text-muted">{t("rejectedDashed")}</span>}
           </li>
         ))}
         <li className="flex items-center gap-2">
           <svg width="12" height="12" aria-hidden><circle cx="6" cy="6" r="4" fill="var(--surface)" stroke="var(--good)" strokeWidth="2" /></svg>
-          Checkpoint accepted
+          {t("accepted")}
         </li>
         <li className="flex items-center gap-2">
           <svg width="12" height="12" aria-hidden><circle cx="6" cy="6" r="4" fill="var(--surface)" stroke="var(--muted)" strokeWidth="2" /></svg>
-          Being checked
+          {t("checking")}
         </li>
         <li className="flex items-center gap-2">
           <svg width="12" height="12" aria-hidden><path d="M2 2L10 10M10 2L2 10" stroke="var(--critical)" strokeWidth="2" /></svg>
-          Checkpoint rejected
+          {t("rejectedMark")}
         </li>
       </ul>
 
@@ -117,7 +119,7 @@ export function LossChart({ state, showTable = false }: { state: DashboardState;
             width={width}
             height={H}
             role="img"
-            aria-label={`Training loss by step. ${segs.length} segments.`}
+            aria-label={t("aria", { n: segs.length })}
             tabIndex={0}
             className="block rounded-md focus-visible:outline-2"
             onPointerMove={(e) => setCursor(toStep(e.clientX, e.currentTarget.getBoundingClientRect()))}
@@ -132,22 +134,22 @@ export function LossChart({ state, showTable = false }: { state: DashboardState;
             }}
           >
             {/* grid + axes: hairline, recessive */}
-            {yTicks.map((t) => (
-              <g key={t}>
-                <line x1={PAD.left} x2={PAD.left + iw} y1={y(t)} y2={y(t)} stroke="var(--grid)" strokeWidth="1" />
-                <text x={PAD.left - 8} y={y(t)} dy="0.32em" textAnchor="end" className="tabular fill-[var(--muted)] text-[12px]">
-                  {t.toFixed(2)}
+            {yTicks.map((tick) => (
+              <g key={tick}>
+                <line x1={PAD.left} x2={PAD.left + iw} y1={y(tick)} y2={y(tick)} stroke="var(--grid)" strokeWidth="1" />
+                <text x={PAD.left - 8} y={y(tick)} dy="0.32em" textAnchor="end" className="tabular fill-[var(--muted)] text-[12px]">
+                  {tick.toFixed(2)}
                 </text>
               </g>
             ))}
-            {xTicks.map((t) => (
-              <text key={t} x={x(t)} y={H - PAD.bottom + 20} textAnchor="middle" className="tabular fill-[var(--muted)] text-[12px]">
-                {t}
+            {xTicks.map((tick) => (
+              <text key={tick} x={x(tick)} y={H - PAD.bottom + 20} textAnchor="middle" className="tabular fill-[var(--muted)] text-[12px]">
+                {tick}
               </text>
             ))}
             <line x1={PAD.left} x2={PAD.left + iw} y1={PAD.top + ih} y2={PAD.top + ih} stroke="var(--border-strong)" />
             <text x={PAD.left + iw} y={H - 2} textAnchor="end" className="fill-[var(--muted)] text-[12px]">
-              logical step
+              {t("axis")}
             </text>
 
             {/* lines */}
@@ -196,7 +198,7 @@ export function LossChart({ state, showTable = false }: { state: DashboardState;
                   )}
                   <text x={x(last.step) + 10} y={y(last.loss)} dy="0.32em" className="fill-[var(--text-2)] text-[13px] font-medium">
                     {s.providerId}
-                    {s.rejected ? " · rejected" : ""}
+                    {s.rejected ? t("endRejected") : ""}
                   </text>
                 </g>
               );
@@ -222,9 +224,9 @@ export function LossChart({ state, showTable = false }: { state: DashboardState;
             )}
             style={x(cursor) > width / 2 ? { right: width - x(cursor) + 12 } : { left: x(cursor) + 12 }}
           >
-            <div className="tabular text-xs text-muted">Step {cursor}</div>
+            <div className="tabular text-xs text-muted">{t("step", { step: cursor })}</div>
             {readout.length === 0 ? (
-              <div className="text-ink-2">No data at this step</div>
+              <div className="text-ink-2">{t("noData")}</div>
             ) : (
               readout.map((r) => (
                 <div key={r.seg.attempt} className="mt-1 flex items-center gap-2">
@@ -235,7 +237,7 @@ export function LossChart({ state, showTable = false }: { state: DashboardState;
                   <span className="tabular font-semibold text-ink">{r.pt.loss.toFixed(3)}</span>
                   <span className="text-ink-2">
                     {providerName(state, r.seg.providerId)}
-                    {r.seg.rejected ? " (rejected)" : ""}
+                    {r.seg.rejected ? t("rejectedParen") : ""}
                   </span>
                 </div>
               ))
@@ -249,11 +251,11 @@ export function LossChart({ state, showTable = false }: { state: DashboardState;
         <table className="tabular mt-3 w-full text-left text-sm">
           <thead className="text-muted">
             <tr>
-              <th className="py-1 font-medium">Attempt</th>
-              <th className="py-1 font-medium">Provider</th>
-              <th className="py-1 font-medium">Steps</th>
-              <th className="py-1 font-medium">Last loss</th>
-              <th className="py-1 font-medium">Result</th>
+              <th className="py-1 font-medium">{t("colAttempt")}</th>
+              <th className="py-1 font-medium">{t("colProvider")}</th>
+              <th className="py-1 font-medium">{t("colSteps")}</th>
+              <th className="py-1 font-medium">{t("colLoss")}</th>
+              <th className="py-1 font-medium">{t("colResult")}</th>
             </tr>
           </thead>
           <tbody className="text-ink">
@@ -263,7 +265,7 @@ export function LossChart({ state, showTable = false }: { state: DashboardState;
                 <td className="py-1">{providerName(state, s.providerId)}</td>
                 <td className="py-1">{s.points[0].step}–{s.points.at(-1)!.step}</td>
                 <td className="py-1">{s.points.at(-1)!.loss.toFixed(3)}</td>
-                <td className="py-1">{s.rejected ? "Rejected" : s.live ? "Training" : "Kept"}</td>
+                <td className="py-1">{t(s.rejected ? "rejected" : s.live ? "training" : "kept")}</td>
               </tr>
             ))}
           </tbody>

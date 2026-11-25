@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Download, Radio, RefreshCw } from "lucide-react";
 import { config } from "@/lib/config";
 import { useDashboard, useSourceControl } from "@/lib/events/source-context";
@@ -28,13 +29,7 @@ import { cx } from "@/components/ui/cx";
 import { usePrivateListsReadable } from "@/lib/platform/signed-in";
 
 const stageTone: Record<Stage, Tone> = { proposed: "warning", reported: "neutral", disputed: "serious", refund_only: "idle", error: "critical" };
-const stageShort: Record<Stage, string> = {
-  proposed: "Proposed",
-  reported: "Reported finalized",
-  disputed: "Disputed",
-  refund_only: "Refund only",
-  error: "Error",
-};
+// Short stage names are in messages (demo.earnings.stage.<stage>).
 
 const short = (h: string) => (h.length > 14 ? `${h.slice(0, 8)}…${h.slice(-4)}` : h);
 const money = (units: number) => `${usdc(units)} USDC`;
@@ -63,7 +58,8 @@ async function get(path: string) {
 }
 
 function Tx({ hash }: { hash: string | null }) {
-  if (!hash) return <span className="text-muted">none</span>;
+  const t = useTranslations("demo.earnings");
+  if (!hash) return <span className="text-muted">{t("none")}</span>;
   return config.explorer ? (
     <a className="font-mono underline decoration-line-strong underline-offset-2 hover:text-ink" href={`${config.explorer}/tx/${hash}`} target="_blank" rel="noreferrer">
       {short(hash)}
@@ -74,6 +70,7 @@ function Tx({ hash }: { hash: string | null }) {
 }
 
 function Receipt({ row }: { row: SettlementRow }) {
+  const t = useTranslations("demo.earnings");
   const stamp = () => new Date().toISOString();
   return (
     <div className="flex flex-wrap gap-1.5">
@@ -81,7 +78,7 @@ function Receipt({ row }: { row: SettlementRow }) {
         type="button"
         className={buttonStyles("ghost", "sm")}
         onClick={() => download(`receipt-${row.job_id}.csv`, "text/csv", receiptCsv(row, stamp()))}
-        aria-label={`Download CSV receipt for ${row.job_id}`}
+        aria-label={t("csvAria", { job: row.job_id })}
       >
         <Download className="size-3.5" aria-hidden /> CSV
       </button>
@@ -89,7 +86,7 @@ function Receipt({ row }: { row: SettlementRow }) {
         type="button"
         className={buttonStyles("ghost", "sm")}
         onClick={() => download(`receipt-${row.job_id}.json`, "application/json", receiptJson(row, stamp()))}
-        aria-label={`Download JSON receipt for ${row.job_id}`}
+        aria-label={t("jsonAria", { job: row.job_id })}
       >
         <Download className="size-3.5" aria-hidden /> JSON
       </button>
@@ -98,7 +95,8 @@ function Receipt({ row }: { row: SettlementRow }) {
 }
 
 function Amounts({ row }: { row: SettlementRow }) {
-  if (!row.verdict) return <span className="italic text-muted">no verdict stored</span>;
+  const t = useTranslations("demo.earnings");
+  if (!row.verdict) return <span className="italic text-muted">{t("noVerdict")}</span>;
   return (
     <ul className="space-y-0.5">
       {row.verdict.payees.map((p, i) => (
@@ -106,12 +104,13 @@ function Amounts({ row }: { row: SettlementRow }) {
           <code className="font-mono text-ink-2" title={p}>{short(p)}</code> {money(row.verdict!.amounts[i])}
         </li>
       ))}
-      <li className="tabular text-ink-2">Refund {money(row.verdict.refund)}</li>
+      <li className="tabular text-ink-2">{t("refund", { amount: money(row.verdict.refund) })}</li>
     </ul>
   );
 }
 
 export default function EarningsPage() {
+  const t = useTranslations("demo.earnings");
   const { mode } = useDashboard();
   const { setMode } = useSourceControl();
   const [ledger, setLedger] = useState<Ledger | null>(null);
@@ -133,10 +132,10 @@ export default function EarningsPage() {
         if (!alive) return;
         setError(
           e instanceof TypeError || (e instanceof DOMException && e.name === "TimeoutError")
-            ? `Couldn't reach the coordinator at ${config.coordinatorUrl}. Is it running?`
+            ? t("unreachable", { url: config.coordinatorUrl })
             : e instanceof Error
               ? e.message
-              : "request failed",
+              : t("requestFailed"),
         );
       })
       .finally(() => {
@@ -145,7 +144,7 @@ export default function EarningsPage() {
     return () => {
       alive = false;
     };
-  }, [mode, nonce, readable]);
+  }, [mode, nonce, readable, t]);
 
   const load = () => {
     setBusy(true);
@@ -153,52 +152,49 @@ export default function EarningsPage() {
     setNonce((n) => n + 1);
   };
 
-  const t = ledger ? totals(ledger.rows) : null;
+  const tot = ledger ? totals(ledger.rows) : null;
 
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Earnings"
+        title={t("title")}
         aside={
           mode === "live" && readable === true && (
             <Button size="sm" onClick={() => load()} disabled={busy}>
-              <RefreshCw className={cx("size-3.5", busy && "animate-spin motion-reduce:animate-none")} aria-hidden /> Refresh
+              <RefreshCw className={cx("size-3.5", busy && "animate-spin motion-reduce:animate-none")} aria-hidden /> {t("refresh")}
             </Button>
           )
         }
       >
-        What the coordinator says each provider is owed, job by job. These are its stored verdicts and its own status, not
-        a read of the chain, so nothing here is called paid or verified.
+        {t("lead")}
       </PageHeader>
 
       {mode !== "live" ? (
         <EmptyState
-          title="Not available for a recording"
+          title={t("recordingTitle")}
           action={
             <button type="button" onClick={() => setMode("live")} className={buttonStyles("secondary", "md")}>
-              <Radio className="size-4" aria-hidden /> Switch to live
+              <Radio className="size-4" aria-hidden /> {t("switchToLive")}
             </button>
           }
         >
-          Earnings reads every settlement from the live coordinator. The recording has one job; its split is on the{" "}
-          <Link href="/settlement" className="underline underline-offset-2">Settlement</Link> screen.
+          {t.rich("recording", { link: (c) => <Link href="/settlement" className="underline underline-offset-2">{c}</Link> })}
         </EmptyState>
       ) : readable === false ? (
         <EmptyState
-          title="Earnings are private on this network"
+          title={t("privateTitle")}
           action={
             <Link href="/account" className={buttonStyles("secondary", "md")}>
-              Your account
+              {t("yourAccount")}
             </Link>
           }
         >
-          The coordinator shows every provider&apos;s settlements only to its operator. As a provider, see what you&apos;re owed on your
-          account page by signing in with your wallet.
+          {t("private")}
         </EmptyState>
       ) : error ? (
-        <ErrorState title="Couldn't load earnings" detail={`${error} Nothing is shown rather than a stale or partial total.`} onRetry={() => load()} />
+        <ErrorState title={t("loadFailed")} detail={t("loadFailedDetail", { error })} onRetry={() => load()} />
       ) : !ledger ? (
-        <LoadingState waitingFor="settlements from the coordinator" />
+        <LoadingState waitingFor={t("waitingFor")} />
       ) : (
         <>
           <p
@@ -210,75 +206,76 @@ export default function EarningsPage() {
           >
             <StatusIcon tone={ledger.coverage.complete ? "good" : "warning"} />
             {ledger.coverage.complete && ledger.rows.length === 0 ? (
-              <span>The coordinator has no settlements yet.</span>
+              <span>{t("noneYet")}</span>
             ) : ledger.coverage.complete ? (
               <span>
-                All {ledger.rows.length} settlement{ledger.rows.length === 1 ? "" : "s"} the coordinator has
-                {ledger.coverage.pages > 1 ? ` (read in ${ledger.coverage.pages} pages)` : ""}.
+                {t("all", { n: ledger.rows.length })}
+                {ledger.coverage.pages > 1 ? t("pages", { n: ledger.coverage.pages }) : ""}.
               </span>
             ) : (
               <span>
-                <b className="font-semibold">Limited history: showing {ledger.rows.length} settlements.</b> {ledger.coverage.reason} Totals cover only these rows.
+                {t.rich("limited", { n: ledger.rows.length, reason: ledger.coverage.reason ?? "", b: (c) => <b className="font-semibold">{c}</b> })}
               </span>
             )}
             <span className="text-ink-2">
-              Source <code className="font-mono">{ledger.coverage.route}</code>
+              {t.rich("source", { route: ledger.coverage.route, code: (c) => <code className="font-mono">{c}</code> })}
             </span>
           </p>
 
           {ledger.rows.length === 0 ? (
-            <EmptyState title="No settlements yet">
-              A row appears when a job ends and the coordinator builds its verdict. Run a job to the end, then refresh.
+            <EmptyState title={t("emptyTitle")}>
+              {t("empty")}
             </EmptyState>
           ) : (
-            t && (
+            tot && (
               <>
-                <section aria-label="Totals" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                <section aria-label={t("totalsAria")} className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                   {[
-                    { k: "Proposed", v: money(t.proposed), note: `${t.byStage.proposed} job(s). Signed or signing verdicts, not finalized.`, tone: "warning" as Tone },
-                    { k: "Reported finalized", v: money(t.reported), note: `${t.byStage.reported} job(s). Coordinator recorded a finalize tx. Not checked on-chain.`, tone: "neutral" as Tone },
-                    { k: "Credited on-chain", v: null, note: "Needs the escrow's final split (getJob) read from the chain. Not available yet.", tone: "idle" as Tone },
-                    { k: "Withdrawn", v: null, note: "The escrow logs withdrawals per wallet, not per job. Needs a chain read. Not available yet.", tone: "idle" as Tone },
+                    { k: t("stage.proposed"), v: money(tot.proposed), note: t("proposedNote", { n: tot.byStage.proposed }), tone: "warning" as Tone },
+                    { k: t("stage.reported"), v: money(tot.reported), note: t("reportedNote", { n: tot.byStage.reported }), tone: "neutral" as Tone },
+                    { k: t("credited"), v: null, note: t("creditedNote"), tone: "idle" as Tone },
+                    { k: t("withdrawn"), v: null, note: t("withdrawnNote"), tone: "idle" as Tone },
                   ].map((s) => (
                     <div key={s.k} className="panel rounded-2xl border border-line p-4">
                       <div className="flex items-center gap-2 text-sm text-ink-2">
                         <StatusIcon tone={s.tone} /> {s.k}
                       </div>
                       <div className="tabular mt-1 text-2xl font-semibold text-ink">
-                        {s.v ?? <span className="text-lg font-normal italic text-muted">not checked</span>}
+                        {s.v ?? <span className="text-lg font-normal italic text-muted">{t("notChecked")}</span>}
                       </div>
                       <p className="mt-1 text-xs text-muted">{s.note}</p>
                     </div>
                   ))}
                 </section>
-                {(t.disputed > 0 || t.byStage.error > 0 || t.noVerdict > 0) && (
+                {(tot.disputed > 0 || tot.byStage.error > 0 || tot.noVerdict > 0) && (
                   <ul className="space-y-1 text-sm text-ink">
-                    {t.disputed > 0 && (
+                    {tot.disputed > 0 && (
                       <li className="flex items-center gap-2">
-                        <StatusIcon tone="serious" /> {money(t.disputed)} sits in {t.byStage.disputed} disputed job(s), left out of both totals: the arbiter can change that split.
+                        <StatusIcon tone="serious" /> {t("disputedLine", { amount: money(tot.disputed), n: tot.byStage.disputed })}
                       </li>
                     )}
-                    {t.byStage.error > 0 && (
+                    {tot.byStage.error > 0 && (
                       <li className="flex items-center gap-2">
-                        <StatusIcon tone="critical" /> {t.byStage.error} settlement(s) hit an error. Their status may be stale.
+                        <StatusIcon tone="critical" /> {t("errorLine", { n: tot.byStage.error })}
                       </li>
                     )}
-                    {t.noVerdict > 0 && (
+                    {tot.noVerdict > 0 && (
                       <li className="flex items-center gap-2">
-                        <StatusIcon tone="idle" /> {t.noVerdict} row(s) have no readable verdict and add nothing.
+                        <StatusIcon tone="idle" /> {t("noVerdictLine", { n: tot.noVerdict })}
                       </li>
                     )}
                   </ul>
                 )}
 
-                <Panel title="By provider wallet" subtitle="Addresses from the verdicts. Amounts are the coordinator's, per stage.">
+                <Panel title={t("byWallet")} subtitle={t("byWalletSubtitle")}>
                   <ul className="divide-y divide-line text-sm sm:hidden">
-                    {t.payees.map((p) => (
+                    {tot.payees.map((p) => (
                       <li key={p.address} className="space-y-1 py-3">
                         <code className="block font-mono text-ink [overflow-wrap:anywhere]">{p.address}</code>
                         <p className="tabular text-ink-2">
-                          Proposed {money(p.proposed)} · Reported {money(p.reported)}
-                          {p.disputed > 0 && ` · Disputed ${money(p.disputed)}`} · {p.jobs} job(s)
+                          {t("walletLine", { proposed: money(p.proposed), reported: money(p.reported) })}
+                          {p.disputed > 0 && t("walletDisputed", { amount: money(p.disputed) })}
+                          {t("jobs", { n: p.jobs })}
                         </p>
                       </li>
                     ))}
@@ -287,22 +284,22 @@ export default function EarningsPage() {
                     <table className="tabular w-full min-w-[640px] text-left text-sm">
                       <thead className="text-muted">
                         <tr className="border-b border-line">
-                          <th className="py-2 pr-4 font-medium">Wallet</th>
-                          <th className="py-2 pr-4 text-right font-medium">Proposed</th>
-                          <th className="py-2 pr-4 text-right font-medium">Reported finalized</th>
-                          <th className="py-2 pr-4 text-right font-medium">Disputed</th>
-                          <th className="py-2 pr-4 text-right font-medium">Credited / withdrawn</th>
-                          <th className="py-2 text-right font-medium">Jobs</th>
+                          <th className="py-2 pr-4 font-medium">{t("colWallet")}</th>
+                          <th className="py-2 pr-4 text-right font-medium">{t("stage.proposed")}</th>
+                          <th className="py-2 pr-4 text-right font-medium">{t("stage.reported")}</th>
+                          <th className="py-2 pr-4 text-right font-medium">{t("stage.disputed")}</th>
+                          <th className="py-2 pr-4 text-right font-medium">{t("colCredited")}</th>
+                          <th className="py-2 text-right font-medium">{t("colJobs")}</th>
                         </tr>
                       </thead>
                       <tbody className="text-ink">
-                        {t.payees.map((p) => (
+                        {tot.payees.map((p) => (
                           <tr key={p.address} className="border-b border-line">
                             <td className="py-2.5 pr-4"><code className="font-mono" title={p.address}>{short(p.address)}</code></td>
                             <td className="py-2.5 pr-4 text-right">{money(p.proposed)}</td>
                             <td className="py-2.5 pr-4 text-right">{money(p.reported)}</td>
                             <td className="py-2.5 pr-4 text-right">{p.disputed ? money(p.disputed) : "–"}</td>
-                            <td className="py-2.5 pr-4 text-right italic text-muted">not checked</td>
+                            <td className="py-2.5 pr-4 text-right italic text-muted">{t("notChecked")}</td>
                             <td className="py-2.5 text-right">{p.jobs}</td>
                           </tr>
                         ))}
@@ -311,7 +308,7 @@ export default function EarningsPage() {
                   </div>
                 </Panel>
 
-                <Panel title="Settlements" subtitle="Newest first, as the coordinator returned them. Download a receipt per job.">
+                <Panel title={t("settlements")} subtitle={t("settlementsSubtitle")}>
                   <ul className="divide-y divide-line text-sm lg:hidden">
                     {ledger.rows.map((r) => {
                       const st = stageOf(r);
@@ -319,11 +316,11 @@ export default function EarningsPage() {
                         <li key={r.job_id} className="space-y-2 py-3">
                           <div className="flex flex-wrap items-center justify-between gap-2">
                             <code className="font-mono text-ink">{r.job_id}</code>
-                            <StatusPill tone={stageTone[st]}>{stageShort[st]}</StatusPill>
+                            <StatusPill tone={stageTone[st]}>{t(`stage.${st}`)}</StatusPill>
                           </div>
                           <Amounts row={r} />
                           <p className="text-xs text-ink-2">
-                            Coordinator status <code className="font-mono">{r.status}</code> · finalize tx <Tx hash={r.finalize_tx} />
+                            {t.rich("statusLine", { status: r.status, code: (c) => <code className="font-mono">{c}</code> })} <Tx hash={r.finalize_tx} />
                           </p>
                           <Receipt row={r} />
                         </li>
@@ -334,12 +331,12 @@ export default function EarningsPage() {
                     <table className="w-full min-w-[880px] text-left text-sm">
                       <thead className="text-muted">
                         <tr className="border-b border-line">
-                          <th className="py-2 pr-4 font-medium">Job</th>
-                          <th className="py-2 pr-4 font-medium">Stage</th>
-                          <th className="py-2 pr-4 font-medium">Verdict amounts</th>
-                          <th className="py-2 pr-4 font-medium">Coordinator status</th>
-                          <th className="py-2 pr-4 font-medium">Finalize tx</th>
-                          <th className="py-2 font-medium">Receipt</th>
+                          <th className="py-2 pr-4 font-medium">{t("colJob")}</th>
+                          <th className="py-2 pr-4 font-medium">{t("colStage")}</th>
+                          <th className="py-2 pr-4 font-medium">{t("colAmounts")}</th>
+                          <th className="py-2 pr-4 font-medium">{t("colStatus")}</th>
+                          <th className="py-2 pr-4 font-medium">{t("colFinalize")}</th>
+                          <th className="py-2 font-medium">{t("colReceipt")}</th>
                         </tr>
                       </thead>
                       <tbody className="align-top text-ink">
@@ -349,7 +346,7 @@ export default function EarningsPage() {
                             <tr key={r.job_id} className="border-b border-line">
                               <td className="py-3 pr-4"><code className="font-mono">{r.job_id}</code></td>
                               <td className="py-3 pr-4">
-                                <span title={stageText[st]}><StatusPill tone={stageTone[st]}>{stageShort[st]}</StatusPill></span>
+                                <span title={stageText[st]}><StatusPill tone={stageTone[st]}>{t(`stage.${st}`)}</StatusPill></span>
                               </td>
                               <td className="py-3 pr-4"><Amounts row={r} /></td>
                               <td className="py-3 pr-4"><code className="font-mono text-ink-2">{r.status}</code></td>
@@ -366,7 +363,7 @@ export default function EarningsPage() {
             )
           )}
 
-          <Panel title="What a receipt can and can't prove">
+          <Panel title={t("limitsTitle")}>
             <ul className="space-y-1.5 text-sm text-ink">
               {RECEIPT_LIMITS.map((l) => (
                 <li key={l} className="flex items-start gap-2">
@@ -375,8 +372,7 @@ export default function EarningsPage() {
               ))}
             </ul>
             <p className="mt-3 text-sm text-ink-2">
-              The <Link href="/verify" className="underline underline-offset-2">Verify</Link> screen re-checks one job&apos;s split from the
-              chain transaction, but the checkpoints and provider details it checks against still come from the coordinator.
+              {t.rich("verifyNote", { link: (c) => <Link href="/verify" className="underline underline-offset-2">{c}</Link> })}
             </p>
           </Panel>
         </>

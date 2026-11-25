@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useDashboard } from "@/lib/events/source-context";
 import { buttonStyles } from "@/components/ui/button-styles";
 import { describeStage } from "@/lib/events/describe";
@@ -24,27 +25,23 @@ import { LiveGpu } from "@/components/mission/live-gpu";
 import { CoordinatorOffline } from "@/components/shell/coordinator-offline";
 import { config } from "@/lib/config";
 
-const txLabel: Record<string, string> = {
-  createJob: "Escrow funded",
-  markActive: "Job activated",
-  anchorEvent: "Recovery anchored",
-  submitAttestation: "Attestation submitted",
-  finalize: "Payment finalized",
-  withdraw: "Withdrawal",
-};
+// Labels are in messages (demo.dashboard.tx.<kind>); an unknown kind shows as itself.
+const TX_KINDS = new Set(["createJob", "markActive", "anchorEvent", "submitAttestation", "finalize", "withdraw"]);
 
 // Every screen has one top-level heading (ekido-internal#92). Mission control's visible headline is the live status,
 // so the page title is kept for screen readers and the outline.
 export default function MissionControlPage() {
+  const t = useTranslations("demo.dashboard");
   return (
     <>
-      <h1 className="sr-only">Mission control</h1>
+      <h1 className="sr-only">{t("title")}</h1>
       <MissionControl />
     </>
   );
 }
 
 function MissionControl() {
+  const t = useTranslations("demo.dashboard");
   const [showTable, setShowTable] = useState(false);
   const { state, mode, provenance, live: liveSnap } = useDashboard();
   const fresh = describeStage(state);
@@ -53,9 +50,9 @@ function MissionControl() {
   const signedJobs = config.signedJobs && config.chainId === 84532;
   const stage =
     stale && state.log.length > 0
-      ? { ...fresh, tone: "idle" as const, headline: `Last known: ${fresh.headline}` }
+      ? { ...fresh, tone: "idle" as const, headline: t("lastKnown", { headline: fresh.headline }) }
       : mode === "live" && state.jobState === null
-        ? { ...fresh, detail: signedJobs ? "Connected. Waiting for a signed job." : "Connected. Nothing has run yet: press Start demo job." }
+        ? { ...fresh, detail: t(signedJobs ? "waitingSigned" : "waitingDemo") }
         : fresh;
   const last = state.progress.at(-1);
   const total = last?.total_steps ?? null;
@@ -80,21 +77,19 @@ function MissionControl() {
     if (liveSnap.connection === "live" && canStart)
       return (
         <section className="mx-auto max-w-3xl panel rounded-2xl border border-line p-6 sm:p-8">
-          <h1 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">Connected. No job yet.</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">{t("noJobTitle")}</h1>
           <p className="mt-2 text-ink-2">
-            {signedJobs
-              ? "The Base Sepolia coordinator is ready for a signed job."
-              : "The coordinator is up and nothing has run. Start the local demo job, then press Kill once it is training."}
+            {t(signedJobs ? "noJobSigned" : "noJobDemo")}
           </p>
           <div className="mt-6">
             {signedJobs
-              ? <Link href="/jobs/new" className={buttonStyles("primary", "md")}>New signed job</Link>
+              ? <Link href="/jobs/new" className={buttonStyles("primary", "md")}>{t("newSignedJob")}</Link>
               : <StartDemoJob jobState={state.jobState} align="start" />}
           </div>
         </section>
       );
     return (
-      <LoadingState waitingFor={liveSnap.connection === "live" ? "the first event from the coordinator" : "the coordinator to accept the connection"} />
+      <LoadingState waitingFor={t(liveSnap.connection === "live" ? "waitingFirstEvent" : "waitingConnection")} />
     );
   }
 
@@ -114,10 +109,10 @@ function MissionControl() {
           </div>
           {mode === "replay" ? (
             <p className="max-w-72 text-sm text-ink-2 sm:text-right">
-              Recording: Kill only works live. Press a step below to jump to that moment.
+              {t("recordingHint")}
             </p>
           ) : signedJobs ? (
-            !stale && canStart && <Link href="/jobs/new" className={buttonStyles("primary", "md")}>New signed job</Link>
+            !stale && canStart && <Link href="/jobs/new" className={buttonStyles("primary", "md")}>{t("newSignedJob")}</Link>
           ) : !stale && canStart ? (
             <div className="flex flex-wrap items-center gap-3">
               <DownloadModel jobId={state.jobId} jobState={state.jobState} live={mode === "live"} />
@@ -136,7 +131,7 @@ function MissionControl() {
           <div
             className="h-3 flex-1 overflow-hidden rounded-full bg-surface-3"
             role="progressbar"
-            aria-label="Job progress"
+            aria-label={t("progressAria")}
             aria-valuemin={0}
             aria-valuemax={total ?? undefined}
             aria-valuenow={shownStep}
@@ -145,11 +140,11 @@ function MissionControl() {
           </div>
           <span className="tabular shrink-0 text-sm text-ink">
             {!last ? (
-              <span className="italic text-muted">not started</span>
+              <span className="italic text-muted">{t("notStarted")}</span>
             ) : resume !== null ? (
-              `Going back to step ${resume} of ${total}`
+              t("goingBack", { step: resume, total: total ?? 0 })
             ) : (
-              `Step ${last.step} of ${total}`
+              t("step", { step: last.step, total: total ?? 0 })
             )}
           </span>
         </div>
@@ -159,39 +154,39 @@ function MissionControl() {
         ) : (
         <div className="mt-3 grid grid-cols-2 gap-4 md:grid-cols-4 xl:grid-cols-5">
           <Stat
-            label="Training on"
-            value={live ? providerName(state, live) : stale ? null : last ? "Nobody right now" : null}
+            label={t("trainingOn")}
+            value={live ? providerName(state, live) : stale ? null : last ? t("nobody") : null}
           />
           <Stat
-            label="Throughput"
+            label={t("throughput")}
             value={running ? (last?.steps_per_s ?? null) : null}
             digits={1}
-            unit="steps/s"
-            source={running ? "Runtime" : "Not training"}
+            unit={t("stepsPerS")}
+            source={t(running ? "runtime" : "notTraining")}
           />
           <Stat
-            label={running ? "Loss" : "Last trusted loss"}
+            label={t(running ? "loss" : "lastTrustedLoss")}
             value={lastTrusted?.loss ?? null}
             digits={3}
-            source={lastTrusted ? `Runtime, ${providerName(state, lastTrusted.provider_id)}` : undefined}
+            source={lastTrusted ? t("runtimeOf", { provider: providerName(state, lastTrusted.provider_id) }) : undefined}
           />
           <Stat
-            label="Worker generation"
+            label={t("generation")}
             value={state.fencingToken || null}
-            source="Goes up on every recovery, so old workers can't write"
+            source={t("generationSource")}
           />
           <div className="col-span-2 min-w-0 md:col-span-4 xl:col-span-1">
-            <div className="text-sm text-ink-2">Last on-chain action</div>
+            <div className="text-sm text-ink-2">{t("lastTx")}</div>
             <div className="mt-1.5">
               {lastTx ? (
                 <TxStatus
-                  label={txLabel[lastTx.kind] ?? lastTx.kind}
+                  label={TX_KINDS.has(lastTx.kind) ? t(`tx.${lastTx.kind}`) : lastTx.kind}
                   status={lastTx.status}
                   hash={lastTx.tx_hash}
                   href={lastTx.explorer_url}
                 />
               ) : (
-                <span className="text-lg italic text-muted">none yet</span>
+                <span className="text-lg italic text-muted">{t("noneYet")}</span>
               )}
             </div>
           </div>
@@ -205,8 +200,8 @@ function MissionControl() {
       <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_26rem]">
         <div className="min-w-0 space-y-4">
           <Panel
-            title="Training loss by logical step"
-            subtitle="Lower is better. One line per attempt. Overlapping lines are work done again after a rollback."
+            title={t("lossTitle")}
+            subtitle={t("lossSubtitle")}
             actions={
               <button
                 type="button"
@@ -214,21 +209,21 @@ function MissionControl() {
                 onClick={() => setShowTable((v) => !v)}
                 className={buttonStyles("ghost", "sm")}
               >
-                {showTable ? "Hide table" : "Show as table"}
+                {t(showTable ? "hideTable" : "showTable")}
               </button>
             }
           >
             <LossChart state={state} showTable={showTable} />
           </Panel>
-          <section aria-label="Providers" className="panel rounded-2xl border border-line p-4">
+          <section aria-label={t("providersAria")} className="panel rounded-2xl border border-line p-4">
             <ProviderGrid state={state} />
           </section>
         </div>
         {/* On wide screens this column takes the left column's height and scrolls inside,
             so a long recovery history never pushes the page past one screen. */}
         <Panel
-          title="Recoveries"
-          subtitle="Newest first. Times are since job start."
+          title={t("recoveries")}
+          subtitle={t("recoveriesSubtitle")}
           className="flex flex-col xl:h-0 xl:min-h-full xl:self-stretch"
           bodyClassName="min-h-0 flex-1 xl:overflow-y-auto"
         >
