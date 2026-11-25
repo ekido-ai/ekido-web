@@ -771,6 +771,81 @@
       "text": "No tracking. If you sign in, one cookie keeps you signed in. Everything else stays in this browser.",
       "link": "What we store",
       "ok": "Got it"
+    },
+    "app": {
+      "skip": "Skip to content",
+      "openApp": "Open the app",
+      "modeAria": "What to show",
+      "live": "Live",
+      "recorded": "Recorded",
+      "connecting": "Connecting",
+      "recording": "<b>You are watching a recording</b> of the 4 Nov run (RTX 3060, local chain). Nothing here is happening right now.",
+      "playing": "Playing at {clock}",
+      "paused": "Paused at {clock}",
+      "playFromStart": "Play from start",
+      "switchToLive": "Switch to live",
+      "liveFrom": "<b>Live</b> from the coordinator at <code>{url}</code>",
+      "connectingTo": "Connecting to the coordinator at <code>{url}</code>…",
+      "watchRecording": "Watch the recording instead",
+      "synthetic": "CPU fallback: a small workload through the same pipeline. Loss and accuracy are not the real model's.",
+      "localChain": "Payments on a local Anvil chain, not Base Sepolia.",
+      "shortWindows": "Local demos can use short dispute windows; check the job's on-chain terms."
+    },
+    "states": {
+      "offline": "Lost connection to the coordinator. Reconnecting. What you see may be stale.",
+      "offlineSince": "Lost connection to the coordinator at {since}. Reconnecting. What you see may be stale.",
+      "confirmed": "Confirmed",
+      "failed": "Failed",
+      "pending": "Pending",
+      "opensExplorer": "(opens block explorer)"
+    },
+    "truth": {
+      "REAL": {
+        "label": "Real GPU",
+        "title": "A physical GPU running this work live"
+      },
+      "REAL_SEPARATE": {
+        "label": "Real · separate machine",
+        "title": "A physical GPU on a different machine"
+      },
+      "CAPPED_PROFILE": {
+        "label": "Capped profile · same GPU",
+        "title": "The same physical GPU with a memory cap enforced by PyTorch's allocator. Not a different architecture"
+      },
+      "INJECTED_FAULT": {
+        "label": "Injected fault",
+        "title": "We caused this on purpose to show how the system reacts"
+      },
+      "RECORDED": {
+        "label": "Recorded",
+        "title": "Captured from an earlier real run, played back"
+      },
+      "SAMPLE": {
+        "label": "Sample data",
+        "title": "Hand-authored fixture. Numbers are illustrative, not measured"
+      },
+      "SYNTHETIC": {
+        "label": "Synthetic workload",
+        "title": "A small CPU workload stands in for the real GPU training. The pipeline is the same, the model is not"
+      },
+      "LOCAL_CHAIN": {
+        "label": "Local chain",
+        "title": "Running on a local Anvil chain, not Base Sepolia"
+      }
+    },
+    "legal": {
+      "kicker": "LEGAL · UPDATED {date}",
+      "related": "Related pages",
+      "onThisPage": "On this page",
+      "onThisPageKicker": "ON THIS PAGE",
+      "links": {
+        "help": "Help",
+        "status": "Status",
+        "privacy": "Privacy",
+        "terms": "Terms",
+        "acceptableUse": "Acceptable use",
+        "security": "Security"
+      }
     }
   },
   "auth": {
