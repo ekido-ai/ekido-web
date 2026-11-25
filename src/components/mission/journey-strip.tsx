@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { Minus } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { DashboardState } from "@/lib/events/reduce";
 import { journey, stepTimes, type JourneyStep, type StepKey } from "@/lib/events/journey";
 import { momentsOf } from "@/lib/events/moments";
@@ -19,7 +20,11 @@ function toneOf(step: JourneyStep): Tone {
   return "idle";
 }
 
-function StepBody({ step, at }: { step: JourneyStep; at: number | null }) {
+/** A step as shown: its translated label, and the line under it (translated, or overridden by the strip). */
+type Shown = JourneyStep & { text: string };
+
+function StepBody({ step, at }: { step: Shown; at: number | null }) {
+  const t = useTranslations("demo.journey");
   const dim = step.status === "waiting" || step.status === "skipped";
   return (
     <>
@@ -29,12 +34,12 @@ function StepBody({ step, at }: { step: JourneyStep; at: number | null }) {
         ) : (
           <StatusIcon tone={toneOf(step)} className="mt-0.5 size-5" />
         )}
-        <span className={cx("min-w-0 flex-1 text-base font-semibold leading-snug", dim ? "text-ink-2" : "text-ink")}>{step.label}</span>
+        <span className={cx("min-w-0 flex-1 text-base font-semibold leading-snug", dim ? "text-ink-2" : "text-ink")}>{t(`label.${step.key}`)}</span>
         {at !== null && <span className={cx("tabular mt-0.5 shrink-0 text-xs", step.atMs === null ? "text-muted/70" : "text-muted")}>{formatClock(at)}</span>}
       </span>
-      <span className={cx("mt-0.5 block truncate pl-7 text-sm", step.status === "active" ? "text-ink" : "text-muted")}>{step.detail}</span>
+      <span className={cx("mt-0.5 block truncate pl-7 text-sm", step.status === "active" ? "text-ink" : "text-muted")}>{step.text}</span>
       <span className="sr-only">
-        {step.status === "done" ? "happened" : step.status === "active" ? "happening now" : step.status === "skipped" ? "didn't happen" : "not yet"}
+        {t(`status.${step.status}`)}
       </span>
     </>
   );
@@ -53,9 +58,13 @@ const cell = (step: JourneyStep) =>
  */
 export function JourneyStrip({ state, replay, stale = false }: { state: DashboardState; replay: boolean; stale?: boolean }) {
   // Disconnected: nothing is "happening now" as far as we know, so no spinner.
-  const steps = journey(state).map((s) => (stale && s.status === "active" ? { ...s, status: "waiting" as const, detail: `Last known: ${s.detail}` } : s));
+  const t = useTranslations("demo.journey");
+  const steps: Shown[] = journey(state).map((s) => {
+    const text = t(`note.${s.note.key}`, { who: s.note.who ?? "" });
+    return stale && s.status === "active" ? { ...s, status: "waiting" as const, text: t("lastKnown", { detail: text }) } : { ...s, text };
+  });
   return (
-    <ol aria-label="How far the run has got" className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-6">
+    <ol aria-label={t("aria")} className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-6">
       {replay ? <ReplaySteps steps={steps} /> : steps.map((s) => (
         <li key={s.key} className={cell(s)} aria-current={s.status === "active" ? "step" : undefined}>
           <StepBody step={s} at={s.atMs} />
@@ -65,7 +74,8 @@ export function JourneyStrip({ state, replay, stale = false }: { state: Dashboar
   );
 }
 
-function ReplaySteps({ steps }: { steps: JourneyStep[] }) {
+function ReplaySteps({ steps }: { steps: Shown[] }) {
+  const tr = useTranslations("demo.journey");
   const player = usePlayer();
   const snap = usePlayerSnapshot();
   // Jump targets come from the whole recording, so steps that haven't played yet still work.
@@ -82,7 +92,7 @@ function ReplaySteps({ steps }: { steps: JourneyStep[] }) {
       {steps.map((step) => {
         const at = targets[step.key];
         // In a recording, "Press Kill" makes no sense: the step is simply further along.
-        const s = step.status === "waiting" && at !== undefined ? { ...step, detail: "Later in the recording" } : step;
+        const s = step.status === "waiting" && at !== undefined ? { ...step, text: tr("later") } : step;
         if (at === undefined)
           return (
             <li key={s.key} className={cell(s)}>
@@ -98,7 +108,7 @@ function ReplaySteps({ steps }: { steps: JourneyStep[] }) {
                 if (!snap.playing) player.play();
               }}
               aria-current={s.status === "active" ? "step" : undefined}
-              title={`Jump to ${s.label.toLowerCase()} at ${formatClock(at)} in the recording`}
+              title={tr("jump", { step: tr(`label.${s.key}`).toLowerCase(), time: formatClock(at) })}
               className={cx(cell(s), "press w-full transition-colors hover:border-line-strong hover:bg-surface-2")}
             >
               <StepBody step={s} at={at} />

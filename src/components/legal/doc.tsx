@@ -1,38 +1,44 @@
 import { Children, isValidElement } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { config } from "@/lib/config";
 import { MarketingPage, PageHero } from "@/components/landing/page-hero";
 
 /** Shared frame for the plain-language policy and help pages: a page header, a sticky contents list and the text. */
 export function Doc({ title, updated, intro, children }: { title: string; updated: string; intro: React.ReactNode; children: React.ReactNode }) {
+  const t = useTranslations("shell.legal");
   const sections = Children.toArray(children)
     .filter(isValidElement)
     .map((c) => (c.props as { id?: string; title?: string }))
     .filter((p) => p.title)
     .map((p) => ({ id: p.id ?? slug(p.title!), title: p.title! }));
+  // The contents list needs at least two sections. With one, there is no side column, so the text keeps its full width.
+  const contents = sections.length > 1;
   return (
     <MarketingPage>
-      <PageHero kicker={`LEGAL · UPDATED ${updated.toUpperCase()}`} title={title} sub={intro}>
-        <nav aria-label="Related pages" className="flex flex-wrap gap-2 text-sm">
-          {[
-            ["/help", "Help"],
-            ["/status", "Status"],
-            ["/privacy", "Privacy"],
-            ["/terms", "Terms"],
-            ["/acceptable-use", "Acceptable use"],
-            ["/security", "Security"],
-          ].map(([href, label]) => (
+      <PageHero kicker={updated === "live" ? t("liveKicker") : t("kicker", { date: updated.toUpperCase() })} title={title} sub={intro}>
+        <nav aria-label={t("related")} className="flex flex-wrap gap-2 text-sm">
+          {(
+            [
+              ["/help", "help"],
+              ["/status", "status"],
+              ["/privacy", "privacy"],
+              ["/terms", "terms"],
+              ["/acceptable-use", "acceptableUse"],
+              ["/security", "security"],
+            ] as const
+          ).map(([href, key]) => (
             <Link key={href} href={href} className="rounded-full border border-line bg-surface px-3 py-1 text-ink-2 hover:border-line-strong hover:text-ink">
-              {label}
+              {t(`links.${key}`)}
             </Link>
           ))}
         </nav>
       </PageHero>
-      <div className="mx-auto grid max-w-[1200px] gap-10 px-4 pt-14 sm:px-8 lg:grid-cols-[220px_1fr] lg:gap-16">
-        {sections.length > 1 && (
+      <div className={`mx-auto grid max-w-[1200px] gap-10 px-4 pt-14 sm:px-8 lg:gap-16 ${contents ? "lg:grid-cols-[220px_1fr]" : ""}`}>
+        {contents && (
           <aside className="hidden lg:block">
-            <nav aria-label="On this page" className="sticky top-24 space-y-1 text-sm">
-              <p className="kicker mb-3">ON THIS PAGE</p>
+            <nav aria-label={t("onThisPage")} className="sticky top-24 space-y-1 text-sm">
+              <p className="kicker mb-3">{t("onThisPageKicker")}</p>
               {sections.map((s) => (
                 <a key={s.id} href={`#${s.id}`} className="block border-l-2 border-line py-1 pl-3 text-ink-2 hover:border-accent hover:text-ink">
                   {s.title}

@@ -115,16 +115,24 @@ export function TrainFlow() {
 
   async function waitForPaidAndStart(orderId: string, quoteId: string) {
     setStep("starting");
-    for (let i = 0; i < 60; i++) {
+    // Starting a job probes a device first, which can outlast one request. So after asking once, keep reading the order:
+    // it shows the job id when the start finishes. Two minutes for the payment to arrive, six in all.
+    let asked = false;
+    for (let i = 0; i < (asked ? 180 : 60); i++) {
       const status = await train.orderStatus(orderId).catch(() => null);
       if (status?.job_id) return router.push(`/jobs/${status.job_id}`);
-      if (status?.status === "HELD") {
-        const job = await train.start(org!.org_id, quoteId);
-        return router.push(`/jobs/${job.job_id}`);
+      if (!asked && status?.status === "HELD") {
+        asked = true;
+        try {
+          const job = await train.start(org!.org_id, quoteId);
+          return router.push(`/jobs/${job.job_id}`);
+        } catch (e) {
+          if (!(e instanceof PlatformError && e.code === "OFFLINE")) throw e;
+        }
       }
       await new Promise((r) => setTimeout(r, 2000));
     }
-    setError(t("paymentSlow"));
+    setError(t(asked ? "startSlow" : "paymentSlow"));
     setStep("quote");
   }
 

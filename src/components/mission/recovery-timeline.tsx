@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import type { DashboardState } from "@/lib/events/reduce";
 import { providerName, recoveries, sinceStart, type RecoveryView } from "@/lib/events/derive";
 import { Timeline } from "@/components/ui/timeline";
@@ -19,8 +20,6 @@ function MiniStat({ label, children }: { label: string; children: React.ReactNod
   );
 }
 
-const unknown = <span className="text-base font-normal italic text-muted">unknown</span>;
-const pending = <span className="text-base font-normal italic text-muted">not yet</span>;
 
 const STEP_LIMIT = 4;
 
@@ -38,39 +37,42 @@ function RecoveryCard({
   /** Older recoveries on mission control: header only, so the screen fits 1080p. */
   collapsed: boolean;
 }) {
+  const t = useTranslations("demo.timeline");
+  const unknown = <span className="text-base font-normal italic text-muted">{t("unknown")}</span>;
+  const pending = <span className="text-base font-normal italic text-muted">{t("notYet")}</span>;
   const maxPhase = Math.max(1, ...r.phases.map((p) => p.ms ?? 0));
   const firstOpen = r.phases.findIndex((p) => p.ms === null);
   return (
     <article
-      aria-label={`Recovery ${index}`}
+      aria-label={t("aria", { index })}
       className={cx("rounded-lg border p-4", latest ? "border-line-strong bg-surface-2" : "border-line")}
     >
       <header className="flex flex-wrap items-start justify-between gap-2">
         <div className="min-w-0">
           <div className="text-xs font-semibold uppercase tracking-wide text-muted">
-            Recovery {index} · started {sinceStart(state, r.startedTs)}
+            {t("started", { index, when: sinceStart(state, r.startedTs) })}
           </div>
           <div className="mt-1 flex flex-wrap items-center gap-2">
             <span className="text-lg font-semibold text-ink">{r.headline}</span>
             {r.injected && <TruthBadge truth="INJECTED_FAULT" />}
           </div>
         </div>
-        {r.status === "resumed" && <StatusPill tone="good">Resumed in {secs(r.elapsedMs)}</StatusPill>}
-        {r.status === "in_progress" && <StatusPill tone="active">Recovering · {secs(r.elapsedMs)}</StatusPill>}
-        {r.status === "aborted" && <StatusPill tone="critical">Gave up after {secs(r.elapsedMs)}</StatusPill>}
+        {r.status === "resumed" && <StatusPill tone="good">{t("resumedIn", { time: secs(r.elapsedMs) })}</StatusPill>}
+        {r.status === "in_progress" && <StatusPill tone="active">{t("recovering", { time: secs(r.elapsedMs) })}</StatusPill>}
+        {r.status === "aborted" && <StatusPill tone="critical">{t("gaveUp", { time: secs(r.elapsedMs) })}</StatusPill>}
       </header>
 
       {!collapsed && (
         <>
           <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-2">
-            <MiniStat label="Steps lost">{r.lostSteps ?? (r.status === "in_progress" ? pending : unknown)}</MiniStat>
-            <MiniStat label="Resume point">
-              {r.checkpointStep !== null ? `step ${r.checkpointStep}` : r.status === "in_progress" ? pending : unknown}
+            <MiniStat label={t("stepsLost")}>{r.lostSteps ?? (r.status === "in_progress" ? pending : unknown)}</MiniStat>
+            <MiniStat label={t("resumePoint")}>
+              {r.checkpointStep !== null ? t("step", { step: r.checkpointStep }) : r.status === "in_progress" ? pending : unknown}
             </MiniStat>
-            <MiniStat label="Handed to">
+            <MiniStat label={t("handedTo")}>
               {r.replacementId ? providerName(state, r.replacementId) : r.status === "in_progress" ? pending : unknown}
             </MiniStat>
-            <MiniStat label="Time to resume">{r.status === "resumed" ? secs(r.elapsedMs) : pending}</MiniStat>
+            <MiniStat label={t("timeToResume")}>{r.status === "resumed" ? secs(r.elapsedMs) : pending}</MiniStat>
           </div>
 
           {/* Where the time went. Neutral bars: phases are ordered parts, not identities. */}
@@ -89,7 +91,7 @@ function RecoveryCard({
                   ) : i === firstOpen && r.status === "in_progress" ? (
         <>
                       <StatusIcon tone="active" className="size-3.5" />
-                      <span className="text-ink-2">now</span>
+                      <span className="text-ink-2">{t("now")}</span>
         </>
                   ) : (
                     <span className="text-muted">–</span>
@@ -104,7 +106,7 @@ function RecoveryCard({
               {r.entries.length > STEP_LIMIT && (
                 <details className="group mb-3">
                   <summary className="cursor-pointer text-sm text-ink-2 hover:text-ink">
-                    {r.entries.length - STEP_LIMIT} earlier steps
+                    {t("earlier", { n: r.entries.length - STEP_LIMIT })}
                   </summary>
                   <div className="mt-3">
                     <Timeline entries={toEntries(r.entries.slice(0, -STEP_LIMIT))} />
@@ -115,7 +117,7 @@ function RecoveryCard({
             </div>
           ) : (
             <details className="group mt-4">
-              <summary className="cursor-pointer text-sm text-ink-2 hover:text-ink">{r.entries.length} steps</summary>
+              <summary className="cursor-pointer text-sm text-ink-2 hover:text-ink">{t("steps", { n: r.entries.length })}</summary>
               <div className="mt-3">
                 <Timeline entries={toEntries(r.entries)} />
               </div>
@@ -135,12 +137,12 @@ const toEntries = (list: RecoveryView["entries"]) =>
  * with `compact`, older ones shrink to a single line.
  */
 export function RecoveryTimeline({ state, compact = false }: { state: DashboardState; compact?: boolean }) {
+  const t = useTranslations("demo.timeline");
   const list = recoveries(state);
   if (list.length === 0) {
     return (
       <p className="text-ink-2">
-        Nothing has gone wrong yet. If a provider stops or a result is rejected, each recovery appears here with its
-        steps, the time it took and the steps lost.
+        {t("empty")}
       </p>
     );
   }
