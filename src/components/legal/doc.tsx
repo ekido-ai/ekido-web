@@ -1,36 +1,58 @@
+import { Children, isValidElement } from "react";
 import Link from "next/link";
 import { config } from "@/lib/config";
+import { MarketingPage, PageHero } from "@/components/landing/page-hero";
 
-/** Shared frame for the plain-language policy and help pages. Server component. */
+/** Shared frame for the plain-language policy and help pages: a page header, a sticky contents list and the text. */
 export function Doc({ title, updated, intro, children }: { title: string; updated: string; intro: React.ReactNode; children: React.ReactNode }) {
+  const sections = Children.toArray(children)
+    .filter(isValidElement)
+    .map((c) => (c.props as { id?: string; title?: string }))
+    .filter((p) => p.title)
+    .map((p) => ({ id: p.id ?? slug(p.title!), title: p.title! }));
   return (
-    <article className="mx-auto max-w-3xl py-4">
-      <p className="text-sm text-muted">Last updated {updated}</p>
-      <h1 className="mt-1 font-serif text-4xl text-ink">{title}</h1>
-      <div className="mt-3 text-lg text-ink-2">{intro}</div>
-      <nav aria-label="Related pages" className="mt-5 flex flex-wrap gap-x-4 gap-y-1 border-b border-line pb-5 text-sm">
-        {[
-          ["/help", "Help"],
-          ["/status", "Status"],
-          ["/privacy", "Privacy"],
-          ["/terms", "Terms"],
-          ["/acceptable-use", "Acceptable use"],
-          ["/security", "Security"],
-        ].map(([href, label]) => (
-          <Link key={href} href={href} className="text-ink-2 underline decoration-line-strong underline-offset-4 hover:text-ink">
-            {label}
-          </Link>
-        ))}
-      </nav>
-      <div className="doc mt-6 space-y-8">{children}</div>
-    </article>
+    <MarketingPage>
+      <PageHero kicker={`LEGAL · UPDATED ${updated.toUpperCase()}`} title={title} sub={intro}>
+        <nav aria-label="Related pages" className="flex flex-wrap gap-2 text-sm">
+          {[
+            ["/help", "Help"],
+            ["/status", "Status"],
+            ["/privacy", "Privacy"],
+            ["/terms", "Terms"],
+            ["/acceptable-use", "Acceptable use"],
+            ["/security", "Security"],
+          ].map(([href, label]) => (
+            <Link key={href} href={href} className="rounded-full border border-line bg-surface px-3 py-1 text-ink-2 hover:border-line-strong hover:text-ink">
+              {label}
+            </Link>
+          ))}
+        </nav>
+      </PageHero>
+      <div className="mx-auto grid max-w-[1200px] gap-10 px-4 pt-14 sm:px-8 lg:grid-cols-[220px_1fr] lg:gap-16">
+        {sections.length > 1 && (
+          <aside className="hidden lg:block">
+            <nav aria-label="On this page" className="sticky top-24 space-y-1 text-sm">
+              <p className="kicker mb-3">ON THIS PAGE</p>
+              {sections.map((s) => (
+                <a key={s.id} href={`#${s.id}`} className="block border-l-2 border-line py-1 pl-3 text-ink-2 hover:border-accent hover:text-ink">
+                  {s.title}
+                </a>
+              ))}
+            </nav>
+          </aside>
+        )}
+        <article className="doc max-w-3xl space-y-10">{children}</article>
+      </div>
+    </MarketingPage>
   );
 }
 
+const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
 export function Section({ id, title, children }: { id?: string; title: string; children: React.ReactNode }) {
   return (
-    <section id={id} className="scroll-mt-24 space-y-3 text-ink-2 [&_a]:text-ink [&_a]:underline [&_a]:underline-offset-4 [&_li]:ml-5 [&_li]:list-disc [&_strong]:text-ink">
-      <h2 className="font-serif text-2xl text-ink">{title}</h2>
+    <section id={id ?? slug(title)} className="scroll-mt-24 space-y-3 text-[15.5px] leading-relaxed text-ink-2 [&_a]:text-ink [&_a]:underline [&_a]:underline-offset-4 [&_li]:ml-5 [&_li]:list-disc [&_li]:mt-1.5 [&_strong]:text-ink">
+      <h2 className="text-2xl font-bold tracking-tight text-ink">{title}</h2>
       {children}
     </section>
   );

@@ -1,0 +1,5 @@
+# Pins the Rust toolchain that builds the WebAssembly module (see .github/workflows/ci.yml, job "pii").
+[toolchain]
+channel = "1.99.1"
+profile = "minimal"
+targets = ["wasm32-unknown-unknown"]

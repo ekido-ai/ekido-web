@@ -1,0 +1,81 @@
+{
+  "clean_lines": 60,
+  "clean_lines_with_a_false_positive": 0,
+  "false_positives": [],
+  "input": "pii-set.jsonl",
+  "lines": 300,
+  "misses": [],
+  "overall": {
+    "false_positives": 0,
+    "missed": 0,
+    "precision": 1.0,
+    "recall": 1.0
+  },
+  "per_type": {
+    "AADHAAR": {
+      "false_positives": 0,
+      "found_correctly": 31,
+      "labelled": 31,
+      "missed": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "ADDRESS": {
+      "false_positives": 0,
+      "found_correctly": 47,
+      "labelled": 47,
+      "missed": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "EMAIL": {
+      "false_positives": 0,
+      "found_correctly": 69,
+      "labelled": 69,
+      "missed": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "GSTIN": {
+      "false_positives": 0,
+      "found_correctly": 41,
+      "labelled": 41,
+      "missed": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "NAME": {
+      "false_positives": 0,
+      "found_correctly": 101,
+      "labelled": 101,
+      "missed": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "PAN": {
+      "false_positives": 0,
+      "found_correctly": 44,
+      "labelled": 44,
+      "missed": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "PHONE": {
+      "false_positives": 0,
+      "found_correctly": 73,
+      "labelled": 73,
+      "missed": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "UPI_ID": {
+      "false_positives": 0,
+      "found_correctly": 32,
+      "labelled": 32,
+      "missed": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    }
+  },
+  "tool": "ekido_pii score (strict match: start, end and type)"
+}

@@ -15,7 +15,7 @@ export function SiteFooter() {
   const text = t.raw("columns") as { title: string; links: string[] }[];
   const columns = HREFS.map((hrefs, i) => ({ title: text[i].title, links: hrefs.map((href, j) => [href, text[i].links[j]] as [string, string]) }));
   return (
-    <footer className="border-t border-line bg-surface">
+    <footer className="site-footer theme-dark border-t border-line">
       <div className="mx-auto grid max-w-[1840px] gap-8 px-4 py-10 sm:px-6 md:grid-cols-[1.4fr_repeat(4,1fr)]">
         <div>
           <Link href="/" className="flex items-center gap-2 text-lg font-bold tracking-tight text-ink">

@@ -1,4 +1,4 @@
-import type { NextConfig } from "next";
+﻿import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
 // Text comes from messages/<locale>.json through next-intl (src/i18n/request.ts).
@@ -33,8 +33,10 @@ const connect = [
 const CSP = [
   "default-src 'self'",
   // Next.js inlines its bootstrap and our theme script; no third-party scripts are allowed.
+  // 'wasm-unsafe-eval' lets the browser compile our own WebAssembly (the personal-detail remover, ticket C16) and nothing else:
+  // it does not allow eval() or new Function(), which 'unsafe-eval' would.
   // Razorpay Checkout (test mode): its script, its payment window and the calls it makes. Nothing else from outside.
-  "script-src 'self' 'unsafe-inline' https://checkout.razorpay.com",
+  "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://checkout.razorpay.com",
   "frame-src https://api.razorpay.com https://checkout.razorpay.com",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https://*.razorpay.com",
@@ -69,7 +71,7 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     // The landing page is "/" and the dashboard "/dashboard". Old links keep working:
-    // "/?view=dashboard", "/?at=…" and the rest move to /dashboard with their query intact.
+    // "/?view=dashboard", "/?at=â€¦" and the rest move to /dashboard with their query intact.
     const old = ["view", "at", "play", "source", "job"].map((key) => ({
       source: "/",
       has: [{ type: "query" as const, key }],

@@ -31,6 +31,42 @@ jobs:
       - name: Production build
         run: npx next build
 
+  pii:
+    name: PII remover (Rust)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      # The Rust version and the WebAssembly target are pinned in pii/rust-toolchain.toml, and wasm-bindgen-cli to the version in
+      # Cargo.lock, so the module that runs in customers' browsers is built from the source in this commit with known tools.
+      - name: Pinned Rust toolchain
+        working-directory: pii
+        run: |
+          rustup show
+          rustc --version
+      - name: Pinned wasm-bindgen
+        run: cargo install wasm-bindgen-cli --version 0.2.100 --locked
+      - name: Unit tests
+        working-directory: pii
+        run: cargo test --locked
+      - name: Build the WebAssembly module from source
+        run: sh pii/build.sh
+      - name: The committed module is byte for byte what the source builds
+        run: |
+          sha256sum src/lib/pii/wasm/*
+          if [ -n "$(git status --porcelain -- src/lib/pii/wasm)" ]; then
+            echo "::error::src/lib/pii/wasm is not what pii/ builds. Download the 'ekido-pii-wasm' artifact of this run, copy its files into src/lib/pii/wasm and commit them."
+            git status --porcelain -- src/lib/pii/wasm
+            exit 1
+          fi
+          echo "The committed files are identical to a fresh build."
+      - name: The built module, for a commit when the check above fails
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: ekido-pii-wasm
+          path: src/lib/pii/wasm/
+          if-no-files-found: ignore
   e2e:
     name: Web e2e
     runs-on: ubuntu-latest

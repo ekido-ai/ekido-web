@@ -7,7 +7,7 @@ import { config } from "@/lib/config";
 import { Panel } from "@/components/ui/panel";
 import { buttonStyles } from "@/components/ui/button-styles";
 import { cx } from "@/components/ui/cx";
-import { ChipScene } from "@/components/gpu/chip-art";
+import { ProductScene } from "@/components/brand/scenes";
 import { ProviderChecklist } from "@/components/provide/checklist";
 import { GPU_CLASSES, PROPOSED_FEE_BPS, clientHourly, perStepPrice, suggestedHourly } from "@/lib/pricing";
 
@@ -207,7 +207,7 @@ export default function ProvidePage() {
             </p>
           </div>
           <div className="relative hidden h-72 place-items-center overflow-hidden lg:grid">
-            <ChipScene phase="training" util={0.8} vram={0.5} size={190} fieldWidth={520} fieldHeight={320} perSide={7} label="YOUR GPU" />
+            <ProductScene name="devices" title="Ekido Devices" labels={["GAMING PCS", "LAPTOPS", "PHONES: NEXT", "OUTBOUND ONLY, NO OPEN PORTS"]} />
           </div>
         </div>
       </section>

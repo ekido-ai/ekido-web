@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ArrowUpRight, BadgeCheck, Boxes, Check, Coins, Cpu, EyeOff, FileLock2, KeyRound, Landmark, Layers, Lock, Scale, Server, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowUpRight, BadgeCheck, Check, EyeOff, FileLock2, KeyRound, Landmark, Layers, Lock, Scale, ShieldCheck } from "lucide-react";
+import { ProductIcon } from "@/components/brand/product-icons";
 import { StatusBadge } from "@/components/shell/marketing-nav";
 import { type Status } from "@/lib/landing/products";
 import { getProducts } from "@/lib/landing/products-server";
@@ -13,7 +14,6 @@ import { getTranslations } from "next-intl/server";
  * set from measured costs and appear in each quote.
  */
 
-const ICONS: Record<string, typeof Boxes> = { assistant: Sparkles, train: Boxes, verify: BadgeCheck, host: Server, pay: Coins, devices: Cpu };
 
 export async function ProductCatalog() {
   const PRODUCTS = await getProducts();
@@ -21,12 +21,11 @@ export async function ProductCatalog() {
   return (
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {PRODUCTS.map((p) => {
-        const Icon = ICONS[p.key] ?? Boxes;
         return (
           <Link key={p.key} href={p.href} className="artifact lift group flex flex-col p-6">
             <div className="flex items-start justify-between gap-3">
               <span className="grid size-11 place-items-center rounded-2xl bg-action text-action-ink">
-                <Icon className="size-5" aria-hidden />
+                <ProductIcon name={p.key} className="size-5" />
               </span>
               <StatusBadge status={p.status} />
             </div>
@@ -139,7 +138,7 @@ export async function PricingSection() {
           {p.featured && <span aria-hidden className="edge-strip absolute inset-x-0 top-0 h-1.5 bg-accent" />}
           <p className="text-sm text-muted">{p.who}</p>
           <h3 className="mt-1 text-xl text-ink">{p.name}</h3>
-          <p className="figure mt-5 font-serif text-4xl text-ink">{p.price}</p>
+          <p className={/\d/.test(p.price) ? "figure mt-5 font-serif text-4xl text-ink" : "mt-5 text-4xl font-bold tracking-tight text-ink"}>{p.price}</p>
           <p className="text-sm text-muted">{p.note}</p>
           <ul className="mb-8 mt-6 space-y-2.5 text-[15px] text-ink-2">
             {p.points.map((t) => (

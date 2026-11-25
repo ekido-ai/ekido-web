@@ -1,0 +1,137 @@
+{
+  "clean_lines": 60,
+  "clean_lines_with_a_false_positive": 3,
+  "false_positives": [
+    {
+      "line": 57,
+      "text": "चेकआउट पर कूपन RCUCS9571M लगाओ, 10 प्रतिशत छूट मिलेगी।",
+      "text_found": "RCUCS9571M",
+      "type": "PAN"
+    },
+    {
+      "line": 100,
+      "text": "ट्रैकिंग नंबर 8819019447 आउट फ़ॉर डिलीवरी दिखा रहा है।",
+      "text_found": "8819019447",
+      "type": "PHONE"
+    },
+    {
+      "line": 238,
+      "text": "ट्रैकिंग नंबर 8806550560 आउट फ़ॉर डिलीवरी दिखा रहा है।",
+      "text_found": "8806550560",
+      "type": "PHONE"
+    },
+    {
+      "line": 278,
+      "text": "Malik Sunita Singh se +916879739758 ya snehamehta75@example.org pe baat kar lo.",
+      "text_found": "916879739758",
+      "type": "AADHAAR"
+    }
+  ],
+  "input": "pii-set.jsonl",
+  "lines": 300,
+  "misses": [
+    {
+      "expected": "Flat 358, Green Park, Kochi 682001",
+      "found_instead": [],
+      "line": 134,
+      "text": "Delivery Flat 358, Green Park, Kochi 682001 pe karna, ghar pe na mile to 8925935218 pe call karna.",
+      "type": "ADDRESS"
+    },
+    {
+      "expected": "Flat 375, Sector 14, Pune 411001",
+      "found_instead": [],
+      "line": 272,
+      "text": "Delivery Flat 375, Sector 14, Pune 411001 pe karna, ghar pe na mile to 9608759813 pe call karna.",
+      "type": "ADDRESS"
+    },
+    {
+      "expected": "+916879739758",
+      "found_instead": [
+        "AADHAAR:916879739758"
+      ],
+      "line": 278,
+      "text": "Malik Sunita Singh se +916879739758 ya snehamehta75@example.org pe baat kar lo.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "House No. 101, Sector 14, Kochi, 682001",
+      "found_instead": [],
+      "line": 296,
+      "text": "Delivery House No. 101, Sector 14, Kochi, 682001 pe karna, ghar pe na mile to 9720955981 pe call karna.",
+      "type": "ADDRESS"
+    }
+  ],
+  "overall": {
+    "false_positives": 4,
+    "missed": 4,
+    "precision": 0.9909,
+    "recall": 0.9909
+  },
+  "per_type": {
+    "AADHAAR": {
+      "false_positives": 1,
+      "found_correctly": 31,
+      "labelled": 31,
+      "missed": 0,
+      "precision": 0.9688,
+      "recall": 1.0
+    },
+    "ADDRESS": {
+      "false_positives": 0,
+      "found_correctly": 44,
+      "labelled": 47,
+      "missed": 3,
+      "precision": 1.0,
+      "recall": 0.9362
+    },
+    "EMAIL": {
+      "false_positives": 0,
+      "found_correctly": 69,
+      "labelled": 69,
+      "missed": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "GSTIN": {
+      "false_positives": 0,
+      "found_correctly": 41,
+      "labelled": 41,
+      "missed": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "NAME": {
+      "false_positives": 0,
+      "found_correctly": 101,
+      "labelled": 101,
+      "missed": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "PAN": {
+      "false_positives": 1,
+      "found_correctly": 44,
+      "labelled": 44,
+      "missed": 0,
+      "precision": 0.9778,
+      "recall": 1.0
+    },
+    "PHONE": {
+      "false_positives": 2,
+      "found_correctly": 72,
+      "labelled": 73,
+      "missed": 1,
+      "precision": 0.973,
+      "recall": 0.9863
+    },
+    "UPI_ID": {
+      "false_positives": 0,
+      "found_correctly": 32,
+      "labelled": 32,
+      "missed": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    }
+  },
+  "tool": "ekido_pii score (strict match: start, end and type)"
+}

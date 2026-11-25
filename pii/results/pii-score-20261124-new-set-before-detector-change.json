@@ -1,0 +1,1118 @@
+{
+  "clean_lines": 60,
+  "clean_lines_with_a_false_positive": 0,
+  "false_positives": [],
+  "input": "pii-set.jsonl",
+  "lines": 300,
+  "misses": [
+    {
+      "expected": "GWWQP0218L",
+      "found_instead": [],
+      "line": 1,
+      "text": "Invoice INV-2026-01352: bill to Karan Kulkarni, GSTIN 08AUFND7677T1ZQ, PAN GWWQP0218L.",
+      "type": "PAN"
+    },
+    {
+      "expected": "TSZSK8819K",
+      "found_instead": [],
+      "line": 2,
+      "text": "Invoice INV-2025-56314: bill to Kavita Reddy, GSTIN 27ZVNXB9263K8ZQ, PAN TSZSK8819K.",
+      "type": "PAN"
+    },
+    {
+      "expected": "LKZXU6211B",
+      "found_instead": [],
+      "line": 6,
+      "text": "PAN LKZXU6211B hai mera, GST bill me daal dena.",
+      "type": "PAN"
+    },
+    {
+      "expected": "0986-9865-6533",
+      "found_instead": [],
+      "line": 9,
+      "text": "Loan form ke liye Rahul Das ka Aadhaar 0986-9865-6533 aur PAN PJRDJ8981M laga diya.",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "PJRDJ8981M",
+      "found_instead": [],
+      "line": 9,
+      "text": "Loan form ke liye Rahul Das ka Aadhaar 0986-9865-6533 aur PAN PJRDJ8981M laga diya.",
+      "type": "PAN"
+    },
+    {
+      "expected": "1940 2316 0171",
+      "found_instead": [],
+      "line": 12,
+      "text": "My Aadhaar is 1940 2316 0171, please update the KYC for my account.",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "+91 57679 94906",
+      "found_instead": [],
+      "line": 17,
+      "text": "Sunita Chauhan bol raha hoon, email sunita.sharma94@example.com, number +91 57679 94906. cotton bedsheet toota hua aaya.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "1874 1853 8620",
+      "found_instead": [],
+      "line": 18,
+      "text": "Loan form ke liye Rohan Mehta ka Aadhaar 1874 1853 8620 aur PAN PGXXL1329X laga diya.",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "PGXXL1329X",
+      "found_instead": [],
+      "line": 18,
+      "text": "Loan form ke liye Rohan Mehta ka Aadhaar 1874 1853 8620 aur PAN PGXXL1329X laga diya.",
+      "type": "PAN"
+    },
+    {
+      "expected": "SVLUE1538P",
+      "found_instead": [],
+      "line": 24,
+      "text": "Invoice INV-2025-21412: bill to Isha Bansal, GSTIN 24PUKYH8108A1Z5, PAN SVLUE1538P.",
+      "type": "PAN"
+    },
+    {
+      "expected": "089983118968",
+      "found_instead": [],
+      "line": 29,
+      "text": "Aadhaar 089983118968 and PAN BEWVD6936H attached for the loan form of Rohan Nair.",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "BEWVD6936H",
+      "found_instead": [],
+      "line": 29,
+      "text": "Aadhaar 089983118968 and PAN BEWVD6936H attached for the loan form of Rohan Nair.",
+      "type": "PAN"
+    },
+    {
+      "expected": "BLZRC3939V",
+      "found_instead": [],
+      "line": 31,
+      "text": "मेरा पैन BLZRC3939V है, जीएसटी बिल में लिख देना।",
+      "type": "PAN"
+    },
+    {
+      "expected": "104572201968",
+      "found_instead": [],
+      "line": 32,
+      "text": "My Aadhaar is 104572201968, please update the KYC for my account.",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "52397-83581",
+      "found_instead": [],
+      "line": 35,
+      "text": "Hi, my name is Arjun Bansal and my number is 52397-83581. Please call me about order ORD784037.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "+91 51178 43031",
+      "found_instead": [],
+      "line": 36,
+      "text": "डिलीवरी फ्लैट 333, ग्रीन पार्क, इंदौर 452001 पर करना। फ़ोन +91 51178 43031।",
+      "type": "PHONE"
+    },
+    {
+      "expected": "51014-62727",
+      "found_instead": [],
+      "line": 39,
+      "text": "Malik Rahul Iyer se 51014-62727 ya isha_verma27@example.org pe baat kar lo.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "1959-3948-6194",
+      "found_instead": [],
+      "line": 40,
+      "text": "Loan form ke liye Arjun Kulkarni ka Aadhaar 1959-3948-6194 aur PAN VZAUV7831V laga diya.",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "VZAUV7831V",
+      "found_instead": [],
+      "line": 40,
+      "text": "Loan form ke liye Arjun Kulkarni ka Aadhaar 1959-3948-6194 aur PAN VZAUV7831V laga diya.",
+      "type": "PAN"
+    },
+    {
+      "expected": "011274167885",
+      "found_instead": [],
+      "line": 42,
+      "text": "Mera Aadhaar number 011274167885 hai, KYC update kar do.",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "+915766690816",
+      "found_instead": [],
+      "line": 44,
+      "text": "डिलीवरी फ्लैट 102, मॉडल टाउन, जयपुर 302001 पर करना। फ़ोन +915766690816।",
+      "type": "PHONE"
+    },
+    {
+      "expected": "0120 7920 5545",
+      "found_instead": [],
+      "line": 45,
+      "text": "Mera Aadhaar number 0120 7920 5545 hai, KYC update kar do.",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "1119-9691-4955",
+      "found_instead": [],
+      "line": 46,
+      "text": "मेरा आधार नंबर 1119-9691-4955 है, केवाईसी अपडेट कर दो।",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "58082-09208",
+      "found_instead": [],
+      "line": 47,
+      "text": "Mera naam Neha Reddy hai, mujhe 58082-09208 pe call karo, order ORD247609 ka kya hua?",
+      "type": "PHONE"
+    },
+    {
+      "expected": "VJSMY7689A",
+      "found_instead": [],
+      "line": 48,
+      "text": "Invoice INV-2026-00226 me Anjali Sharma ka PAN VJSMY7689A aur GSTIN 29ADEYK0177B1ZD daal diya hai.",
+      "type": "PAN"
+    },
+    {
+      "expected": "+91 57657 48674",
+      "found_instead": [],
+      "line": 49,
+      "text": "Hi, my name is Ravi Chauhan and my number is +91 57657 48674. Please call me about order ORD192438.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "171838283557",
+      "found_instead": [],
+      "line": 50,
+      "text": "Aadhaar 171838283557 and PAN GLCEG5701W attached for the loan form of Suresh Gupta.",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "GLCEG5701W",
+      "found_instead": [],
+      "line": 50,
+      "text": "Aadhaar 171838283557 and PAN GLCEG5701W attached for the loan form of Suresh Gupta.",
+      "type": "PAN"
+    },
+    {
+      "expected": "ETJDP5077P",
+      "found_instead": [],
+      "line": 51,
+      "text": "Invoice INV-2026-52728: bill to Vikram Sharma, GSTIN 33YWLZT0564L7ZP, PAN ETJDP5077P.",
+      "type": "PAN"
+    },
+    {
+      "expected": "05271850900",
+      "found_instead": [],
+      "line": 55,
+      "text": "Amit Bansal here, email divyajoshi@example.net, phone 05271850900. My blue kurta arrived damaged.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "+915846297606",
+      "found_instead": [],
+      "line": 56,
+      "text": "डिलीवरी फ्लैट 360, नेहरू पार्क, सूरत 395003 पर करना। फ़ोन +915846297606।",
+      "type": "PHONE"
+    },
+    {
+      "expected": "+91 50846 81028",
+      "found_instead": [],
+      "line": 57,
+      "text": "विक्रम चौहान बोल रहा हूँ, ईमेल anjalisingh99@example.org, फ़ोन +91 50846 81028।",
+      "type": "PHONE"
+    },
+    {
+      "expected": "060757123000",
+      "found_instead": [],
+      "line": 59,
+      "text": "Aadhaar 060757123000 and PAN JTAEZ1931M attached for the loan form of Neha Bansal.",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "JTAEZ1931M",
+      "found_instead": [],
+      "line": 59,
+      "text": "Aadhaar 060757123000 and PAN JTAEZ1931M attached for the loan form of Neha Bansal.",
+      "type": "PAN"
+    },
+    {
+      "expected": "YCBKH4291P",
+      "found_instead": [],
+      "line": 62,
+      "text": "मेरा पैन YCBKH4291P है, जीएसटी बिल में लिख देना।",
+      "type": "PAN"
+    },
+    {
+      "expected": "1419 6761 9540",
+      "found_instead": [],
+      "line": 63,
+      "text": "Aadhaar 1419 6761 9540 and PAN FEEEU3778W attached for the loan form of Amit Patel.",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "FEEEU3778W",
+      "found_instead": [],
+      "line": 63,
+      "text": "Aadhaar 1419 6761 9540 and PAN FEEEU3778W attached for the loan form of Amit Patel.",
+      "type": "PAN"
+    },
+    {
+      "expected": "+915271263107",
+      "found_instead": [],
+      "line": 64,
+      "text": "Priya Sharma bol raha hoon, email neha_nair@example.org, number +915271263107. cotton bedsheet toota hua aaya.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "0133-7836-9289",
+      "found_instead": [],
+      "line": 65,
+      "text": "मेरा आधार नंबर 0133-7836-9289 है, केवाईसी अपडेट कर दो।",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "53849-05958",
+      "found_instead": [],
+      "line": 67,
+      "text": "Reach the owner, Karan Reddy, on 53849-05958 or sneha.nair59@example.org.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "PNTDB1445X",
+      "found_instead": [],
+      "line": 69,
+      "text": "Invoice INV-2026-71486: bill to Anjali Kulkarni, GSTIN 27WLJKX3944G8Z2, PAN PNTDB1445X.",
+      "type": "PAN"
+    },
+    {
+      "expected": "59216-27487",
+      "found_instead": [],
+      "line": 71,
+      "text": "Ship it to Rahul Bansal, House No. 247, Civil Lines, Nagpur, 440001. Contact 59216-27487.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "+91 50967 58862",
+      "found_instead": [],
+      "line": 77,
+      "text": "Hi, my name is Isha Singh and my number is +91 50967 58862. Please call me about order ORD056721.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "53218-09004",
+      "found_instead": [],
+      "line": 78,
+      "text": "Reach the owner, Pooja Gupta, on 53218-09004 or anjali.kulkarni74@example.com.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "+91 54511 89675",
+      "found_instead": [],
+      "line": 79,
+      "text": "मेरा नाम प्रिया वर्मा है, मुझे +91 54511 89675 पर फ़ोन करो।",
+      "type": "PHONE"
+    },
+    {
+      "expected": "PDTXS1927K",
+      "found_instead": [],
+      "line": 81,
+      "text": "Invoice INV-2025-05924: bill to Anjali Kulkarni, GSTIN 24VTGQW0049Z7ZT, PAN PDTXS1927K.",
+      "type": "PAN"
+    },
+    {
+      "expected": "122940621499",
+      "found_instead": [],
+      "line": 82,
+      "text": "नेहा सिंह का आधार 122940621499 और पैन GVBVZ7067E लगा दिया है।",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "GVBVZ7067E",
+      "found_instead": [],
+      "line": 82,
+      "text": "नेहा सिंह का आधार 122940621499 और पैन GVBVZ7067E लगा दिया है।",
+      "type": "PAN"
+    },
+    {
+      "expected": "50795-89814",
+      "found_instead": [],
+      "line": 83,
+      "text": "Mera naam Isha Sharma hai, mujhe 50795-89814 pe call karo, order ORD932476 ka kya hua?",
+      "type": "PHONE"
+    },
+    {
+      "expected": "DSBMM5917E",
+      "found_instead": [],
+      "line": 87,
+      "text": "PAN DSBMM5917E is on the GST invoice, can you confirm it?",
+      "type": "PAN"
+    },
+    {
+      "expected": "1569 2346 1695",
+      "found_instead": [],
+      "line": 90,
+      "text": "मेरा आधार नंबर 1569 2346 1695 है, केवाईसी अपडेट कर दो।",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "56686-72151",
+      "found_instead": [],
+      "line": 93,
+      "text": "Malik Isha Sharma se 56686-72151 ya sunita.singh89@example.org pe baat kar lo.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "+91 52126 72127",
+      "found_instead": [],
+      "line": 96,
+      "text": "Malik Rohan Joshi se +91 52126 72127 ya deepak.das91@example.com pe baat kar lo.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "0975 8219 7570",
+      "found_instead": [],
+      "line": 99,
+      "text": "Loan form ke liye Arjun Chauhan ka Aadhaar 0975 8219 7570 aur PAN NZTRL1279Y laga diya.",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "NZTRL1279Y",
+      "found_instead": [],
+      "line": 99,
+      "text": "Loan form ke liye Arjun Chauhan ka Aadhaar 0975 8219 7570 aur PAN NZTRL1279Y laga diya.",
+      "type": "PAN"
+    },
+    {
+      "expected": "54436-70308",
+      "found_instead": [],
+      "line": 106,
+      "text": "Ship it to Pooja Patel, House No. 374, Shanti Nagar, Indore, 452001. Contact 54436-70308.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "55700-26583",
+      "found_instead": [],
+      "line": 109,
+      "text": "Hi, my name is Arjun Mehta and my number is 55700-26583. Please call me about order ORD943049.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "05572429205",
+      "found_instead": [],
+      "line": 110,
+      "text": "Reach the owner, Neha Singh, on 05572429205 or vikram_mehta@example.net.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "MVTYS9068W",
+      "found_instead": [],
+      "line": 111,
+      "text": "PAN MVTYS9068W hai mera, GST bill me daal dena.",
+      "type": "PAN"
+    },
+    {
+      "expected": "05654757436",
+      "found_instead": [],
+      "line": 113,
+      "text": "Delivery Flat 387, Green Park, Surat 395003 pe karna, ghar pe na mile to 05654757436 pe call karna.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "05433293636",
+      "found_instead": [],
+      "line": 117,
+      "text": "Parcel Pooja Bansal ke naam pe bhejna, pata hai Flat 366, Green Park, Surat 395003. Phone 05433293636.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "153380174127",
+      "found_instead": [],
+      "line": 118,
+      "text": "Aadhaar 153380174127 and PAN WGXDP6901U attached for the loan form of Karan Yadav.",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "WGXDP6901U",
+      "found_instead": [],
+      "line": 118,
+      "text": "Aadhaar 153380174127 and PAN WGXDP6901U attached for the loan form of Karan Yadav.",
+      "type": "PAN"
+    },
+    {
+      "expected": "+915333543570",
+      "found_instead": [],
+      "line": 119,
+      "text": "Hi, my name is Vikram Sharma and my number is +915333543570. Please call me about order ORD544718.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "+915850352085",
+      "found_instead": [],
+      "line": 121,
+      "text": "Parcel Neha Das ke naam pe bhejna, pata hai House No. 298, Lake View Colony, Lucknow, 226001. Phone +915850352085.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "+91 52903 31162",
+      "found_instead": [],
+      "line": 122,
+      "text": "Reach the owner, Arjun Yadav, on +91 52903 31162 or divyaverma05@example.com.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "TYYDH4566E",
+      "found_instead": [],
+      "line": 123,
+      "text": "Invoice INV-2026-22090 me Divya Singh ka PAN TYYDH4566E aur GSTIN 24ULPVY4966K6Z2 daal diya hai.",
+      "type": "PAN"
+    },
+    {
+      "expected": "+91 52391 45719",
+      "found_instead": [],
+      "line": 126,
+      "text": "Malik Ravi Kulkarni se +91 52391 45719 ya isha.das@example.org pe baat kar lo.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "BMMQG5443Z",
+      "found_instead": [],
+      "line": 127,
+      "text": "Invoice INV-2025-85916 me Sneha Nair ka PAN BMMQG5443Z aur GSTIN 29WGNKA4810H3Z4 daal diya hai.",
+      "type": "PAN"
+    },
+    {
+      "expected": "51112-45559",
+      "found_instead": [],
+      "line": 128,
+      "text": "Mera naam Rahul Chauhan hai, mujhe 51112-45559 pe call karo, order ORD262663 ka kya hua?",
+      "type": "PHONE"
+    },
+    {
+      "expected": "061561561356",
+      "found_instead": [],
+      "line": 132,
+      "text": "Aadhaar 061561561356 and PAN VPFDG5695R attached for the loan form of Manoj Yadav.",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "VPFDG5695R",
+      "found_instead": [],
+      "line": 132,
+      "text": "Aadhaar 061561561356 and PAN VPFDG5695R attached for the loan form of Manoj Yadav.",
+      "type": "PAN"
+    },
+    {
+      "expected": "+915732495488",
+      "found_instead": [],
+      "line": 133,
+      "text": "Sneha Joshi bol raha hoon, email meena_sharma19@example.net, number +915732495488. steel bottle toota hua aaya.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "GJXMY1214J",
+      "found_instead": [],
+      "line": 135,
+      "text": "PAN GJXMY1214J is on the GST invoice, can you confirm it?",
+      "type": "PAN"
+    },
+    {
+      "expected": "+91 54755 17179",
+      "found_instead": [],
+      "line": 139,
+      "text": "मेरा नाम मीना रेड्डी है, मुझे +91 54755 17179 पर फ़ोन करो।",
+      "type": "PHONE"
+    },
+    {
+      "expected": "+91 54425 47208",
+      "found_instead": [],
+      "line": 140,
+      "text": "Delivery Flat 312, Gandhi Road, Bhopal 462001 pe karna, ghar pe na mile to +91 54425 47208 pe call karna.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "+91 55153 84629",
+      "found_instead": [],
+      "line": 144,
+      "text": "Ship it to Pooja Joshi, House No. 9, Gandhi Road, Pune, 411001. Contact +91 55153 84629.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "05591880267",
+      "found_instead": [],
+      "line": 149,
+      "text": "Delivery House No. 63, Lake View Colony, Indore, 452001 pe karna, ghar pe na mile to 05591880267 pe call karna.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "JHEVE9465S",
+      "found_instead": [],
+      "line": 150,
+      "text": "PAN JHEVE9465S is on the GST invoice, can you confirm it?",
+      "type": "PAN"
+    },
+    {
+      "expected": "122181420470",
+      "found_instead": [],
+      "line": 152,
+      "text": "My Aadhaar is 122181420470, please update the KYC for my account.",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "56863-36589",
+      "found_instead": [],
+      "line": 153,
+      "text": "Parcel Priya Gupta ke naam pe bhejna, pata hai Flat 2, Shanti Nagar, Pune 411001. Phone 56863-36589.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "+915220673906",
+      "found_instead": [],
+      "line": 156,
+      "text": "Mera naam Arjun Patel hai, mujhe +915220673906 pe call karo, order ORD657003 ka kya hua?",
+      "type": "PHONE"
+    },
+    {
+      "expected": "05930669650",
+      "found_instead": [],
+      "line": 158,
+      "text": "मेरा नाम अंजलि नायर है, मुझे 05930669650 पर फ़ोन करो।",
+      "type": "PHONE"
+    },
+    {
+      "expected": "+915255064986",
+      "found_instead": [],
+      "line": 159,
+      "text": "Manoj Yadav here, email arjun_kulkarni@example.com, phone +915255064986. My phone cover arrived damaged.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "05720698302",
+      "found_instead": [],
+      "line": 162,
+      "text": "Deliver to Flat 183, Lake View Colony, Nagpur 440001. If I am out, call 05720698302.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "XKMVF3664P",
+      "found_instead": [],
+      "line": 164,
+      "text": "PAN XKMVF3664P is on the GST invoice, can you confirm it?",
+      "type": "PAN"
+    },
+    {
+      "expected": "0170 2785 6031",
+      "found_instead": [],
+      "line": 165,
+      "text": "My Aadhaar is 0170 2785 6031, please update the KYC for my account.",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "NWCSE3465N",
+      "found_instead": [],
+      "line": 168,
+      "text": "PAN NWCSE3465N hai mera, GST bill me daal dena.",
+      "type": "PAN"
+    },
+    {
+      "expected": "+91 58045 60792",
+      "found_instead": [],
+      "line": 169,
+      "text": "Ship it to Suresh Reddy, House No. 105, Gandhi Road, Indore, 452001. Contact +91 58045 60792.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "+91 58910 12442",
+      "found_instead": [],
+      "line": 173,
+      "text": "Karan Patel bol raha hoon, email sneha.sharma43@example.com, number +91 58910 12442. cotton bedsheet toota hua aaya.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "BAZVX3730F",
+      "found_instead": [],
+      "line": 174,
+      "text": "Invoice INV-2025-15293 me Isha Reddy ka PAN BAZVX3730F aur GSTIN 27PLRVZ4625Z6ZG daal diya hai.",
+      "type": "PAN"
+    },
+    {
+      "expected": "1810 9026 9392",
+      "found_instead": [],
+      "line": 178,
+      "text": "Loan form ke liye Kavita Yadav ka Aadhaar 1810 9026 9392 aur PAN APGWL3806P laga diya.",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "APGWL3806P",
+      "found_instead": [],
+      "line": 178,
+      "text": "Loan form ke liye Kavita Yadav ka Aadhaar 1810 9026 9392 aur PAN APGWL3806P laga diya.",
+      "type": "PAN"
+    },
+    {
+      "expected": "JNWZJ1551D",
+      "found_instead": [],
+      "line": 180,
+      "text": "PAN JNWZJ1551D is on the GST invoice, can you confirm it?",
+      "type": "PAN"
+    },
+    {
+      "expected": "0857 6661 2184",
+      "found_instead": [],
+      "line": 181,
+      "text": "नेहा गुप्ता का आधार 0857 6661 2184 और पैन FMSDR5340F लगा दिया है।",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "FMSDR5340F",
+      "found_instead": [],
+      "line": 181,
+      "text": "नेहा गुप्ता का आधार 0857 6661 2184 और पैन FMSDR5340F लगा दिया है।",
+      "type": "PAN"
+    },
+    {
+      "expected": "YFMXZ8062J",
+      "found_instead": [],
+      "line": 182,
+      "text": "PAN YFMXZ8062J hai mera, GST bill me daal dena.",
+      "type": "PAN"
+    },
+    {
+      "expected": "05679556044",
+      "found_instead": [],
+      "line": 183,
+      "text": "Suresh Joshi here, email karan_das@example.com, phone 05679556044. My phone cover arrived damaged.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "05065361980",
+      "found_instead": [],
+      "line": 185,
+      "text": "Kavita Gupta here, email arjun.mehta34@example.org, phone 05065361980. My steel bottle arrived damaged.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "AJTWF1193P",
+      "found_instead": [],
+      "line": 186,
+      "text": "Invoice INV-2026-19189: bill to Arjun Yadav, GSTIN 24EXMZR6881E7Z6, PAN AJTWF1193P.",
+      "type": "PAN"
+    },
+    {
+      "expected": "TARYW4281P",
+      "found_instead": [],
+      "line": 187,
+      "text": "PAN TARYW4281P hai mera, GST bill me daal dena.",
+      "type": "PAN"
+    },
+    {
+      "expected": "+915676976038",
+      "found_instead": [],
+      "line": 189,
+      "text": "Deliver to House No. 324, Model Town, Lucknow, 226001. If I am out, call +915676976038.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "53428-39869",
+      "found_instead": [],
+      "line": 190,
+      "text": "Mera naam Deepak Nair hai, mujhe 53428-39869 pe call karo, order ORD695171 ka kya hua?",
+      "type": "PHONE"
+    },
+    {
+      "expected": "062512804889",
+      "found_instead": [],
+      "line": 191,
+      "text": "My Aadhaar is 062512804889, please update the KYC for my account.",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "05480696332",
+      "found_instead": [],
+      "line": 193,
+      "text": "Malik Sunita Gupta se 05480696332 ya amit_iyer33@example.net pe baat kar lo.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "1885-5629-3151",
+      "found_instead": [],
+      "line": 195,
+      "text": "Loan form ke liye Sunita Das ka Aadhaar 1885-5629-3151 aur PAN ZZGWB0959L laga diya.",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "ZZGWB0959L",
+      "found_instead": [],
+      "line": 195,
+      "text": "Loan form ke liye Sunita Das ka Aadhaar 1885-5629-3151 aur PAN ZZGWB0959L laga diya.",
+      "type": "PAN"
+    },
+    {
+      "expected": "54830-91980",
+      "found_instead": [],
+      "line": 199,
+      "text": "Ship it to Deepak Yadav, Flat 255, Nehru Park, Surat 395003. Contact 54830-91980.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "+915291758580",
+      "found_instead": [],
+      "line": 200,
+      "text": "Deliver to Flat 297, Nehru Park, Nagpur 440001. If I am out, call +915291758580.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "+915312002475",
+      "found_instead": [],
+      "line": 201,
+      "text": "Arjun Nair here, email arjun_joshi03@example.org, phone +915312002475. My phone cover arrived damaged.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "NUHSS3864A",
+      "found_instead": [],
+      "line": 202,
+      "text": "मेरा पैन NUHSS3864A है, जीएसटी बिल में लिख देना।",
+      "type": "PAN"
+    },
+    {
+      "expected": "+915521612170",
+      "found_instead": [],
+      "line": 204,
+      "text": "Deliver to Flat 430, Sector 14, Nagpur 440001. If I am out, call +915521612170.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "0034-7237-7090",
+      "found_instead": [],
+      "line": 207,
+      "text": "Mera Aadhaar number 0034-7237-7090 hai, KYC update kar do.",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "+91 57908 36176",
+      "found_instead": [],
+      "line": 208,
+      "text": "Delivery Flat 86, Model Town, Nagpur 440001 pe karna, ghar pe na mile to +91 57908 36176 pe call karna.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "05349771542",
+      "found_instead": [],
+      "line": 211,
+      "text": "Ship it to Karan Sharma, House No. 270, Lake View Colony, Lucknow, 226001. Contact 05349771542.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "CBZSZ2235E",
+      "found_instead": [],
+      "line": 213,
+      "text": "PAN CBZSZ2235E hai mera, GST bill me daal dena.",
+      "type": "PAN"
+    },
+    {
+      "expected": "NDFRW8473L",
+      "found_instead": [],
+      "line": 218,
+      "text": "PAN NDFRW8473L is on the GST invoice, can you confirm it?",
+      "type": "PAN"
+    },
+    {
+      "expected": "+91 55127 30433",
+      "found_instead": [],
+      "line": 222,
+      "text": "कविता रेड्डी बोल रहा हूँ, ईमेल rahul_joshi@example.org, फ़ोन +91 55127 30433।",
+      "type": "PHONE"
+    },
+    {
+      "expected": "1905 5260 0443",
+      "found_instead": [],
+      "line": 224,
+      "text": "Mera Aadhaar number 1905 5260 0443 hai, KYC update kar do.",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "+915346869322",
+      "found_instead": [],
+      "line": 229,
+      "text": "Kavita Iyer here, email suresh_joshi21@example.org, phone +915346869322. My phone cover arrived damaged.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "+91 54217 52394",
+      "found_instead": [],
+      "line": 230,
+      "text": "Parcel Kavita Gupta ke naam pe bhejna, pata hai Flat 226, Shanti Nagar, Pune 411001. Phone +91 54217 52394.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "0451 1925 5246",
+      "found_instead": [],
+      "line": 233,
+      "text": "My Aadhaar is 0451 1925 5246, please update the KYC for my account.",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "59810-93547",
+      "found_instead": [],
+      "line": 234,
+      "text": "Divya Das bol raha hoon, email arjungupta09@example.org, number 59810-93547. leather wallet toota hua aaya.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "+91 54495 87574",
+      "found_instead": [],
+      "line": 235,
+      "text": "Reach the owner, Neha Iyer, on +91 54495 87574 or suresh_nair47@example.com.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "+915056679854",
+      "found_instead": [],
+      "line": 239,
+      "text": "Malik Anjali Patel se +915056679854 ya rahul_yadav52@example.net pe baat kar lo.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "+91 55753 43429",
+      "found_instead": [],
+      "line": 247,
+      "text": "Deliver to House No. 273, Gandhi Road, Lucknow, 226001. If I am out, call +91 55753 43429.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "+915210992772",
+      "found_instead": [],
+      "line": 248,
+      "text": "Karan Reddy here, email amit.verma81@example.net, phone +915210992772. My cotton bedsheet arrived damaged.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "LWDQJ2130G",
+      "found_instead": [],
+      "line": 251,
+      "text": "Invoice INV-2025-70711 me Pooja Bansal ka PAN LWDQJ2130G aur GSTIN 24VKADX9390Y1ZT daal diya hai.",
+      "type": "PAN"
+    },
+    {
+      "expected": "+915941059470",
+      "found_instead": [],
+      "line": 252,
+      "text": "Reach the owner, Amit Bansal, on +915941059470 or arjunpatel@example.org.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "1386-4795-9350",
+      "found_instead": [],
+      "line": 253,
+      "text": "करण बंसल का आधार 1386-4795-9350 और पैन GBVKF9182C लगा दिया है।",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "GBVKF9182C",
+      "found_instead": [],
+      "line": 253,
+      "text": "करण बंसल का आधार 1386-4795-9350 और पैन GBVKF9182C लगा दिया है।",
+      "type": "PAN"
+    },
+    {
+      "expected": "05108615948",
+      "found_instead": [],
+      "line": 254,
+      "text": "Hi, my name is Vikram Joshi and my number is 05108615948. Please call me about order ORD873481.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "1387 8847 5511",
+      "found_instead": [],
+      "line": 255,
+      "text": "Mera Aadhaar number 1387 8847 5511 hai, KYC update kar do.",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "+915522071324",
+      "found_instead": [],
+      "line": 256,
+      "text": "Delivery House No. 210, Gandhi Road, Lucknow, 226001 pe karna, ghar pe na mile to +915522071324 pe call karna.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "0111 2295 6816",
+      "found_instead": [],
+      "line": 258,
+      "text": "My Aadhaar is 0111 2295 6816, please update the KYC for my account.",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "05737410682",
+      "found_instead": [],
+      "line": 261,
+      "text": "Parcel Neha Das ke naam pe bhejna, pata hai House No. 282, Civil Lines, Indore, 452001. Phone 05737410682.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "05383764294",
+      "found_instead": [],
+      "line": 263,
+      "text": "Deliver to Flat 130, Nehru Park, Jaipur 302001. If I am out, call 05383764294.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "05911128219",
+      "found_instead": [],
+      "line": 264,
+      "text": "Ship it to Anjali Mehta, Flat 65, Sector 14, Jaipur 302001. Contact 05911128219.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "53623-11708",
+      "found_instead": [],
+      "line": 265,
+      "text": "Parcel Sunita Gupta ke naam pe bhejna, pata hai Flat 78, Nehru Park, Kochi 682001. Phone 53623-11708.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "05882329221",
+      "found_instead": [],
+      "line": 270,
+      "text": "Delivery House No. 368, Lake View Colony, Lucknow, 226001 pe karna, ghar pe na mile to 05882329221 pe call karna.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "106115548015",
+      "found_instead": [],
+      "line": 271,
+      "text": "Mera Aadhaar number 106115548015 hai, KYC update kar do.",
+      "type": "AADHAAR"
+    },
+    {
+      "expected": "05416644269",
+      "found_instead": [],
+      "line": 278,
+      "text": "Deliver to House No. 413, Shanti Nagar, Nagpur, 440001. If I am out, call 05416644269.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "+915080427367",
+      "found_instead": [],
+      "line": 279,
+      "text": "Isha Verma bol raha hoon, email deepakreddy45@example.org, number +915080427367. desk lamp toota hua aaya.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "05426181595",
+      "found_instead": [],
+      "line": 293,
+      "text": "Hi, my name is Vikram Joshi and my number is 05426181595. Please call me about order ORD115642.",
+      "type": "PHONE"
+    },
+    {
+      "expected": "05717418852",
+      "found_instead": [],
+      "line": 294,
+      "text": "Mera naam Amit Sharma hai, mujhe 05717418852 pe call karo, order ORD914095 ka kya hua?",
+      "type": "PHONE"
+    },
+    {
+      "expected": "KSDMJ9393X",
+      "found_instead": [],
+      "line": 296,
+      "text": "PAN KSDMJ9393X is on the GST invoice, can you confirm it?",
+      "type": "PAN"
+    },
+    {
+      "expected": "58193-65936",
+      "found_instead": [],
+      "line": 297,
+      "text": "करण कुलकर्णी बोल रहा हूँ, ईमेल priya_das@example.com, फ़ोन 58193-65936।",
+      "type": "PHONE"
+    },
+    {
+      "expected": "TRNDT9475J",
+      "found_instead": [],
+      "line": 298,
+      "text": "Invoice INV-2025-05871 me Sunita Nair ka PAN TRNDT9475J aur GSTIN 08DEZNH5018N8ZM daal diya hai.",
+      "type": "PAN"
+    }
+  ],
+  "overall": {
+    "false_positives": 0,
+    "missed": 148,
+    "precision": 1.0,
+    "recall": 0.6621
+  },
+  "per_type": {
+    "AADHAAR": {
+      "false_positives": 0,
+      "found_correctly": 0,
+      "labelled": 31,
+      "missed": 31,
+      "precision": null,
+      "recall": 0.0
+    },
+    "ADDRESS": {
+      "false_positives": 0,
+      "found_correctly": 47,
+      "labelled": 47,
+      "missed": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "EMAIL": {
+      "false_positives": 0,
+      "found_correctly": 69,
+      "labelled": 69,
+      "missed": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "GSTIN": {
+      "false_positives": 0,
+      "found_correctly": 41,
+      "labelled": 41,
+      "missed": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "NAME": {
+      "false_positives": 0,
+      "found_correctly": 101,
+      "labelled": 101,
+      "missed": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "PAN": {
+      "false_positives": 0,
+      "found_correctly": 0,
+      "labelled": 44,
+      "missed": 44,
+      "precision": null,
+      "recall": 0.0
+    },
+    "PHONE": {
+      "false_positives": 0,
+      "found_correctly": 0,
+      "labelled": 73,
+      "missed": 73,
+      "precision": null,
+      "recall": 0.0
+    },
+    "UPI_ID": {
+      "false_positives": 0,
+      "found_correctly": 32,
+      "labelled": 32,
+      "missed": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    }
+  },
+  "tool": "ekido_pii score (strict match: start, end and type)"
+}
