@@ -3,11 +3,13 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Check, Copy, LogOut } from "lucide-react";
+import { Check, CircleCheck, Copy, LogOut } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Field, inputClass } from "@/components/auth/field";
-import { Button, ConfirmButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { ApiKeyList } from "@/components/platform/api-key-list";
+import { MemberList } from "@/components/platform/member-list";
+import { RetryNotice } from "@/components/platform/retry-notice";
 import { buttonStyles } from "@/components/ui/button-styles";
 import { Panel } from "@/components/ui/panel";
 import { ErrorState, SkeletonLines } from "@/components/ui/states";
@@ -21,9 +23,16 @@ import {
   type KeyScope,
   type Me,
   type NewApiKey,
+  type Member,
   type Org,
   type Role,
 } from "@/lib/platform/api";
+
+/** What the last invite did: sent, paused by the email limit (with when it can go again), or refused. */
+type InviteNote =
+  | { kind: "sent"; email: string; again: boolean }
+  | { kind: "wait"; email: string; role: Role; until: number }
+  | { kind: "error"; text: string };
 
 type Load = { kind: "loading" } | { kind: "signed-out" } | { kind: "error"; message: string } | { kind: "ready"; me: Me };
 
@@ -105,6 +114,7 @@ function TeamPanels({ orgId, role, myUserId }: { orgId: string; role: Role; myUs
   const [org, setOrg] = useState<Org | null>(null);
   const [keys, setKeys] = useState<ApiKey[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [note, setNote] = useState<InviteNote | null>(null);
 
   const refresh = useCallback(() => {
     Promise.all([platform.org(orgId), platform.keys(orgId)])
@@ -117,6 +127,24 @@ function TeamPanels({ orgId, role, myUserId }: { orgId: string; role: Role; myUs
   }, [orgId]);
   useEffect(refresh, [refresh]);
 
+  /** Sends (or re-sends) an invite; true when it went. Used by the form and by Resend on an invited row. */
+  const send = useCallback(
+    async (email: string, inviteRole: Role, again = false): Promise<boolean> => {
+      try {
+        await platform.invite(orgId, email, inviteRole);
+        setNote({ kind: "sent", email, again });
+        refresh();
+        return true;
+      } catch (e) {
+        if (e instanceof PlatformError && e.retryAfter)
+          setNote({ kind: "wait", email, role: inviteRole, until: Date.now() + e.retryAfter * 1000 });
+        else setNote({ kind: "error", text: (e as Error).message });
+        return false;
+      }
+    },
+    [orgId, refresh],
+  );
+
   if (error) return <ErrorState title={t("loadFailed")} detail={error} onRetry={refresh} />;
   if (!org || !keys) return <Panel><div className="p-6"><SkeletonLines lines={4} /></div></Panel>;
 
@@ -126,25 +154,15 @@ function TeamPanels({ orgId, role, myUserId }: { orgId: string; role: Role; myUs
         <div className="space-y-6 p-6">
           <div>
             <h3 className="text-sm font-semibold text-ink">{t("members")}</h3>
-            <ul className="mt-2 divide-y divide-line rounded-lg border border-line">
-              {org.members.map((m) => (
-                <li key={m.user_id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 text-sm">
-                  <span className="min-w-0 text-ink [overflow-wrap:anywhere]">
-                    {m.email ?? m.user_id} {m.user_id === myUserId && <span className="text-muted">({t("you")})</span>}
-                  </span>
-                  <span className="flex items-center gap-3">
-                    <span className="text-ink-2">{t(`roles.${m.role}`)}</span>
-                    {manage && m.user_id !== myUserId && (
-                      <ConfirmButton size="sm" confirmLabel={t("confirmRemove")} onConfirm={() => platform.removeMember(orgId, m.user_id).then(refresh, (e) => setError(e.message))}>
-                        {t("remove")}
-                      </ConfirmButton>
-                    )}
-                  </span>
-                </li>
-              ))}
-            </ul>
+            <MemberList
+              members={org.members}
+              myUserId={myUserId}
+              manage={manage}
+              onRemove={(m: Member) => platform.removeMember(orgId, m.user_id).then(refresh, (e) => setError(e.message))}
+              onResend={(m: Member) => send(m.email ?? "", m.role, true)}
+            />
           </div>
-          {manage ? <InviteForm orgId={orgId} canMakeOwner={role === "owner"} onInvited={refresh} /> : <p className="text-sm text-muted">{t("readOnly")}</p>}
+          {manage ? <InviteForm canMakeOwner={role === "owner"} send={send} note={note} /> : <p className="text-sm text-muted">{t("readOnly")}</p>}
         </div>
       </Panel>
       <KeysPanel orgId={orgId} keys={keys} manage={manage} onChange={refresh} />
@@ -152,24 +170,25 @@ function TeamPanels({ orgId, role, myUserId }: { orgId: string; role: Role; myUs
   );
 }
 
-function InviteForm({ orgId, canMakeOwner, onInvited }: { orgId: string; canMakeOwner: boolean; onInvited: () => void }) {
+function InviteForm({ canMakeOwner, send, note }: {
+  canMakeOwner: boolean;
+  send: (email: string, role: Role, again?: boolean) => Promise<boolean>;
+  note: InviteNote | null;
+}) {
   const t = useTranslations("settings");
   const auth = useTranslations("auth");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<Role>("member");
-  const [note, setNote] = useState<{ ok: boolean; text: string } | null>(null);
+  const [badEmail, setBadEmail] = useState(false);
+  const [busy, setBusy] = useState(false);
   async function submit(event: React.FormEvent) {
     event.preventDefault();
     const value = email.trim();
-    if (!looksLikeEmail(value)) return setNote({ ok: false, text: auth("badEmail") });
-    try {
-      await platform.invite(orgId, value, role);
-      setNote({ ok: true, text: t("invited", { email: value }) });
-      setEmail("");
-      onInvited();
-    } catch (e) {
-      setNote({ ok: false, text: (e as Error).message });
-    }
+    setBadEmail(!looksLikeEmail(value));
+    if (!looksLikeEmail(value)) return;
+    setBusy(true);
+    if (await send(value, role)) setEmail("");
+    setBusy(false);
   }
   return (
     <form onSubmit={submit} className="space-y-3">
@@ -187,9 +206,27 @@ function InviteForm({ orgId, canMakeOwner, onInvited }: { orgId: string; canMake
             {canMakeOwner && <option value="owner">{t("roles.owner")}</option>}
           </select>
         </label>
-        <button type="submit" className={buttonStyles("secondary", "md")}>{t("sendInvite")}</button>
+        <button type="submit" className={buttonStyles("secondary", "md")} disabled={busy}>{busy ? t("sending") : t("sendInvite")}</button>
       </div>
-      {note && (note.ok ? <p className="text-sm text-ink-2" role="status">{note.text}</p> : <ErrorState title={note.text} />)}
+      {badEmail ? (
+        <ErrorState title={auth("badEmail")} />
+      ) : note?.kind === "sent" ? (
+        <p className="flex items-start gap-2 rounded-lg border border-good bg-surface-2 px-3 py-2.5 text-sm text-ink" role="status">
+          <CircleCheck className="mt-0.5 size-4 shrink-0 text-good" aria-hidden />
+          <span>{t(note.again ? "invitedAgain" : "invited", { email: note.email })}</span>
+        </p>
+      ) : note?.kind === "wait" ? (
+        <RetryNotice
+          key={note.until}
+          title={t("waitTitle", { email: note.email })}
+          detail={t("waitDetail")}
+          until={note.until}
+          againLabel={t("sendAgain")}
+          onAgain={() => void send(note.email, note.role, true)}
+        />
+      ) : note?.kind === "error" ? (
+        <ErrorState title={note.text} />
+      ) : null}
     </form>
   );
 }

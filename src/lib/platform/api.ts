@@ -13,16 +13,29 @@ export const KEY_SCOPES = ["jobs", "models.read", "models.predict"] as const;
 export type KeyScope = (typeof KEY_SCOPES)[number];
 
 export type Me = { user_id: string; email: string | null; name: string | null; orgs: { org_id: string; name: string; role: Role }[] };
-export type Org = { org_id: string; name: string; members: { user_id: string; email: string | null; role: Role }[] };
+/** `status` is "invited" until the person signs in from the invite (older Platform versions don't send it). */
+export type Member = {
+  user_id: string;
+  email: string | null;
+  role: Role;
+  status?: "joined" | "invited";
+  invited_at?: string | null;
+  joined_at?: string | null;
+};
+export type Org = { org_id: string; name: string; members: Member[] };
 export type ApiKey = { key_id: string; name: string; mode: KeyMode; prefix: string; scopes: KeyScope[]; created_at: string; last_used_at: string | null };
 export type NewApiKey = ApiKey & { secret: string };
 
-/** A refused request, with the API's own error code (e.g. SIGN_IN_REQUIRED) and its readable detail. */
+/**
+ * A refused request, with the API's own error code (e.g. SIGN_IN_REQUIRED) and its readable detail. A rate limit
+ * (TOO_MANY_LINKS, TOO_MANY_INVITES) also says how many seconds to wait, in `retryAfter`.
+ */
 export class PlatformError extends Error {
   constructor(
     readonly status: number,
     readonly code: string,
     message: string,
+    readonly retryAfter: number | null = null,
   ) {
     super(message);
   }
@@ -48,7 +61,8 @@ async function call<T>(method: "GET" | "POST" | "DELETE", path: string, body?: u
   if (!response.ok) {
     const code = typeof data?.error === "string" ? data.error : `HTTP_${response.status}`;
     const detail = typeof data?.detail === "string" ? data.detail : "Something went wrong. Try again.";
-    throw new PlatformError(response.status, code, detail);
+    const retryAfter = typeof data?.retry_after === "number" && data.retry_after > 0 ? data.retry_after : null;
+    throw new PlatformError(response.status, code, detail, retryAfter);
   }
   return data as T;
 }
