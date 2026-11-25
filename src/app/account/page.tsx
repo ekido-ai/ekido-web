@@ -65,22 +65,29 @@ function SignedIn({ address, expiresAt, demo }: { address: `0x${string}`; expire
   const [wd, setWd] = useState<{ hash?: string; ok?: boolean; error?: string } | null>(null);
   const me = address.toLowerCase();
 
-  const load = useCallback(async () => {
-    setError(null);
-    try {
-      const [l, b] = await Promise.all([readLedger(), readWallet(address)]);
-      setLedger(l);
-      setBalances(b);
-    } catch (e) {
-      setError(e instanceof Error ? e.message.split("\n")[0] : "The chain couldn't be read.");
-    }
-    // The provider list is private (operator only) on a public server, so it isn't asked for (ekido-ai/ekido-internal#93).
-    if (!(await privateListsReadable())) return setCoord(null);
-    fetch(`${config.coordinatorUrl}/providers`, { signal: AbortSignal.timeout(8000) })
-      .then((r) => (r.ok ? r.json() : null))
-      .then(setCoord)
-      .catch(() => setCoord(null));
-  }, [address]);
+  // State is set only in the promise callbacks, so the first load from the effect below renders once per answer.
+  const load = useCallback(
+    () =>
+      Promise.all([readLedger(), readWallet(address)])
+        .then(
+          ([l, b]) => {
+            setError(null);
+            setLedger(l);
+            setBalances(b);
+          },
+          (e) => setError(e instanceof Error ? e.message.split("\n")[0] : "The chain couldn't be read."),
+        )
+        // The provider list is private (operator only) on a public server, so it isn't asked for (ekido-ai/ekido-internal#93).
+        .then(() => privateListsReadable())
+        .then((readable) => {
+          if (!readable) return setCoord(null);
+          fetch(`${config.coordinatorUrl}/providers`, { signal: AbortSignal.timeout(8000) })
+            .then((r) => (r.ok ? r.json() : null))
+            .then(setCoord)
+            .catch(() => setCoord(null));
+        }),
+    [address],
+  );
 
   useEffect(() => {
     void load();
@@ -135,7 +142,7 @@ function SignedIn({ address, expiresAt, demo }: { address: `0x${string}`; expire
         <span className="block text-sm">Everything below is read from Base Sepolia by your browser.</span>
       </PageHeader>
 
-      {error && <ErrorState title="Couldn't read Base Sepolia" detail={error} onRetry={load} />}
+      {error && <ErrorState title="Couldn't read Base Sepolia" detail={error} onRetry={() => { setError(null); void load(); }} />}
 
       <section className="grid gap-4 md:grid-cols-3">
         <div className="relative panel rounded-2xl border border-line p-5">

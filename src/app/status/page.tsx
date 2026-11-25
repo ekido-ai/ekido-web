@@ -57,19 +57,27 @@ async function runChecks(): Promise<Check[]> {
 
 export default function StatusPage() {
   const [checks, setChecks] = useState<Check[] | null>(null);
-  const [busy, setBusy] = useState(false);
+  // Busy from the start: the first round of checks runs as soon as the page opens.
+  const [busy, setBusy] = useState(true);
   const [at, setAt] = useState<string | null>(null);
 
-  const run = useCallback(async () => {
+  const check = useCallback(
+    () =>
+      runChecks().then((c) => {
+        setChecks(c);
+        setAt(new Date().toLocaleTimeString());
+        setBusy(false);
+      }),
+    [],
+  );
+  const run = () => {
     setBusy(true);
-    setChecks(await runChecks());
-    setAt(new Date().toLocaleTimeString());
-    setBusy(false);
-  }, []);
+    void check();
+  };
 
   useEffect(() => {
-    void run();
-  }, [run]);
+    void check();
+  }, [check]);
 
   const down = checks?.filter((c) => c.tone !== "good").length ?? 0;
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { Check, Copy, Cpu, Download, Lock, Power, ShieldCheck, Wallet } from "lucide-react";
 import { config } from "@/lib/config";
@@ -118,8 +118,17 @@ function PriceBox({ gpu, hourly, setHourly, rate, setRate, step }: {
   );
 }
 
+const noSubscribe = () => () => {};
+function guessOs(): Os {
+  return /Mac|Linux|X11/.test(navigator.userAgent) && !/Windows/.test(navigator.userAgent) ? "unix" : "windows";
+}
+
 export default function ProvidePage() {
-  const [os, setOs] = useState<Os>("windows");
+  // The OS and origin are read after hydration (the server renders Windows and the production address); a tab
+  // the person picks replaces the guess.
+  const guessedOs = useSyncExternalStore(noSubscribe, guessOs, () => "windows" as Os);
+  const [pickedOs, setOs] = useState<Os | null>(null);
+  const os = pickedOs ?? guessedOs;
   const [name, setName] = useState("My GPU");
   const [cls, setCls] = useState(GPU_CLASSES[0].id);
   const [hourly, setHourly] = useState(String(suggestedHourly(GPU_CLASSES[0])));
@@ -129,11 +138,9 @@ export default function ProvidePage() {
   const [busy, setBusy] = useState(25);
   const [sha, setSha] = useState<string | null>(null);
   const [kitBytes, setKitBytes] = useState<number | null>(null);
-  const [origin, setOrigin] = useState("https://ekido.duckdns.org");
+  const origin = useSyncExternalStore(noSubscribe, () => window.location.origin, () => "https://ekido.duckdns.org");
 
   useEffect(() => {
-    setOrigin(window.location.origin);
-    if (/Mac|Linux|X11/.test(navigator.userAgent) && !/Windows/.test(navigator.userAgent)) setOs("unix");
     fetch("/ekido-provider-kit.sha256").then((r) => (r.ok ? r.text() : null)).then((t) => setSha(t?.split(/\s+/)[0] ?? null)).catch(() => {});
     fetch(KIT, { method: "HEAD" }).then((r) => setKitBytes(Number(r.headers.get("content-length")) || null)).catch(() => {});
   }, []);
