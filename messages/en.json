@@ -1123,5 +1123,91 @@
     "callLead": "Create a key with Run models in Settings, then:",
     "timelineLabel": "Where your training is",
     "percent": "{n}% trained"
+  },
+  "preview": {
+    "tabs": {
+      "describe": "Describe",
+      "quote": "Quote",
+      "train": "Train",
+      "result": "Your model"
+    },
+    "rows": "{file} · {n} rows",
+    "assistant": "Ekido assistant",
+    "assistantReply": "Got it: a Hinglish ticket sorter. I'll keep 20 of your examples aside, unseen, to test the model before you pay.",
+    "quote": {
+      "job": "Job",
+      "jobValue": "Sort support tickets (Hinglish)",
+      "baseModel": "Base model",
+      "bar": "Quality bar",
+      "barValue": "At least 80% of your 20 test examples answered correctly; the model must also perform better than the untrained base",
+      "misses": "If it misses",
+      "missesValue": "Full refund, automatically",
+      "price": "Price",
+      "priceValue": "Fixed before you start, never per message",
+      "provisional": "Prices are provisional on the test network",
+      "approve": "Approve and start"
+    },
+    "train": {
+      "pc": "Gaming PC · Pune",
+      "pcNote": "Dropped out at step 450, checkpoint saved",
+      "laptop": "Laptop · Indore",
+      "laptopNote": "Picked up from step 450",
+      "step": "Step {step} of {total}"
+    },
+    "result": {
+      "passed": "Passed: 17 of 20 test examples correct",
+      "baseline": "The untrained model got 7 of 20. Both conditions met.",
+      "download": "Download",
+      "api": "Or call it over an API",
+      "apiKey": "with an ek_live_… key"
+    },
+    "window": "ekido · new job",
+    "example": "Preview, example data",
+    "stepsAria": "Product preview steps"
+  },
+  "relay": {
+    "caption": {
+      "pc": "A gaming PC is training your model.",
+      "dropped": "The PC went offline. Its last checkpoint is safe.",
+      "laptop": "A laptop picks up the sash and carries on from that checkpoint.",
+      "checking": "Checking the model on your own test examples…",
+      "passed": "It passed your test and beat the untrained model. Now it's yours."
+    },
+    "devices": {
+      "pc": "Gaming PC",
+      "laptop": "Laptop",
+      "phone": "Phone"
+    },
+    "notes": {
+      "offline": "Went offline",
+      "training": "Training",
+      "done": "Done",
+      "pickedUp": "Picked up the sash",
+      "ready": "Idle, ready",
+      "later": "Later: while charging"
+    },
+    "aria": "How Ekido trains a model: an illustration",
+    "job": "Your job: sort support tickets",
+    "replayAria": "Play the relay again",
+    "replay": "Replay",
+    "training": "Training",
+    "passed": "Your model passed",
+    "check": "Quality check",
+    "checkNote": "Must pass your test, and beat the untrained model. Otherwise, a full refund.",
+    "figcaption": "An illustration. The recorded run further down is the real thing."
+  },
+  "artifacts": {
+    "tickets": "Sort support tickets · Hinglish",
+    "category": "category:",
+    "invoices": "Read invoices",
+    "invoice": "Invoice",
+    "date": "Date",
+    "gstin": "GSTIN",
+    "total": "Total",
+    "questions": "Answer customer questions · Hinglish",
+    "descriptions": "Write product descriptions",
+    "reviews": "Read review sentiment · Hinglish",
+    "stars": "{n} out of 5 stars",
+    "sentiment": "sentiment:"
   }
 }
