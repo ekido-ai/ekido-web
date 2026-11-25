@@ -174,7 +174,12 @@ export default async function Landing() {
               </div>
             ))}
           </dl>
-          <p className="mt-8 text-xs text-muted">{t("metricsNote")}</p>
+          <p className="mt-8 text-xs text-muted">
+            {t("metricsNote")}{" "}
+            <Link href="/trust#measured" className="font-semibold text-ink underline underline-offset-4 hover:text-accent-text">
+              {(await getTranslations("proof"))("homeLink")}
+            </Link>
+          </p>
         </div>
       </section>
 

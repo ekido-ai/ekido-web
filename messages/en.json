@@ -58,6 +58,67 @@
     "title": "One service, in order",
     "sub": "Every job takes the same five steps, on the same devices. Each part has its own page."
   },
+  "proof": {
+    "measuredTitle": "Measured, including what failed",
+    "measuredSub": "Each line links to its raw files. The tests are synthetic sets written by us or by a model, so read them as engineering evidence, not as results on your data.",
+    "approveTitle": "Nothing big happens without you",
+    "approveSub": "What you see and approve, and what happens by rule.",
+    "raw": "Raw files",
+    "passed": "Met its bar",
+    "failed": "Missed its bar",
+    "ready": "Works on the test network",
+    "building": "Being built",
+    "homeLink": "See what passed and what didn't",
+    "rows": [
+      {
+        "name": "A device stopped in the middle of training",
+        "result": "Carried on in 65 s, 8 of 400 steps lost",
+        "note": "One recorded run on 4 Nov 2026, on a local test network."
+      },
+      {
+        "name": "Review sentiment from 30 examples",
+        "result": "0.83 against 0.80 untrained; bar 0.80",
+        "note": "Teacher-written training rows, 100 test rows reused from earlier work."
+      },
+      {
+        "name": "Invoice fields from 30 examples",
+        "result": "50 of 50 against 0 of 50 untrained; bar 0.70",
+        "note": "A highly templated test: it says nothing yet about real invoices."
+      },
+      {
+        "name": "Clinic questions from 30 examples",
+        "result": "7 of 60; bar 0.60",
+        "note": "Missed. Some of the 7 passes had wrong facts."
+      },
+      {
+        "name": "The assistant that reads your request",
+        "result": "65% valid, 30% right; bar 90%",
+        "note": "Missed, so it stays off."
+      }
+    ],
+    "steps": [
+      {
+        "title": "The price and the bar, first",
+        "body": "The quote fixes both before you pay. Neither can change afterwards.",
+        "ready": true
+      },
+      {
+        "title": "Personal details, in your browser",
+        "body": "The Prepare screen removes them and locks your file with a key only you hold.",
+        "ready": true
+      },
+      {
+        "title": "Generated examples, before training",
+        "body": "When we write more examples from yours, you look at a sample and approve, redo or reject it.",
+        "ready": false
+      },
+      {
+        "title": "A refund by rule",
+        "body": "A model that misses your bar is refunded in full, without you having to ask.",
+        "ready": true
+      }
+    ]
+  },
   "home": {
     "how": {
       "eyebrow": "How it works",
