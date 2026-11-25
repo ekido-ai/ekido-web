@@ -1,6 +1,19 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+
+const REDUCE = "(prefers-reduced-motion: reduce)";
+function subscribeMotion(cb: () => void) {
+  const mq = window.matchMedia(REDUCE);
+  const mo = new MutationObserver(cb);
+  mq.addEventListener("change", cb);
+  mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-motion"] });
+  return () => {
+    mq.removeEventListener("change", cb);
+    mo.disconnect();
+  };
+}
+const motionOff = () => window.matchMedia(REDUCE).matches || document.documentElement.dataset.motion === "off";
 
 /**
  * Counts from the last shown value to the new one, so a change in money is seen, not just noticed later.
@@ -9,10 +22,11 @@ import { useEffect, useRef, useState } from "react";
 export function AnimatedNumber({ value, format, duration = 900, className }: { value: number; format: (n: number) => string; duration?: number; className?: string }) {
   const [shown, setShown] = useState(value);
   const from = useRef(value);
+  // The server renders the final value, so there it counts as no motion.
+  const reduce = useSyncExternalStore(subscribeMotion, motionOff, () => true);
+  const still = reduce || !Number.isFinite(value);
   useEffect(() => {
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.dataset.motion === "off";
-    if (reduce || !Number.isFinite(value)) {
-      setShown(value);
+    if (still) {
       from.current = value;
       return;
     }
@@ -28,6 +42,6 @@ export function AnimatedNumber({ value, format, duration = 900, className }: { v
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [value, duration]);
-  return <span className={`tabular ${className ?? ""}`}>{format(shown)}</span>;
+  }, [value, duration, still]);
+  return <span className={`tabular ${className ?? ""}`}>{format(still ? value : shown)}</span>;
 }

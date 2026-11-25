@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import { Check } from "lucide-react";
 import { cx } from "@/components/ui/cx";
 
@@ -19,16 +19,30 @@ const STEPS = [
   { id: "paid", label: "Got your first payout" },
 ];
 
+const noSubscribe = () => () => {};
+function readSaved(): string {
+  try {
+    return localStorage.getItem(KEY) ?? "{}";
+  } catch {
+    return "{}"; // storage can be blocked
+  }
+}
+
 export function ProviderChecklist() {
-  const [done, setDone] = useState<Record<string, boolean>>({ price: true });
-  useEffect(() => {
+  // Read after hydration (the server always renders just the first step), then kept in state once ticked here.
+  const savedRaw = useSyncExternalStore(noSubscribe, readSaved, () => "{}");
+  const saved = useMemo((): Record<string, boolean> => {
     try {
-      const saved = JSON.parse(localStorage.getItem(KEY) ?? "{}") as Record<string, boolean>;
-      setDone({ ...saved, price: true });
-    } catch {}
-  }, []);
+      return { ...(JSON.parse(savedRaw) as Record<string, boolean>), price: true };
+    } catch {
+      return { price: true };
+    }
+  }, [savedRaw]);
+  const [ticked, setTicked] = useState<Record<string, boolean> | null>(null);
+  const done = ticked ?? saved;
   const toggle = (id: string) =>
-    setDone((d) => {
+    setTicked((t) => {
+      const d = t ?? saved;
       const next = { ...d, [id]: !d[id], price: true };
       try {
         localStorage.setItem(KEY, JSON.stringify(next));
