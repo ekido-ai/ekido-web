@@ -835,6 +835,7 @@
     },
     "legal": {
       "kicker": "LEGAL · UPDATED {date}",
+      "liveKicker": "LIVE · CHECKED FROM YOUR BROWSER",
       "related": "Related pages",
       "onThisPage": "On this page",
       "onThisPageKicker": "ON THIS PAGE",
