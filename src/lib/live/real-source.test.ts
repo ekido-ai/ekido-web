@@ -227,3 +227,50 @@ describe("RealLiveSource when the browser blocks the WebSocket", () => {
     source.stop();
   });
 });
+
+describe("RealLiveSource for a signed-out visitor (ekido-ai/ekido-internal#93)", () => {
+  let calls: string[];
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.stubGlobal("WebSocket", DeadSocket);
+    calls = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) => {
+        const path = new URL(url).pathname;
+        calls.push(path);
+        if (path === "/providers") return new Response(JSON.stringify([provider("aaaa", "Provider A")]), { status: 200 });
+        const body = path === "/jobs" ? [{ job_id: job }] : path.endsWith("/timeline") ? [event] : {};
+        return new Response(JSON.stringify(body), { status: 200 });
+      }),
+    );
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+  });
+
+  it("never asks for the provider list, and still follows the job", async () => {
+    const source = new RealLiveSource("http://127.0.0.1:8000");
+    source.setProvidersReadable(false);
+    source.start();
+    await vi.advanceTimersByTimeAsync(30_000);
+    expect(calls).not.toContain("/providers");
+    expect(calls).toContain("/jobs");
+    expect(source.getSnapshot().state.jobId).toBe(job);
+    expect(source.getSnapshot().connection).toBe("live");
+    source.stop();
+  });
+
+  it("asks again once the visitor signs in", async () => {
+    const source = new RealLiveSource("http://127.0.0.1:8000");
+    source.setProvidersReadable(false);
+    source.start();
+    await vi.advanceTimersByTimeAsync(5_000);
+    expect(calls).not.toContain("/providers");
+    source.setProvidersReadable(true);
+    await vi.advanceTimersByTimeAsync(5_000);
+    expect(calls).toContain("/providers");
+    source.stop();
+  });
+});

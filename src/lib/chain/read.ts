@@ -132,7 +132,12 @@ function toEvent(log: Decoded): EscrowEvent | { kind: "verifiers"; verifiers: He
 
 /** Reads the escrow's whole history and present state straight from Base Sepolia. Nothing comes from the coordinator. */
 /** Index first; if anything fails to reconcile with the contracts' own totals, scan the chain instead. */
-export async function readLedger(onProgress?: (done: number, total: number) => void): Promise<Ledger> {
+/**
+ * `useIndex: false` skips our coordinator's log index and reads the chain only. A public server keeps the index
+ * private, so a signed-out visitor would get a 401 there first (ekido-ai/ekido-internal#93).
+ */
+export async function readLedger(onProgress?: (done: number, total: number) => void, { useIndex = true }: { useIndex?: boolean } = {}): Promise<Ledger> {
+  if (!useIndex) return readLedgerFrom("chain", onProgress);
   try {
     const fast = await readLedgerFrom("index", onProgress);
     if (fast.checks.every((c) => c.passed)) return fast;

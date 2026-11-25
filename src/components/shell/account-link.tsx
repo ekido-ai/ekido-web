@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { cx } from "@/components/ui/cx";
-import { platform } from "@/lib/platform/api";
+import { currentAccount } from "@/lib/platform/signed-in";
 
 /**
  * The header's account control. Signed in (the 30-day session cookie is valid), it shows the email and leads to
@@ -16,10 +16,9 @@ export function AccountLink({ path, hideOnPhone = false }: { path: string; hideO
 
   useEffect(() => {
     let live = true;
-    platform
-      .me()
-      .then((me) => live && setEmail(me.email ?? ""))
-      .catch(() => live && setEmail(null));
+    // Asks /v1/me only if this browser has signed in (the account note), so a signed-out visitor's pages don't
+    // each log a 401 (ekido-ai/ekido-internal#93).
+    void currentAccount().then((me) => live && setEmail(me ? (me.email ?? "") : null));
     return () => {
       live = false;
     };

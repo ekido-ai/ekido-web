@@ -54,6 +54,8 @@ export class RealLiveSource {
   private rebuildTimer: ReturnType<typeof setTimeout> | null = null;
   /** The server keeps its provider list private: don't ask again before this time. */
   private providersQuietUntil = 0;
+  /** The page turns this off for a signed-out visitor on a public server, before start() (ekido-ai/ekido-internal#93). */
+  private providersReadable = true;
   /** The server answered 429: send nothing before this time. */
   private pausedUntil = 0;
 
@@ -101,6 +103,14 @@ export class RealLiveSource {
     void this.poll();
   }
 
+  /** Whether to ask for the provider list at all. A signed-out visitor on a public server would only get a 401. */
+  setProvidersReadable(readable: boolean): void {
+    if (readable === this.providersReadable) return;
+    this.providersReadable = readable;
+    this.providersQuietUntil = 0;
+    if (!readable) this.providers = [];
+  }
+
   selectJob(jobId: string): void {
     this.selectedJob = jobId;
     if (this.jobId && this.jobId !== jobId) {
@@ -140,7 +150,9 @@ export class RealLiveSource {
       // A public server keeps its provider list private (401/403): carry on with the jobs, which name providers
       // only by label. Any other failure still counts as the coordinator being unreachable.
       // It is asked again only every few minutes, so a private list costs one request, not one per poll.
-      const providersRequest = Date.now() < this.providersQuietUntil
+      const providersRequest = !this.providersReadable
+        ? Promise.resolve([] as RealProvider[])
+        : Date.now() < this.providersQuietUntil
         ? Promise.resolve(this.providers)
         : this.json<RealProvider[]>("/providers").catch((error: unknown) => {
             if (error instanceof Error && /^HTTP (401|403) /.test(error.message)) {

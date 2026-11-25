@@ -52,6 +52,7 @@ export default function PrivacyPage() {
           <li><code>ekido.theme</code>: light or dark.</li>
           <li><code>ekido.source</code>: whether the dashboard shows the live run or the recording.</li>
           <li><code>ekido.session</code>, only if you sign in, and only in that tab: your wallet address and the sign-in message your wallet signed. Signing out or closing the tab removes it.</li>
+          <li><code>ekido.account</code>, only after you sign in to an Ekido account: a note that this browser has an Ekido account signed in, so pages know to load account-only data. It holds no name, email or token, and signing out removes it.</li>
           <li><code>ekido.provider-progress</code>: which provider setup steps you ticked on the Providers page.</li>
           <li><code>ekido.notice</code>: that you&apos;ve seen the storage notice, so it doesn&apos;t show again.</li>
         </ul>

@@ -1,4 +1,5 @@
-import { config } from "@/lib/config";
+import { config } from "../config";
+import { forgetAccount, rememberAccount } from "./account-hint";
 
 /*
  * The Platform API's account routes (ekido-platform, /v1). The site and the API share a host (Caddy forwards
@@ -52,11 +53,21 @@ async function call<T>(method: "GET" | "POST" | "DELETE", path: string, body?: u
   return data as T;
 }
 
+/** Keeps the account note (account-hint.ts) in step with what `/v1/me` and sign-in answer. */
+function signedIn(me: Me): Me {
+  rememberAccount();
+  return me;
+}
+function signedOutOn401(error: unknown): never {
+  if (error instanceof PlatformError && error.status === 401) forgetAccount();
+  throw error;
+}
+
 export const platform = {
   startEmailSignIn: (email: string) => call<{ sent: boolean }>("POST", "/auth/email/start", { email }),
-  verifyEmailSignIn: (token: string) => call<Me>("POST", "/auth/email/verify", { token }),
-  signOut: () => call<void>("POST", "/auth/logout"),
-  me: () => call<Me>("GET", "/me"),
+  verifyEmailSignIn: (token: string) => call<Me>("POST", "/auth/email/verify", { token }).then(signedIn),
+  signOut: () => call<void>("POST", "/auth/logout").finally(forgetAccount),
+  me: () => call<Me>("GET", "/me").then(signedIn, signedOutOn401),
   createOrg: (name: string) => call<Org>("POST", "/orgs", { name }),
   org: (orgId: string) => call<Org>("GET", `/orgs/${encodeURIComponent(orgId)}`),
   invite: (orgId: string, email: string, role: Role) => call<{ user_id: string; invited: boolean }>("POST", `/orgs/${encodeURIComponent(orgId)}/members`, { email, role }),
