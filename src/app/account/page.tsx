@@ -11,7 +11,7 @@ import { ErrorState } from "@/components/ui/states";
 import { WalletButton, useSession } from "@/components/wallet/wallet-button";
 import { BASE_SEPOLIA, STATES, readLedger, readWallet, withdrawFromEscrow, type Ledger } from "@/lib/chain/read";
 import { journalCsv, owed, short, usdc, wallet as walletAccount } from "@/lib/chain/ledger";
-import { compareListings, type CoordinatorProvider } from "@/lib/chain/registry";
+import { compareListings, isProvider, type CoordinatorProvider } from "@/lib/chain/registry";
 import { injectedProvider, friendlyError } from "@/lib/wallet/escrow";
 import { viewAs } from "@/lib/wallet/session";
 import { config } from "@/lib/config";
@@ -171,7 +171,7 @@ function SignedIn({ address, expiresAt, demo }: { address: `0x${string}`; expire
         <Panel title="As a provider" subtitle="Your listing, and the jobs that paid you">
           {!mine ? (
             <p className="text-ink-2">Reading…</p>
-          ) : mine.coordRow || mine.listing ? (
+          ) : isProvider({ coordRow: mine.coordRow, listing: mine.listing, paidJobs: mine.paidTo.length }) ? (
             <div className="space-y-3 text-sm">
               {mine.coordRow && (
                 <p className="text-ink">
