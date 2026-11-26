@@ -1779,5 +1779,83 @@
       "noProvidersTitle": "No providers online",
       "noProviders": "Start an agent, or play the replay to see the sample network."
     }
+  },
+  "newJob": {
+    "title": "New job",
+    "kicker": "NEW JOB",
+    "unavailableLead": "Create and fund a signed job on Base Sepolia.",
+    "unavailableTitle": "Funding is unavailable",
+    "unavailable": "This deployment needs a Base Sepolia coordinator and trusted escrow configuration before it can accept signed jobs.",
+    "lead": "Review your signed terms, fund the escrow with test USDC, and start the job.",
+    "somethingWrong": "Something went wrong. Try again.",
+    "healthFailed": "The coordinator health check failed.",
+    "notConfigured": "The coordinator is not configured for signed jobs on this escrow and network.",
+    "unexpected": "Unexpected response from the coordinator.",
+    "providerNotReady": "The job is funded. A provider matching the signed terms must be online and ready before it can start.",
+    "importTitle": "1. Import signed terms",
+    "importLead": "Paste the job request containing the workload, quality policy, signed provider quotes and client binding. Keep wallet keys in your wallet or on your own machine.",
+    "upload": "Upload the job file",
+    "checkedHere": "The file is checked here in your browser. Or paste its text below.",
+    "json": "Signed job request JSON",
+    "verify": "Verify signed terms",
+    "summary": "Job {id} · {budget} test USDC · {seconds} s requested",
+    "client": "Client {address}",
+    "token": "Coordinator operator token",
+    "tokenNote": "Kept in this browser tab only, so you paste it once per visit.",
+    "register": "Register signed job",
+    "fundTitle": "2. Fund the registered job",
+    "startTitle": "3. Start training",
+    "autoStart": "Start by itself next time the escrow is verified",
+    "starting": "Starting…",
+    "start": "Start training",
+    "checking": "Checking…",
+    "fund": {
+      "steps": {
+        "connect": {
+          "title": "Connect wallet",
+          "button": "Connect"
+        },
+        "network": {
+          "title": "Switch to {chain}",
+          "button": "Switch"
+        },
+        "approve": {
+          "title": "Allow the escrow to take exactly the budget ({budget} USDC)",
+          "button": "Allow"
+        },
+        "create": {
+          "title": "Lock the budget in escrow",
+          "button": "Lock"
+        }
+      },
+      "notNeeded": "Not needed: the escrow already holds this job",
+      "verifiedFromChain": "Existing escrow verified from the chain",
+      "verified": "Existing escrow verified",
+      "wrongWallet": "Select the wallet that signed this job and try again.",
+      "allowanceCovers": "Allowance already covers the budget",
+      "approvalReverted": "The approval transaction reverted",
+      "createReverted": "createJob reverted. Check the escrow and your USDC balance",
+      "notConfirmed": "The escrow did not confirm the job.",
+      "checkingWallet": "Checking for a wallet…",
+      "noWallet": "No browser wallet found. Install a wallet extension to fund the job.",
+      "connectFirst": "Connect first",
+      "noEscrowEnv": "Escrow contract isn't deployed yet (set NEXT_PUBLIC_ESCROW_ADDRESS)",
+      "noEscrow": "Escrow contract isn't deployed yet",
+      "switchFirst": "Switch network first",
+      "approveFirst": "Approve first",
+      "budget": "Budget",
+      "budgetValue": "{budget} test USDC",
+      "duration": "Requested funding duration",
+      "seconds": "{n} s",
+      "escrow": "Escrow contract",
+      "notDeployed": "not deployed yet",
+      "jobId": "Job id (on-chain)",
+      "specHash": "Spec hash",
+      "policyHash": "Policy hash",
+      "dispute": "Dispute window",
+      "localDemo": " (local demo)",
+      "checkWallet": "Check your wallet…",
+      "tryAgain": "Try again"
+    }
   }
 }
