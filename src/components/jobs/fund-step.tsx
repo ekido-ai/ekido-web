@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import type { EIP1193Provider } from "viem";
 import { config } from "@/lib/config";
 import type { PreparedSignedRequest } from "@/lib/jobs/signed-request";
@@ -26,17 +27,14 @@ import { cx } from "@/components/ui/cx";
 type StepKey = "connect" | "network" | "approve" | "create";
 type StepState = { status: "todo" | "busy" | "done" | "error" | "blocked"; note?: string; tx?: { hash: string; status: "pending" | "confirmed" | "failed" } };
 
-const titles: Record<StepKey, string> = {
-  connect: "Connect wallet",
-  network: `Switch to ${chain.name}`,
-  approve: "Allow the escrow to take exactly the budget",
-  create: "Lock the budget in escrow",
-};
+// Each step's title and button are in messages (newJob.fund.steps.<step>); the button has its own word rather than
+// the title's first word, which only works in English.
 
 const toneOf: Record<StepState["status"], Tone> = { todo: "idle", busy: "active", done: "good", error: "critical", blocked: "warning" };
 
 /** Step 2: fund the escrow from the client's own wallet. Every signature happens in the wallet. */
 export function FundStep({ prepared, onFunded }: { prepared: PreparedSignedRequest; onFunded: () => void }) {
+  const t = useTranslations("newJob.fund");
   const [eth, setEth] = useState<EIP1193Provider | null>(null);
   const [checked, setChecked] = useState(false);
   const [account, setAccount] = useState<`0x${string}` | null>(null);
@@ -64,10 +62,10 @@ export function FundStep({ prepared, onFunded }: { prepared: PreparedSignedReque
     void inspectFundedEscrow(prepared)
       .then((funded) => {
         if (!alive || !funded) return;
-        patch("connect", { status: "done", note: "Not needed: the escrow already holds this job" });
+        patch("connect", { status: "done", note: t("notNeeded") });
         patch("network", { status: "done" });
         patch("approve", { status: "done" });
-        patch("create", { status: "done", note: "Existing escrow verified from the chain" });
+        patch("create", { status: "done", note: t("verifiedFromChain") });
         onFunded();
       })
       .catch(() => {});
@@ -93,7 +91,7 @@ export function FundStep({ prepared, onFunded }: { prepared: PreparedSignedReque
       run("connect", async () => {
         const a = await connect(eth!);
         if (a.toLowerCase() !== prepared.body.client_address.toLowerCase()) {
-          throw new Error("Select the wallet that signed this job and try again.");
+          throw new Error(t("wrongWallet"));
         }
         setAccount(a);
         return { status: "done", note: `${a.slice(0, 6)}…${a.slice(-4)}` };
@@ -102,7 +100,7 @@ export function FundStep({ prepared, onFunded }: { prepared: PreparedSignedReque
       await ensureChain(eth!);
       if ((await inspectFunding(eth!, prepared)).funded) {
         patch("approve", { status: "done" });
-        patch("create", { status: "done", note: "Existing escrow verified" });
+        patch("create", { status: "done", note: t("verified") });
         onFunded();
       }
     }),
@@ -110,17 +108,17 @@ export function FundStep({ prepared, onFunded }: { prepared: PreparedSignedReque
       run("approve", async () => {
         const current = await inspectFunding(eth!, prepared);
         if (current.funded) {
-          patch("create", { status: "done", note: "Existing escrow verified" });
+          patch("create", { status: "done", note: t("verified") });
           onFunded();
           return;
         }
         const pending = steps.approve.tx;
         const hash = pending?.status === "pending" ? pending.hash as `0x${string}` :
           await approveIfNeeded(eth!, current.account, current.escrow, current.amount);
-        if (!hash) return { status: "done", note: "Allowance already covers the budget" };
+        if (!hash) return { status: "done", note: t("allowanceCovers") };
         patch("approve", { status: "busy", tx: { hash, status: "pending" } });
         const r = await waitForTx(hash);
-        if (r !== "success") return { status: "error", note: "The approval transaction reverted", tx: { hash, status: "failed" } };
+        if (r !== "success") return { status: "error", note: t("approvalReverted"), tx: { hash, status: "failed" } };
         return { status: "done", tx: { hash, status: "confirmed" } };
       }),
     create: () =>
@@ -128,7 +126,7 @@ export function FundStep({ prepared, onFunded }: { prepared: PreparedSignedReque
         const current = await inspectFunding(eth!, prepared);
         if (current.funded) {
           onFunded();
-          return { status: "done", note: "Existing escrow verified" };
+          return { status: "done", note: t("verified") };
         }
         const pending = steps.create.tx;
         const hash = pending?.status === "pending" ? pending.hash as `0x${string}` :
@@ -141,8 +139,8 @@ export function FundStep({ prepared, onFunded }: { prepared: PreparedSignedReque
         });
         patch("create", { status: "busy", tx: { hash, status: "pending" } });
         const r = await waitForTx(hash);
-        if (r !== "success") return { status: "error", note: "createJob reverted. Check the escrow and your USDC balance", tx: { hash, status: "failed" } };
-        if (!(await inspectFunding(eth!, prepared)).funded) throw new Error("The escrow did not confirm the job.");
+        if (r !== "success") return { status: "error", note: t("createReverted"), tx: { hash, status: "failed" } };
+        if (!(await inspectFunding(eth!, prepared)).funded) throw new Error(t("notConfirmed"));
         onFunded();
         return { status: "done", tx: { hash, status: "confirmed" } };
       }),
@@ -150,13 +148,13 @@ export function FundStep({ prepared, onFunded }: { prepared: PreparedSignedReque
 
   // What blocks each step, if anything. Shown instead of a dead button.
   const blocker: Record<StepKey, string | null> = {
-    connect: !checked ? "Checking for a wallet…" : !eth ? "No browser wallet found. Install a wallet extension to fund the job." : null,
-    network: !account ? "Connect first" : null,
-    approve: !escrow ? "Escrow contract isn't deployed yet (set NEXT_PUBLIC_ESCROW_ADDRESS)" : steps.network.status !== "done" ? "Switch network first" : null,
+    connect: !checked ? t("checkingWallet") : !eth ? t("noWallet") : null,
+    network: !account ? t("connectFirst") : null,
+    approve: !escrow ? t("noEscrowEnv") : steps.network.status !== "done" ? t("switchFirst") : null,
     create: !escrow
-        ? "Escrow contract isn't deployed yet"
+        ? t("noEscrow")
         : steps.approve.status !== "done"
-          ? "Approve first"
+          ? t("approveFirst")
           : null,
   };
   const order: StepKey[] = ["connect", "network", "approve", "create"];
@@ -165,20 +163,20 @@ export function FundStep({ prepared, onFunded }: { prepared: PreparedSignedReque
   return (
     <div className="space-y-5">
       <dl className="grid gap-x-4 gap-y-1 rounded-lg bg-surface-2 p-4 text-sm sm:grid-cols-[auto_1fr]">
-        <dt className="text-muted">Budget</dt>
-        <dd className="tabular text-ink">{budget} test USDC</dd>
-        <dt className="text-muted">Requested funding duration</dt>
-        <dd className="tabular text-ink">{prepared.body.deadline_seconds} s</dd>
-        <dt className="text-muted">Escrow contract</dt>
-        <dd className="break-all font-mono text-ink">{escrow ?? <span className="italic text-muted">not deployed yet</span>}</dd>
-        <dt className="text-muted">Job id (on-chain)</dt>
+        <dt className="text-muted">{t("budget")}</dt>
+        <dd className="tabular text-ink">{t("budgetValue", { budget: String(budget) })}</dd>
+        <dt className="text-muted">{t("duration")}</dt>
+        <dd className="tabular text-ink">{t("seconds", { n: String(prepared.body.deadline_seconds) })}</dd>
+        <dt className="text-muted">{t("escrow")}</dt>
+        <dd className="break-all font-mono text-ink">{escrow ?? <span className="italic text-muted">{t("notDeployed")}</span>}</dd>
+        <dt className="text-muted">{t("jobId")}</dt>
         <dd className="break-all font-mono text-ink-2">{prepared.onchainId}</dd>
-        <dt className="text-muted">Spec hash</dt>
+        <dt className="text-muted">{t("specHash")}</dt>
         <dd className="break-all font-mono text-ink-2">{prepared.specHash}</dd>
-        <dt className="text-muted">Policy hash</dt>
+        <dt className="text-muted">{t("policyHash")}</dt>
         <dd className="break-all font-mono text-ink-2">{prepared.policyHash}</dd>
-        <dt className="text-muted">Dispute window</dt>
-        <dd className="tabular text-ink">{config.disputeWindowS} s{config.localChain ? " (local demo)" : ""}</dd>
+        <dt className="text-muted">{t("dispute")}</dt>
+        <dd className="tabular text-ink">{t("seconds", { n: String(config.disputeWindowS) })}{config.localChain ? t("localDemo") : ""}</dd>
       </dl>
       {config.localChain && <TruthBadge truth="LOCAL_CHAIN" />}
 
@@ -193,13 +191,12 @@ export function FundStep({ prepared, onFunded }: { prepared: PreparedSignedReque
                 <div className="flex items-center gap-3">
                   <StatusIcon tone={block && isCurrent ? "warning" : toneOf[s.status]} />
                   <span className="font-medium text-ink">
-                    {i + 1}. {titles[k]}
-                    {k === "approve" && ` (${budget} USDC)`}
+                    {i + 1}. {t(`steps.${k}.title`, { chain: chain.name, budget: String(budget) })}
                   </span>
                 </div>
                 {isCurrent && !block && (
                   <Button variant="primary" onClick={actions[k]} disabled={s.status === "busy"}>
-                    {s.status === "busy" ? "Check your wallet…" : s.status === "error" ? "Try again" : titles[k].split(" ")[0]}
+                    {s.status === "busy" ? t("checkWallet") : s.status === "error" ? t("tryAgain") : t(`steps.${k}.button`)}
                   </Button>
                 )}
               </div>

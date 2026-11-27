@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { FundStep } from "@/components/jobs/fund-step";
 import { PageHeader } from "@/components/shell/page-header";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,7 @@ import { post } from "@/lib/live/api";
 const noSubscribe = () => () => {};
 
 export default function NewJobPage() {
+  const t = useTranslations("newJob");
   const router = useRouter();
   const { followJob } = useSourceControl();
   const [text, setText] = useState("");
@@ -44,7 +46,7 @@ export default function NewJobPage() {
     try {
       await action();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Something went wrong. Try again.");
+      setError(e instanceof Error ? e.message : t("somethingWrong"));
     } finally {
       setBusy(false);
     }
@@ -56,12 +58,12 @@ export default function NewJobPage() {
       cache: "no-store",
       redirect: "error",
     });
-    if (!response.ok) throw new Error("The coordinator health check failed.");
+    if (!response.ok) throw new Error(t("healthFailed"));
     const health = await response.json();
     if (health.signed_jobs !== true || health.chain_id !== config.chainId ||
         typeof health.escrow_address !== "string" ||
         health.escrow_address.toLowerCase() !== config.escrowAddress?.toLowerCase()) {
-      throw new Error("The coordinator is not configured for signed jobs on this escrow and network.");
+      throw new Error(t("notConfigured"));
     }
     const result = await post("/jobs", request.body, "signed-" + request.body.job_id, { token: token.trim() });
     if (!result.ok) throw new Error(result.error);
@@ -99,8 +101,8 @@ export default function NewJobPage() {
       { token: token.trim(), timeoutMs: 180000 },
     );
     if (!result.ok) throw new Error(result.error);
-    if (result.data.job_id !== id || !result.data.state) throw new Error("Unexpected response from the coordinator.");
-    if (result.data.state === "OPEN") throw new Error("The job is funded. A provider matching the signed terms must be online and ready before it can start.");
+    if (result.data.job_id !== id || !result.data.state) throw new Error(t("unexpected"));
+    if (result.data.state === "OPEN") throw new Error(t("providerNotReady"));
     followJob(id);
     router.push("/dashboard?source=live&job=" + encodeURIComponent(id));
   }
@@ -108,9 +110,9 @@ export default function NewJobPage() {
   if (!config.signedJobs || config.chainId !== 84532 || !config.escrowAddress || !config.coordinatorUrl.startsWith("https://")) {
     return (
       <div className="space-y-6">
-        <PageHeader title="New job" kicker="NEW JOB">Create and fund a signed job on Base Sepolia.</PageHeader>
-        <Panel title="Funding is unavailable">
-          <p className="text-sm text-ink-2">This deployment needs a Base Sepolia coordinator and trusted escrow configuration before it can accept signed jobs.</p>
+        <PageHeader title={t("title")} kicker={t("kicker")}>{t("unavailableLead")}</PageHeader>
+        <Panel title={t("unavailableTitle")}>
+          <p className="text-sm text-ink-2">{t("unavailable")}</p>
         </Panel>
       </div>
     );
@@ -118,64 +120,63 @@ export default function NewJobPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="New job" kicker="NEW JOB">Review your signed terms, fund the escrow with test USDC, and start the job.</PageHeader>
+      <PageHeader title={t("title")} kicker={t("kicker")}>{t("lead")}</PageHeader>
       {!registered && (
-        <Panel title="1. Import signed terms">
+        <Panel title={t("importTitle")}>
           <div className="space-y-4">
             <p className="text-sm text-ink-2">
-              Paste the job request containing the workload, quality policy, signed provider quotes and client binding.
-              Keep wallet keys in your wallet or on your own machine.
+              {t("importLead")}
             </p>
             <label className="block text-sm text-ink">
-              Upload the job file
+              {t("upload")}
               <input type="file" accept="application/json,.json" disabled={busy}
                 className="mt-2 block w-full rounded-md border border-line bg-surface-2 p-2 text-sm"
                 onChange={(event) => { void onFile(event.target.files?.[0]); event.target.value = ""; }} />
             </label>
-            <p className="text-xs text-ink-2">The file is checked here in your browser. Or paste its text below.</p>
+            <p className="text-xs text-ink-2">{t("checkedHere")}</p>
             <label className="block text-sm text-ink">
-              Signed job request JSON
+              {t("json")}
               <textarea ref={textField} className="mt-2 block min-h-36 w-full rounded-md border border-line bg-surface-2 p-3 font-mono"
                 value={text} maxLength={250000} disabled={busy} spellCheck={false}
                 onChange={(event) => { setText(event.target.value); setPrepared(null); setError(""); }} />
             </label>
             <Button disabled={busy || !text.trim()} onClick={() => void run(async () => {
               setPrepared(await prepareSignedRequest(text, config.chainId, config.escrowAddress));
-            })}>Verify signed terms</Button>
+            })}>{t("verify")}</Button>
             {prepared && (
               <div className="space-y-3 rounded-md border border-line p-4">
-                <p className="break-all text-sm text-ink">Job {prepared.body.job_id} · {prepared.body.budget_usdc} test USDC · {prepared.body.deadline_seconds} s requested</p>
-                <p className="break-all text-sm text-ink-2">Client {prepared.body.client_address}</p>
+                <p className="break-all text-sm text-ink">{t("summary", { id: prepared.body.job_id, budget: String(prepared.body.budget_usdc), seconds: String(prepared.body.deadline_seconds) })}</p>
+                <p className="break-all text-sm text-ink-2">{t("client", { address: prepared.body.client_address })}</p>
                 <label className="block text-sm text-ink">
-                  Coordinator operator token
+                  {t("token")}
                   <input type="password" autoComplete="off" className="mt-2 block w-full rounded-md border border-line bg-surface-2 p-2"
                     value={token} disabled={busy} onChange={(event) => setToken(event.target.value)} />
                 </label>
-                <p className="text-xs text-ink-2">Kept in this browser tab only, so you paste it once per visit.</p>
-                <Button disabled={busy || !token.trim()} onClick={() => void run(() => register(prepared))}>Register signed job</Button>
+                <p className="text-xs text-ink-2">{t("tokenNote")}</p>
+                <Button disabled={busy || !token.trim()} onClick={() => void run(() => register(prepared))}>{t("register")}</Button>
               </div>
             )}
           </div>
         </Panel>
       )}
       {registered && prepared && (
-        <Panel title="2. Fund the registered job">
+        <Panel title={t("fundTitle")}>
           <FundStep prepared={prepared} onFunded={() => setFunded(true)} />
         </Panel>
       )}
       {funded && prepared && (
-        <Panel title="3. Start training">
+        <Panel title={t("startTitle")}>
           <label className="mb-3 flex items-center gap-2 text-sm text-ink">
             <input type="checkbox" checked={autoStart} onChange={(event) => setAutoStart(event.target.checked)} />
-            Start by itself next time the escrow is verified
+            {t("autoStart")}
           </label>
           <Button disabled={busy} onClick={() => void run(() => start(prepared))}>
-            {busy ? "Starting…" : "Start training"}
+            {t(busy ? "starting" : "start")}
           </Button>
         </Panel>
       )}
       {error && <p role="alert" className="rounded-md border border-warning bg-surface p-4 text-sm text-ink">{error}</p>}
-      {busy && !funded && <p role="status" className="text-sm text-ink-2">Checking…</p>}
+      {busy && !funded && <p role="status" className="text-sm text-ink-2">{t("checking")}</p>}
     </div>
   );
 }
