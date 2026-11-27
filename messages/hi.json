@@ -848,6 +848,11 @@
         "security": "Security"
       },
       "contactFallback": "the Ekido team"
+    },
+    "wait": {
+      "in": "You can try again in <b>{time}</b>",
+      "inMinutes": "You can try again in {minutes, plural, one {# minute} other {# minutes}}.",
+      "ready": "Ready. You can try again now."
     }
   },
   "auth": {
@@ -871,7 +876,10 @@
     "noToken": "This page needs the link from your email. Ask for a new one.",
     "newLink": "Get a new link",
     "walletNote": "Device owners: your earnings and payouts stay under your wallet, on the Account page.",
-    "headerSignedInAs": "Signed in as {email}"
+    "headerSignedInAs": "Signed in as {email}",
+    "waitTitle": "Check your inbox first",
+    "sendAgain": "Send a new link",
+    "waitDetail": "We have sent a few sign-in links to this address in the last hour. The newest one still works for 15 minutes from when it was sent."
   },
   "settings": {
     "title": "Settings",
@@ -900,11 +908,11 @@
     "remove": "Remove",
     "confirmRemove": "Press again to remove",
     "invite": "Invite",
-    "inviteLead": "They get a sign-in link by email, and join as soon as they use it.",
+    "inviteLead": "They get an email from Ekido that names your team and you. They show as Invited until they open it.",
     "inviteEmail": "Email",
     "inviteRole": "Role",
     "sendInvite": "Send invite",
-    "invited": "Invite sent to {email}.",
+    "invited": "Invite sent to {email}. They show as Invited until they open the email.",
     "keys": "API keys",
     "keysLead": "Test keys (ek_test_) never touch real money; live keys (ek_live_) do. Give each key only the access it needs.",
     "noKeys": "No keys yet.",
@@ -937,7 +945,17 @@
     "needScope": "Pick at least one kind of access.",
     "needName": "Give the key a name.",
     "readOnly": "Only owners and admins can invite people or manage keys.",
-    "keysLabel": "API keys"
+    "keysLabel": "API keys",
+    "invitedAgain": "Sent a fresh invite to {email}. The old link still works until it expires.",
+    "sending": "Sending…",
+    "invitedBadge": "Invited",
+    "invitedSince": "Invite sent {when}",
+    "resend": "Resend",
+    "resending": "Sending…",
+    "cancelInvite": "Cancel invite",
+    "waitTitle": "A short pause for {email}",
+    "sendAgain": "Send the invite again",
+    "waitDetail": "They have had a few emails from us in the last hour, so we are pausing for a bit to keep their inbox calm. Your earlier invite still works until it expires."
   },
   "admin": {
     "title": "Admin",
