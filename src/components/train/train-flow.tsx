@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { AssistantBox } from "@/components/train/assistant-box";
 import { Button } from "@/components/ui/button";
 import { buttonStyles } from "@/components/ui/button-styles";
 import { cx } from "@/components/ui/cx";
@@ -195,6 +196,18 @@ export function TrainFlow() {
         ))}
       </ol>
       {error && <ErrorState title={t("errorTitle")} detail={error} />}
+
+      {step === "recipe" && org && (
+        <AssistantBox
+          orgId={org.org_id}
+          recipes={recipes}
+          onPick={(r) => {
+            setRecipe(r);
+            setRows(null);
+            setStep("file");
+          }}
+        />
+      )}
 
       {step === "recipe" && (
         <Panel title={t("recipeTitle")} subtitle={t("recipeLead")}>

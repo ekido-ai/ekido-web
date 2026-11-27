@@ -1110,6 +1110,23 @@
     "teamLead": "Models, keys and invoices belong to a team.",
     "teamButton": "Go to settings",
     "stepsLabel": "Steps",
+    "assistantTitle": "Describe the job",
+    "assistantLead": "Say in your own words what you want, for example \"sort my customer messages into complaints, orders and questions\". The assistant suggests one of the recipes below. You still upload your examples, see the price and pay as usual.",
+    "assistantPlaceholder": "What should your model do?",
+    "assistantSend": "Ask the assistant",
+    "assistantSending": "Thinking",
+    "assistantPrivacy": "Don't type personal details. Your message is not saved.",
+    "assistantUse": "Use \"{recipe}\"",
+    "assistantClosest": "See the closest: \"{recipe}\"",
+    "assistantLabels": "Categories it will use:",
+    "assistantNotOn": "The assistant isn't switched on for your team yet. Pick a recipe below.",
+    "assistantNotice": {
+      "unavailable": "The assistant could not safely answer this. Pick a recipe below, or try again.",
+      "busy": "The assistant is busy. Try again in a moment.",
+      "rate": "Too many messages for now. Try again in a few minutes.",
+      "offline": "Couldn't reach Ekido. Check your connection and try again.",
+      "other": "Something went wrong. Try again, or pick a recipe below."
+    },
     "step": {
       "recipe": "Pick a task",
       "file": "Your examples",
