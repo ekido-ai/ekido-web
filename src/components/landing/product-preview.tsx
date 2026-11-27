@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { BadgeCheck, Boxes, FileText, Gamepad2, Laptop, MessageSquare, Paperclip, Receipt, Sparkles } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cx } from "@/components/ui/cx";
 
 /*
@@ -10,40 +11,43 @@ import { cx } from "@/components/ui/cx";
  * the quote's real wording (ekido-core quotes.py); the scores and names are examples, and the window says so.
  */
 
+// Tab labels are in messages (preview.tabs.<key>).
 const TABS = [
-  { key: "describe", label: "Describe", icon: MessageSquare },
-  { key: "quote", label: "Quote", icon: Receipt },
-  { key: "train", label: "Train", icon: Boxes },
-  { key: "result", label: "Your model", icon: BadgeCheck },
+  { key: "describe", icon: MessageSquare },
+  { key: "quote", icon: Receipt },
+  { key: "train", icon: Boxes },
+  { key: "result", icon: BadgeCheck },
 ] as const;
 type Tab = (typeof TABS)[number]["key"];
 
 export function Describe() {
+  const t = useTranslations("preview");
   return (
     <div className="space-y-3">
       <div className="max-w-[88%] rounded-2xl rounded-bl-md bg-surface-2 px-4 py-3 text-[15px] text-ink">
         Mere support tickets sort karne hain: complaint, order, refund, question. 48 examples bhej raha hoon.
         <div className="mt-2.5 inline-flex items-center gap-1.5 rounded-lg border border-line bg-surface px-2.5 py-1 text-xs text-ink-2">
-          <Paperclip className="size-3.5" aria-hidden /> tickets.csv · 48 rows
+          <Paperclip className="size-3.5" aria-hidden /> {t("rows", { file: "tickets.csv", n: 48 })}
         </div>
       </div>
       <div className="ml-auto max-w-[88%] rounded-2xl rounded-br-md bg-action px-4 py-3 text-[15px] text-action-ink">
         <span className="mb-1 flex items-center gap-1.5 text-xs font-semibold text-[#ff9a66]">
-          <Sparkles className="size-3.5" aria-hidden /> Ekido assistant
+          <Sparkles className="size-3.5" aria-hidden /> {t("assistant")}
         </span>
-        Got it: a Hinglish ticket sorter. I&apos;ll keep 20 of your examples aside, unseen, to test the model before you pay.
+        {t("assistantReply")}
       </div>
     </div>
   );
 }
 
 export function Quote() {
+  const t = useTranslations("preview.quote");
   const rows: [string, string][] = [
-    ["Job", "Sort support tickets (Hinglish)"],
-    ["Base model", "Qwen2.5 0.5B Instruct"],
-    ["Quality bar", "At least 80% of your 20 test examples answered correctly; the model must also perform better than the untrained base"],
-    ["If it misses", "Full refund, automatically"],
-    ["Price", "Fixed before you start, never per message"],
+    [t("job"), t("jobValue")],
+    [t("baseModel"), "Qwen2.5 0.5B Instruct"],
+    [t("bar"), t("barValue")],
+    [t("misses"), t("missesValue")],
+    [t("price"), t("priceValue")],
   ];
   return (
     <div className="rounded-2xl border border-line bg-surface">
@@ -56,17 +60,18 @@ export function Quote() {
         ))}
       </dl>
       <div className="flex items-center justify-between gap-3 border-t border-line px-4 py-3">
-        <span className="text-xs text-muted">Prices are provisional on the test network</span>
-        <span className="rounded-full bg-action px-4 py-1.5 text-sm font-semibold text-action-ink">Approve and start</span>
+        <span className="text-xs text-muted">{t("provisional")}</span>
+        <span className="rounded-full bg-action px-4 py-1.5 text-sm font-semibold text-action-ink">{t("approve")}</span>
       </div>
     </div>
   );
 }
 
 export function Train() {
+  const t = useTranslations("preview.train");
   const devices = [
-    { name: "Gaming PC · Pune", note: "Dropped out at step 450, checkpoint saved", Icon: Gamepad2, state: "lost" },
-    { name: "Laptop · Indore", note: "Picked up from step 450", Icon: Laptop, state: "active" },
+    { name: t("pc"), note: t("pcNote"), Icon: Gamepad2, state: "lost" },
+    { name: t("laptop"), note: t("laptopNote"), Icon: Laptop, state: "active" },
   ];
   return (
     <div className="space-y-3">
@@ -84,7 +89,7 @@ export function Train() {
       ))}
       <div>
         <div className="flex justify-between text-xs text-muted">
-          <span>Step 780 of 1,000</span>
+          <span>{t("step", { step: 780, total: 1000 })}</span>
           <span>78%</span>
         </div>
         <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-surface-3">
@@ -96,25 +101,26 @@ export function Train() {
 }
 
 export function Result() {
+  const t = useTranslations("preview.result");
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-3 rounded-2xl border border-success/40 bg-success/10 p-4">
         <BadgeCheck className="size-6 shrink-0 text-success" aria-hidden />
         <div>
-          <div className="font-semibold text-ink">Passed: 17 of 20 test examples correct</div>
-          <div className="text-sm text-ink-2">The untrained model got 7 of 20. Both conditions met.</div>
+          <div className="font-semibold text-ink">{t("passed")}</div>
+          <div className="text-sm text-ink-2">{t("baseline")}</div>
         </div>
       </div>
       <div className="grid grid-cols-2 gap-3 text-sm">
         <div className="rounded-2xl border border-line bg-surface p-3.5">
           <FileText className="size-4 text-ink-2" aria-hidden />
-          <div className="mt-2 font-semibold text-ink">Download</div>
+          <div className="mt-2 font-semibold text-ink">{t("download")}</div>
           <div className="font-mono text-xs text-muted">ticket-sorter.gguf</div>
         </div>
         <div className="rounded-2xl border border-line bg-surface p-3.5">
           <Sparkles className="size-4 text-ink-2" aria-hidden />
-          <div className="mt-2 font-semibold text-ink">Or call it over an API</div>
-          <div className="font-mono text-xs text-muted">with an ek_live_… key</div>
+          <div className="mt-2 font-semibold text-ink">{t("api")}</div>
+          <div className="font-mono text-xs text-muted">{t("apiKey")}</div>
         </div>
       </div>
     </div>
@@ -124,6 +130,7 @@ export function Result() {
 const PANELS: Record<Tab, () => React.ReactElement> = { describe: Describe, quote: Quote, train: Train, result: Result };
 
 export function ProductPreview() {
+  const t = useTranslations("preview");
   const [tab, setTab] = useState<Tab>("describe");
   const [auto, setAuto] = useState(true);
 
@@ -140,12 +147,12 @@ export function ProductPreview() {
         <span className="size-3 rounded-full bg-surface-3" />
         <span className="size-3 rounded-full bg-surface-3" />
         <span className="size-3 rounded-full bg-accent" />
-        <span className="ml-3 truncate font-mono text-xs text-muted">ekido · new job</span>
-        <span className="ml-auto rounded-full bg-surface-2 px-2.5 py-0.5 text-[11px] text-muted">Preview, example data</span>
+        <span className="ml-3 truncate font-mono text-xs text-muted">{t("window")}</span>
+        <span className="ml-auto rounded-full bg-surface-2 px-2.5 py-0.5 text-[11px] text-muted">{t("example")}</span>
       </div>
       <div className="grid sm:grid-cols-[11rem_1fr]">
-        <nav aria-label="Product preview steps" className="flex gap-1 overflow-x-auto border-b border-line bg-surface p-2 sm:flex-col sm:border-b-0 sm:border-r">
-          {TABS.map(({ key, label, icon: Icon }, i) => (
+        <nav aria-label={t("stepsAria")} className="flex gap-1 overflow-x-auto border-b border-line bg-surface p-2 sm:flex-col sm:border-b-0 sm:border-r">
+          {TABS.map(({ key, icon: Icon }, i) => (
             <button
               key={key}
               type="button"
@@ -161,7 +168,7 @@ export function ProductPreview() {
             >
               <span className={cx("grid size-5 place-items-center rounded-full text-[11px] font-bold", tab === key ? "bg-accent text-white" : "bg-surface-3 text-ink-2")}>{i + 1}</span>
               <Icon className="hidden size-4 sm:block" aria-hidden />
-              {label}
+              {t(`tabs.${key}`)}
               {auto && tab === key && (
                 <span aria-hidden className="preview-progress absolute inset-x-3 bottom-1 h-0.5 origin-left rounded-full bg-accent" />
               )}
