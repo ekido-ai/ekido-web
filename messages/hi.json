@@ -797,7 +797,9 @@
       "confirmed": "Confirmed",
       "failed": "Failed",
       "pending": "Pending",
-      "opensExplorer": "(opens block explorer)"
+      "opensExplorer": "(opens block explorer)",
+      "waitingFor": "Waiting for {what}…",
+      "retry": "Retry"
     },
     "truth": {
       "REAL": {
@@ -846,7 +848,13 @@
         "terms": "Terms",
         "acceptableUse": "Acceptable use",
         "security": "Security"
-      }
+      },
+      "contactFallback": "the Ekido team"
+    },
+    "wait": {
+      "in": "You can try again in <b>{time}</b>",
+      "inMinutes": "You can try again in {minutes, plural, one {# minute} other {# minutes}}.",
+      "ready": "Ready. You can try again now."
     }
   },
   "auth": {
@@ -870,7 +878,10 @@
     "noToken": "This page needs the link from your email. Ask for a new one.",
     "newLink": "Get a new link",
     "walletNote": "Device owners: your earnings and payouts stay under your wallet, on the Account page.",
-    "headerSignedInAs": "Signed in as {email}"
+    "headerSignedInAs": "Signed in as {email}",
+    "waitTitle": "Check your inbox first",
+    "sendAgain": "Send a new link",
+    "waitDetail": "We have sent a few sign-in links to this address in the last hour. The newest one still works for 15 minutes from when it was sent."
   },
   "settings": {
     "title": "Settings",
@@ -899,11 +910,11 @@
     "remove": "Remove",
     "confirmRemove": "Press again to remove",
     "invite": "Invite",
-    "inviteLead": "They get a sign-in link by email, and join as soon as they use it.",
+    "inviteLead": "They get an email from Ekido that names your team and you. They show as Invited until they open it.",
     "inviteEmail": "Email",
     "inviteRole": "Role",
     "sendInvite": "Send invite",
-    "invited": "Invite sent to {email}.",
+    "invited": "Invite sent to {email}. They show as Invited until they open the email.",
     "keys": "API keys",
     "keysLead": "Test keys (ek_test_) never touch real money; live keys (ek_live_) do. Give each key only the access it needs.",
     "noKeys": "No keys yet.",
@@ -936,7 +947,17 @@
     "needScope": "Pick at least one kind of access.",
     "needName": "Give the key a name.",
     "readOnly": "Only owners and admins can invite people or manage keys.",
-    "keysLabel": "API keys"
+    "keysLabel": "API keys",
+    "invitedAgain": "Sent a fresh invite to {email}. The old link still works until it expires.",
+    "sending": "Sending…",
+    "invitedBadge": "Invited",
+    "invitedSince": "Invite sent {when}",
+    "resend": "Resend",
+    "resending": "Sending…",
+    "cancelInvite": "Cancel invite",
+    "waitTitle": "A short pause for {email}",
+    "sendAgain": "Send the invite again",
+    "waitDetail": "They have had a few emails from us in the last hour, so we are pausing for a bit to keep their inbox calm. Your earlier invite still works until it expires."
   },
   "admin": {
     "title": "Admin",
@@ -1519,7 +1540,53 @@
       "owedByEscrow": "Owed by the escrow",
       "usdcInWallet": "USDC in the wallet",
       "ethForGas": "ETH for gas",
-      "walletNote": "Nothing is signed or sent. The address is only used for these three reads."
+      "walletNote": "Nothing is signed or sent. The address is only used for these three reads.",
+      "memo": {
+        "createJob": "Client locked the budget (createJob)",
+        "disputeBond": "Client posted a dispute bond",
+        "bondReturned": "Bond returned to the client",
+        "bondForfeited": "Bond forfeited to the arbiter",
+        "bondTimeout": "Bond returned after the arbiter timeout",
+        "providerPaid": "Provider paid for accepted work",
+        "unusedRefunded": "Unused budget refunded to the client",
+        "clientRefunded": "Client refunded",
+        "cancelled": "Client cancelled before work started",
+        "withdrawn": "Withdrawn to the wallet"
+      },
+      "checks": {
+        "solvent": {
+          "title": "The escrow's USDC covers everything it owes",
+          "detail": "Holds {held} USDC against {owed} USDC locked or owed"
+        },
+        "locked": {
+          "title": "Replayed events match the contract's locked total",
+          "detail": "Journal {journal}, contract totalLocked() {contract}"
+        },
+        "owed": {
+          "title": "Replayed events match the contract's owed total",
+          "detail": "Journal {journal}, contract totalWithdrawable() {contract}"
+        },
+        "wallets": {
+          "title": "Every wallet's balance matches withdrawable() on-chain",
+          "differs": "Differs for {wallets}",
+          "ok": "{n} wallets checked one by one"
+        },
+        "journal": {
+          "title": "Every journal entry balances",
+          "problems": "{problems}",
+          "ok": "{n} entries, {moved} USDC moved in total, debits equal credits"
+        }
+      },
+      "state": {
+        "None": "None",
+        "Funded": "Funded",
+        "Active": "Active",
+        "Attested": "Attested",
+        "Disputed": "Disputed",
+        "Settled": "Settled",
+        "Refunded": "Refunded",
+        "Cancelled": "Cancelled"
+      }
     },
     "recovery": {
       "noneFits": "none fits",
@@ -1777,7 +1844,41 @@
       "watchRecorded": "Watch the recorded run",
       "missionControl": "Mission control",
       "noProvidersTitle": "No providers online",
-      "noProviders": "Start an agent, or play the replay to see the sample network."
+      "noProviders": "Start an agent, or play the replay to see the sample network.",
+      "unknown": "unknown"
+    },
+    "stage": {
+      "someProvider": "a provider",
+      "causeFallback": "failed",
+      "cause": {
+        "RUNTIME_EXIT": "lost its training process",
+        "OOM": "ran out of GPU memory",
+        "HEARTBEAT_LOSS": "stopped responding",
+        "DISCONNECT": "lost its connection",
+        "BAD_CHECKPOINT": "sent a checkpoint that failed its integrity check",
+        "START_FAILED": "couldn't start the job",
+        "DIVERGED": "diverged in training",
+        "NO_FINAL_CHECKPOINT": "finished without a final checkpoint"
+      },
+      "headline": {
+        "none": "No job yet",
+        "open": "Job created, waiting for funds in escrow",
+        "assigned": "Provider chosen, starting up",
+        "running": "Training on {name}",
+        "rejected": "{name}'s result was rejected. Rolling back",
+        "failedCause": "{name} {cause}. Recovering",
+        "validating": "Checking the final model",
+        "completed": "Result accepted. Dispute window open",
+        "settled": "Paid for accepted work only",
+        "disputed": "The client disputed the result",
+        "failed": "Job failed",
+        "refunded": "Client refunded",
+        "cancelled": "Job cancelled"
+      },
+      "detail": {
+        "waiting": "Waiting for the first event",
+        "step": "Step {step} of {total}"
+      }
     }
   },
   "preview": {
@@ -1865,5 +1966,359 @@
     "reviews": "Read review sentiment · Hinglish",
     "stars": "{n} out of 5 stars",
     "sentiment": "sentiment:"
+  },
+  "kit": {
+    "title": "Component kit",
+    "lead": "Every building block in every state. Color is reserved for meaning: status, provider identity, and caution badges. Status always pairs an icon with a word.",
+    "truthBadges": "Truth badges",
+    "status": "Status",
+    "tones": {
+      "good": "Accepted",
+      "warning": "Recovering",
+      "serious": "Injected fault",
+      "critical": "Rejected",
+      "active": "Training",
+      "neutral": "Online",
+      "idle": "Offline"
+    },
+    "statusLong": "Provider A stopped responding. Recovering",
+    "identity": "Provider identity",
+    "identityNote": "Fixed slot per provider id, never by rank. P (the injected-fault trainer) stays neutral so it never looks like a real series.",
+    "numbers": "Numbers: unit, source, and unknown",
+    "throughput": "Throughput",
+    "stepsPerS": "steps/s",
+    "measuredRuntime": "Measured by runtime",
+    "gpuTemp": "GPU temperature",
+    "hostNvml": "Host NVML",
+    "power": "Power",
+    "recoveryTime": "Recovery time",
+    "sampleData": "Sample data",
+    "vram": "VRAM · Provider {id}",
+    "vramCap": "VRAM · Provider {id} (cap)",
+    "buttons": "Buttons",
+    "submitJob": "Submit job",
+    "secondary": "Secondary",
+    "ghost": "Ghost",
+    "disabled": "Disabled",
+    "pressToKill": "Press again to kill",
+    "kill": "Kill Provider A",
+    "killNote": "Kill needs a second press within 3 s. No browser dialog. Confirmed {n, plural, one {# time} other {# times}} here.",
+    "timeline": "Timeline",
+    "tl": {
+      "stoppedTitle": "Provider A stopped",
+      "stoppedDetail": "Container killed from the dashboard (docker kill)",
+      "fencedTitle": "Old worker fenced",
+      "fencedDetail": "Fencing token 1 → 2. Writes from the old worker are now rejected",
+      "chosenTitle": "Checkpoint chosen",
+      "chosenDetail": "Step 100, accepted. 12 steps lost",
+      "replacing": "Finding a replacement"
+    },
+    "states": "States",
+    "noProvidersTitle": "No providers online",
+    "noProviders": "Start an agent, or play the replay to see the sample network.",
+    "heartbeat": "the first heartbeat from Provider B",
+    "checkpointsError": "Couldn't load checkpoints",
+    "platform": {
+      "quote": "Quote card",
+      "ready": "Ready",
+      "expiringSoon": "Expiring soon",
+      "expired": "Expired",
+      "loadingError": "Loading and error",
+      "quoteError": "The examples were removed from your team. Upload them again.",
+      "timeline": "Progress timeline",
+      "jobs": {
+        "queued": "Queued",
+        "training": "Training",
+        "moved": "A device moved",
+        "checking": "Checking quality",
+        "passed": "Passed",
+        "refunded": "Missed, refunded",
+        "cancelled": "Cancelled"
+      },
+      "keys": "API-key list",
+      "severalKeys": "Several keys (owner)",
+      "readOnly": "Read-only (member)",
+      "empty": "Empty",
+      "loadingLoadError": "Loading and load error",
+      "drop": "Upload drop zone",
+      "idle": "Idle (drag a file over it, or choose a wrong one, to see the other states)",
+      "reading": "Reading",
+      "chosen": "Chosen"
+    }
+  },
+  "provide": {
+    "copy": {
+      "idle": "Copy",
+      "done": "Copied",
+      "fail": "Select and copy"
+    },
+    "hero": {
+      "title": "Earn with your idle device",
+      "lead": "Your gaming PC or laptop trains small AI models for businesses while you're not using it. When the job's model passes its quality test, you're paid for your accepted training steps. You set the price, your key never leaves your machine, and you can stop whenever you like.",
+      "chips": {
+        "wallet": "Test money for now, no token",
+        "lock": "Budget locked before work starts",
+        "approved": "Approved workloads only",
+        "stop": "Stop with Ctrl+C"
+      },
+      "download": "Download the provider kit",
+      "seeSteps": "See the 4 steps",
+      "platforms": "Windows, macOS or Linux",
+      "size": "{kb} KB",
+      "hardware": "works with an NVIDIA GPU or just a CPU"
+    },
+    "steps": {
+      "title": "Join in four steps",
+      "subtitle": "Each step shows the exact command for your system",
+      "osAria": "Your system",
+      "windows": "Windows",
+      "unix": "macOS or Linux",
+      "kit": {
+        "title": "Download and check the kit",
+        "body": "It holds the agent's Python source plus setup and join scripts. Compare the hash with the one below before you run anything.",
+        "copy": "Copy download commands",
+        "sha": "SHA-256 {sha}",
+        "loading": "loading…"
+      },
+      "setup": {
+        "title": "Set it up, once",
+        "body": "It makes a private Python environment in the folder, installs PyTorch for your GPU (or the CPU), and downloads the model and dataset. Needs Python 3.11 or newer, about 5 GB of disk, and for a GPU an NVIDIA driver.",
+        "copy": "Copy setup command"
+      },
+      "join": {
+        "title": "Join with your name and price",
+        "name": "Name others see",
+        "hardware": "Your hardware",
+        "runOn": "Run on",
+        "auto": "Best available",
+        "cuda": "NVIDIA GPU",
+        "cpu": "CPU only",
+        "nameBad": "Use letters, numbers, spaces, dots, hyphens or underscores.",
+        "copy": "Copy join command",
+        "localNet": "This copy of the site runs the local demo network. To join the public test network, open this page on <link>ekido.duckdns.org</link>.",
+        "key": "The first run creates your key in <code>~/.ekido/provider.key</code> (a key made by an earlier version of the kit keeps working) and prints only your address. Never share that file."
+      },
+      "paid": {
+        "title": "Get paid",
+        "body": "When a job you worked on settles, your share waits in the escrow under your address. Paste the address into <link>Check any wallet</link> to see it, then call <code>withdraw()</code> from that wallet whenever you like."
+      }
+    },
+    "price": {
+      "rate": "Your rate, USDC per hour of accepted work",
+      "speed": "Your speed, steps per second",
+      "perStep": "That's <b>{price} USDC</b> per accepted step",
+      "rounds": " (rounds to {hourly} an hour)",
+      "invalid": "Enter a rate and a speed above zero.",
+      "market": "Typical market rate for this class: about {rate} an hour ({source}). We suggest about 15% under it.",
+      "client": "With the planned {fee}% fee a client would pay {client} an hour, and nothing for failed time.",
+      "barsAria": "Your rate next to the market",
+      "barMarket": "Typical market rate",
+      "barYou": "You earn",
+      "barClient": "Client pays, fee included",
+      "unmeasured": "We haven't measured this class ourselves, so put in your own speed. The figure shown is our RTX 3060's."
+    },
+    "earn": {
+      "title": "What could you earn?",
+      "subtitle": "An estimate from your price and speed, not a promise",
+      "speed": "Steps per second",
+      "rate": "Your rate, USDC an hour",
+      "hours": "Hours a day you're connected: <b>{hours}</b>",
+      "busy": "Share of that time with a job: <b>{busy}%</b>",
+      "perHour": "While training",
+      "perDay": "Per day",
+      "perMonth": "Per month",
+      "unitHour": "USDC / hour",
+      "unitDay": "USDC / day",
+      "unitMonth": "USDC / 30 days",
+      "note": "Rate × hours × share busy, after rounding your rate to a whole micro-USDC per step. {measured} steps/s is what our RTX 3060 Laptop measured on this workload; yours will differ. How busy you are depends on demand, which is small on a test network. Only accepted steps pay, and this network uses test USDC with no value."
+    },
+    "runs": {
+      "title": "What runs on your machine",
+      "approved": "<b>Only approved training jobs.</b> Today that's fine-tuning a small text model on a public dataset. No one can send you arbitrary code.",
+      "data": "<b>Checkpoints are data, never code.</b> They're safetensors and JSON, checked for size, shape and bad values before loading.",
+      "key": "<b>Your key stays put.</b> The site never asks for it. The agent signs your work with it locally.",
+      "stop": "<b>Stop any time.</b> The job moves on from its last checkpoint, and the accepted steps you did are still yours.",
+      "trust": "The kit runs jobs as normal processes under your user, so only join a coordinator you trust. It's a prototype on a test network and is unaudited. More on the <link>security page</link>."
+    },
+    "checklist": {
+      "steps": {
+        "price": "Chose your GPU and rate",
+        "kit": "Downloaded and checked the kit",
+        "setup": "Ran setup",
+        "join": "Joined the network",
+        "gas": "Added test ETH to list on-chain",
+        "paid": "Got your first payout"
+      },
+      "done": "You're a provider",
+      "progress": "{count} of {total} done",
+      "doneHint": "Nice. Check the On-chain page for your earnings.",
+      "hint": "Tick each step as you finish it."
+    },
+    "gpu": {
+      "rtx3060": {
+        "source": "Our estimate: no public figure found; priced below the RTX 4090 range"
+      },
+      "rtx4090": {
+        "source": "Vast.ai median, late Oct 2026 (joulemath.com)"
+      },
+      "a100": {
+        "source": "Marketplace range $0.40 to $1.19 (Vast.ai, RunPod), Oct 2026"
+      },
+      "h100": {
+        "source": "Marketplace range $1.50 to $2.99 (Vast.ai, RunPod), Oct 2026"
+      },
+      "cpu": {
+        "label": "CPU only",
+        "source": "Our estimate for a desktop CPU"
+      }
+    }
+  },
+  "help": {
+    "metaDescription": "How to rent out a GPU, submit a job, check a payout on-chain, and what every badge means.",
+    "title": "Help",
+    "updated": "9 November 2026",
+    "intro": "Answers to the common questions, what each badge means, and the words we use.",
+    "questions": "Questions",
+    "faq": {
+      "what": {
+        "q": "What is Ekido, in one line?",
+        "a": "A network where a training job survives its GPU dying, bad results get refused, and an escrow contract pays each provider only for the work that made it into the final model."
+      },
+      "blockchain": {
+        "q": "Why does it need a blockchain?",
+        "a": "A client and a provider who don't know each other need someone neutral to hold the money and follow the agreed rules, even if we disappear. The escrow contract is that neutral party: the budget is locked before work starts, and it pays out only with verifier signatures. You can check all of it yourself on the <chain>On-chain page</chain>. It doesn't make the computing itself trustworthy. That's what the Quality Guard is for."
+      },
+      "money": {
+        "q": "Is this real money?",
+        "a": "No. Everything runs on Base Sepolia, a test network, with test USDC that has no value. Never send real funds."
+      },
+      "rent": {
+        "q": "How do I rent out my GPU?",
+        "a": "Open <provide>Provide compute</provide>, set a name and a price per step, and copy the one command it shows. It creates a provider key on your machine, registers your device, and starts taking work. It works on an NVIDIA GPU or on a CPU."
+      },
+      "paid": {
+        "q": "How do I get paid?",
+        "a": "After a job settles, your share sits in the escrow under your wallet. Call <code>withdraw()</code> on the escrow from that wallet whenever you like. Type your address into \"Check any wallet\" on the <chain>On-chain page</chain> to see what you're owed."
+      },
+      "dropout": {
+        "q": "What happens if my GPU drops out halfway?",
+        "a": "The coordinator notices, blocks your old worker from writing, and moves the job to another provider from the last trusted checkpoint. You're still paid for your accepted steps up to that checkpoint."
+      },
+      "nothing": {
+        "q": "Why did a provider earn nothing?",
+        "a": "Either its work was refused by the Quality Guard, or it never saved a checkpoint that was accepted. Only accepted steps are paid."
+      },
+      "disagree": {
+        "q": "What if I disagree with a payout?",
+        "a": "The client can dispute during the dispute window by posting a bond. The arbiter decides. If the arbiter stays silent for 3 days, the verdict stands and the bond is returned."
+      },
+      "custom": {
+        "q": "Can I run my own training code?",
+        "a": "Not yet. Only approved workload templates run today, to protect providers' machines. Sandboxed custom code is on the roadmap."
+      }
+    },
+    "badgesTitle": "What the badges mean",
+    "badges": {
+      "real": {
+        "name": "Real GPU",
+        "means": "A physical GPU doing the work live."
+      },
+      "separate": {
+        "name": "Real, separate machine",
+        "means": "A physical GPU on another computer, often a teammate's."
+      },
+      "capped": {
+        "name": "Capped profile",
+        "means": "The same physical GPU with a memory limit, to show the job adapting to a smaller card."
+      },
+      "fault": {
+        "name": "Injected fault",
+        "means": "A provider we made misbehave on purpose, to show bad work being refused."
+      },
+      "recorded": {
+        "name": "Recorded",
+        "means": "Played back from a saved real run, not happening now."
+      },
+      "local": {
+        "name": "Local chain",
+        "means": "Settled on a chain running on this laptop, not on Base Sepolia."
+      },
+      "synthetic": {
+        "name": "Synthetic",
+        "means": "A small CPU workload standing in when the GPU isn't available."
+      }
+    },
+    "wordsTitle": "Words we use",
+    "words": {
+      "escrow": {
+        "word": "Escrow",
+        "means": "The contract that holds a job's budget until the verdict decides who gets what."
+      },
+      "verifier": {
+        "word": "Verifier",
+        "means": "An independent process that evaluates the model and signs the verdict. 2 of 3 must agree."
+      },
+      "checkpoint": {
+        "word": "Checkpoint",
+        "means": "A saved copy of the training state. A job resumes from the last accepted one."
+      },
+      "step": {
+        "word": "Logical step",
+        "means": "One unit of training that means the same on every GPU, however it's split into smaller batches."
+      },
+      "fencing": {
+        "word": "Fencing token",
+        "means": "A counter that stops an old, disconnected worker from writing after the job moved on."
+      },
+      "window": {
+        "word": "Dispute window",
+        "means": "The time after a verdict when the client can still challenge it."
+      },
+      "reserves": {
+        "word": "Proof of reserves",
+        "means": "A live check that the escrow holds at least as much USDC as it owes."
+      }
+    },
+    "troubleTitle": "Something isn't working",
+    "trouble": {
+      "coordinator": "<b>\"Coordinator offline\":</b> the scheduling server isn't reachable. Switch to the recorded run from the top bar, or check <status>Status</status>.",
+      "chain": "<b>\"Chain unreachable\":</b> the public Base Sepolia RPC is limiting requests. Wait a few seconds and read again.",
+      "provider": "<b>A provider command fails:</b> it needs Python 3.12 and the Ekido agent installed. The page shows the exact command for this network.",
+      "keys": "<b>Keyboard shortcuts:</b> press <kbd>?</kbd> on the dashboard to see them."
+    }
+  },
+  "statusPage": {
+    "title": "Status",
+    "updated": "live",
+    "intro": "Each check runs from your browser right now, so it shows what you can reach, not what we say.",
+    "unreachable": "Unreachable",
+    "coordinator": {
+      "name": "Coordinator",
+      "what": "Schedules jobs and streams progress",
+      "busy": "Busy: it asked this page to slow down, answered in {ms} ms",
+      "notReady": "Not ready (answered {status})",
+      "ready": "Ready, answered in {ms} ms"
+    },
+    "rpc": {
+      "name": "{chain} RPC",
+      "what": "Reads balances and contract state"
+    },
+    "logs": {
+      "name": "Event history RPC",
+      "what": "Reads the escrow's past events"
+    },
+    "block": "Block {block}, answered in {ms} ms",
+    "escrow": {
+      "name": "Escrow contract",
+      "what": "Holds budgets and pays out",
+      "noCode": "No contract code at the escrow address",
+      "deployed": "Deployed, {bytes} bytes of code"
+    },
+    "down": "{down} of {total} parts unreachable",
+    "allUp": "Everything reachable",
+    "checking": "Checking",
+    "running": "Running four checks…",
+    "again": "Check again",
+    "lastChecked": "Last checked {at}"
   }
 }

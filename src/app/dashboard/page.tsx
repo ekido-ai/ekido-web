@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useDashboard } from "@/lib/events/source-context";
 import { buttonStyles } from "@/components/ui/button-styles";
-import { describeStage } from "@/lib/events/describe";
+import { describeStage, localizeStage } from "@/lib/events/describe";
 import { providerName, rejectedProviders, resumePoint } from "@/lib/events/derive";
 import { settlementView } from "@/lib/events/views";
 import { PayoutStrip } from "@/components/mission/payout-strip";
@@ -44,7 +44,9 @@ function MissionControl() {
   const t = useTranslations("demo.dashboard");
   const [showTable, setShowTable] = useState(false);
   const { state, mode, provenance, live: liveSnap } = useDashboard();
-  const fresh = describeStage(state);
+  const ts = useTranslations("demo.stage");
+  const described = describeStage(state);
+  const fresh = { ...described, ...localizeStage(described, ts) };
   // Live but disconnected: what we show is the last thing we heard, not what is happening.
   const stale = mode === "live" && liveSnap.connection !== "live";
   const signedJobs = config.signedJobs && config.chainId === 84532;

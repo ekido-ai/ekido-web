@@ -139,6 +139,8 @@ export default function ChainPage() {
 function LedgerView({ ledger }: { ledger: Ledger }) {
   const t = useTranslations("demo.chain");
   const at = (block: bigint) => when(ledger.times.get(block.toString()), t("unknownTime"));
+  // Contract state names in the reader's language; an index past the known list shows as its number.
+  const stateName = (i: number) => (STATES[i] ? t(`state.${STATES[i]}`) : String(i));
   const { reserves: r, counters, roles, book } = ledger;
   const clients = new Set(ledger.jobs.map((j) => j.split.client.toLowerCase()));
   const owedProviders = [...ledger.withdrawableOf].filter(([a]) => !clients.has(a)).reduce((s, [, v]) => s + v, BigInt(0));
@@ -253,8 +255,8 @@ function LedgerView({ ledger }: { ledger: Ledger }) {
             <li key={c.title} className="flex items-start gap-3 py-2.5 first:pt-0 last:pb-0">
               <StatusIcon tone={c.passed ? "good" : "critical"} className="mt-0.5 size-5 shrink-0" />
               <div className="min-w-0">
-                <div className="font-medium text-ink">{c.title}</div>
-                <div className="text-sm text-ink-2 [overflow-wrap:anywhere]">{c.detail}</div>
+                <div className="font-medium text-ink">{t(`checks.${c.key}.title`)}</div>
+                <div className="text-sm text-ink-2 [overflow-wrap:anywhere]">{t(`checks.${c.key}.${c.detailKey}`, c.values)}</div>
               </div>
             </li>
           ))}
@@ -274,8 +276,8 @@ function LedgerView({ ledger }: { ledger: Ledger }) {
             <Panel
               key={job.jobId}
               title={<span className="font-mono">{t("job", { id: short(job.jobId) })}</span>}
-              subtitle={t("jobSubtitle", { budget: usdc(s.budget), state: STATES[s.state] ?? String(s.state), gas: eth(gas) })}
-              actions={<StatusPill tone={STATES[s.state] === "Settled" ? "good" : STATES[s.state] === "Refunded" ? "neutral" : "active"}>{STATES[s.state]}</StatusPill>}
+              subtitle={t("jobSubtitle", { budget: usdc(s.budget), state: stateName(s.state), gas: eth(gas) })}
+              actions={<StatusPill tone={STATES[s.state] === "Settled" ? "good" : STATES[s.state] === "Refunded" ? "neutral" : "active"}>{stateName(s.state)}</StatusPill>}
             >
               <div className="grid gap-6 lg:grid-cols-[1fr_1fr]">
                 <div>
@@ -363,7 +365,7 @@ function LedgerView({ ledger }: { ledger: Ledger }) {
               {book.entries.map((e) => (
                 <tr key={`${e.tx}-${e.logIndex}-${e.debit}`} className="border-b border-line last:border-0">
                   <td className="whitespace-nowrap px-5 py-2 text-ink-2">{at(e.block)}</td>
-                  <td className="px-3 py-2 text-ink">{e.memo}</td>
+                  <td className="px-3 py-2 text-ink">{t(`memo.${e.memoKey}`)}</td>
                   <td className="px-3 py-2"><Account id={e.credit} clients={clients} isNamed={isNamed} /></td>
                   <td className="px-3 py-2"><Account id={e.debit} clients={clients} isNamed={isNamed} /></td>
                   <td className="px-3 py-2 text-right font-semibold text-ink tabular">{usdc(e.amount)}</td>

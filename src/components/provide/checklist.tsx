@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useSyncExternalStore } from "react";
 import { Check } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cx } from "@/components/ui/cx";
 
 /*
@@ -10,13 +11,14 @@ import { cx } from "@/components/ui/cx";
  */
 
 const KEY = "ekido.provider-progress";
+// Labels are in messages (provide.checklist.steps.<id>).
 const STEPS = [
-  { id: "price", label: "Chose your GPU and rate", auto: true },
-  { id: "kit", label: "Downloaded and checked the kit" },
-  { id: "setup", label: "Ran setup" },
-  { id: "join", label: "Joined the network" },
-  { id: "gas", label: "Added test ETH to list on-chain" },
-  { id: "paid", label: "Got your first payout" },
+  { id: "price", auto: true },
+  { id: "kit" },
+  { id: "setup" },
+  { id: "join" },
+  { id: "gas" },
+  { id: "paid" },
 ];
 
 const noSubscribe = () => () => {};
@@ -29,6 +31,7 @@ function readSaved(): string {
 }
 
 export function ProviderChecklist() {
+  const t = useTranslations("provide.checklist");
   // Read after hydration (the server always renders just the first step), then kept in state once ticked here.
   const savedRaw = useSyncExternalStore(noSubscribe, readSaved, () => "{}");
   const saved = useMemo((): Record<string, boolean> => {
@@ -61,8 +64,8 @@ export function ProviderChecklist() {
           <circle cx="32" cy="32" r="26" fill="none" stroke="var(--accent)" strokeWidth="6" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={C * (1 - frac)} className="transition-[stroke-dashoffset] duration-700 ease-out" />
         </svg>
         <div>
-          <div className="text-lg font-semibold text-ink">{count === STEPS.length ? "You're a provider" : `${count} of ${STEPS.length} done`}</div>
-          <div className="text-sm text-ink-2">{count === STEPS.length ? "Nice. Check the On-chain page for your earnings." : "Tick each step as you finish it."}</div>
+          <div className="text-lg font-semibold text-ink">{count === STEPS.length ? t("done") : t("progress", { count, total: STEPS.length })}</div>
+          <div className="text-sm text-ink-2">{count === STEPS.length ? t("doneHint") : t("hint")}</div>
         </div>
       </div>
       <ul className="mt-4 space-y-1">
@@ -78,7 +81,7 @@ export function ProviderChecklist() {
               <span className={cx("grid size-5 shrink-0 place-items-center rounded-md border transition-colors", done[s.id] ? "border-transparent bg-good text-white" : "border-line-strong")}>
                 {done[s.id] && <Check className="size-3.5" aria-hidden />}
               </span>
-              <span className={done[s.id] ? "text-ink-2 line-through decoration-line-strong" : "text-ink"}>{s.label}</span>
+              <span className={done[s.id] ? "text-ink-2 line-through decoration-line-strong" : "text-ink"}>{t(`steps.${s.id}`)}</span>
             </button>
           </li>
         ))}

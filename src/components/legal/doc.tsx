@@ -65,9 +65,11 @@ export function Section({ id, title, children }: { id?: string; title: string; c
 }
 
 export function Contact() {
+  const t = useTranslations("shell.legal");
   return config.contactEmail ? (
     <a href={`mailto:${config.contactEmail}`}>{config.contactEmail}</a>
   ) : (
-    <span>the Ekido team</span>
+    <span>{t("contactFallback")}</span>
   );
 }
+
