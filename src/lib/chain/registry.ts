@@ -87,3 +87,12 @@ export function compareListings(
   const offChainOnly = (coordinator ?? []).filter((p) => !onchainWallets.has(p.wallet_address.toLowerCase())).length;
   return { listings, offChainOnly };
 }
+
+/**
+ * Whether a wallet is a provider, for the account page: listed by the coordinator, committed in ProviderRegistry, or
+ * paid for accepted work in at least one job. A paid wallet counts even when it isn't registered
+ * (ekido-ai/ekido-core#106).
+ */
+export function isProvider(seen: { coordRow: unknown; listing: unknown; paidJobs: number }): boolean {
+  return !!seen.coordRow || !!seen.listing || seen.paidJobs > 0;
+}

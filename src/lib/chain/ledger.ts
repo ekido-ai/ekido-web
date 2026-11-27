@@ -44,9 +44,15 @@ export interface JobSplit {
   state: number;
 }
 
+/** What a journal entry is, for the translation layer (messages: demo.chain.memo.<key>); `memo` is its English. */
+export type MemoKey =
+  | "createJob" | "disputeBond" | "bondReturned" | "bondForfeited" | "bondTimeout" | "providerPaid" | "unusedRefunded"
+  | "clientRefunded" | "cancelled" | "withdrawn";
+
 export interface JournalEntry extends LogRef {
   jobId: Hex | null;
   memo: string;
+  memoKey: MemoKey;
   debit: string; // The account that receives.
   credit: string; // The account that gives.
   amount: bigint;
@@ -76,19 +82,31 @@ export function buildBook(events: EscrowEvent[], splits: Map<string, JobSplit>):
   const problems: string[] = [];
   const bonds = new Map<string, bigint>();
   const resolved = new Set<string>();
-  const add = (e: LogRef, jobId: Hex | null, memo: string, credit: string, debit: string, amount: bigint) => {
-    if (amount > BigInt(0)) entries.push({ block: e.block, logIndex: e.logIndex, tx: e.tx, jobId, memo, credit, debit, amount });
+  const MEMO: Record<MemoKey, string> = {
+    createJob: "Client locked the budget (createJob)",
+    disputeBond: "Client posted a dispute bond",
+    bondReturned: "Bond returned to the client",
+    bondForfeited: "Bond forfeited to the arbiter",
+    bondTimeout: "Bond returned after the arbiter timeout",
+    providerPaid: "Provider paid for accepted work",
+    unusedRefunded: "Unused budget refunded to the client",
+    clientRefunded: "Client refunded",
+    cancelled: "Client cancelled before work started",
+    withdrawn: "Withdrawn to the wallet",
+  };
+  const add = (e: LogRef, jobId: Hex | null, memoKey: MemoKey, credit: string, debit: string, amount: bigint) => {
+    if (amount > BigInt(0)) entries.push({ block: e.block, logIndex: e.logIndex, tx: e.tx, jobId, memo: MEMO[memoKey], memoKey, credit, debit, amount });
   };
 
   for (const e of sortEvents(events)) {
     switch (e.kind) {
       case "created":
-        add(e, e.jobId, "Client locked the budget (createJob)", wallet(e.client), locked(e.jobId), e.budget);
+        add(e, e.jobId, "createJob", wallet(e.client), locked(e.jobId), e.budget);
         break;
       case "disputed": {
         const split = splits.get(lower(e.jobId));
         bonds.set(lower(e.jobId), e.bond);
-        if (split) add(e, e.jobId, "Client posted a dispute bond", wallet(split.client), locked(e.jobId), e.bond);
+        if (split) add(e, e.jobId, "disputeBond", wallet(split.client), locked(e.jobId), e.bond);
         else problems.push(`No stored job for dispute ${e.jobId}`);
         break;
       }
@@ -96,7 +114,7 @@ export function buildBook(events: EscrowEvent[], splits: Map<string, JobSplit>):
         const split = splits.get(lower(e.jobId));
         const bond = bonds.get(lower(e.jobId)) ?? BigInt(0);
         resolved.add(lower(e.jobId));
-        if (split) add(e, e.jobId, e.clientUpheld ? "Bond returned to the client" : "Bond forfeited to the arbiter", locked(e.jobId), owed(e.clientUpheld ? split.client : split.arbiter), bond);
+        if (split) add(e, e.jobId, e.clientUpheld ? "bondReturned" : "bondForfeited", locked(e.jobId), owed(e.clientUpheld ? split.client : split.arbiter), bond);
         break;
       }
       case "settled":
@@ -108,27 +126,27 @@ export function buildBook(events: EscrowEvent[], splits: Map<string, JobSplit>):
         }
         // A dispute that timed out without an arbiter decision returns the bond to the client.
         const bond = bonds.get(lower(e.jobId));
-        if (bond && !resolved.has(lower(e.jobId))) add(e, e.jobId, "Bond returned after the arbiter timeout", locked(e.jobId), owed(split.client), bond);
+        if (bond && !resolved.has(lower(e.jobId))) add(e, e.jobId, "bondTimeout", locked(e.jobId), owed(split.client), bond);
         if (e.kind === "settled") {
           const paid = split.amounts.reduce((s, a) => s + a, BigInt(0));
           if (paid !== e.paid) problems.push(`Job ${short(e.jobId)}: the event says ${e.paid} paid, the stored split says ${paid}`);
           if (split.refund !== e.refunded) problems.push(`Job ${short(e.jobId)}: the event says ${e.refunded} refunded, the stored split says ${split.refund}`);
-          split.payees.forEach((payee, i) => add(e, e.jobId, "Provider paid for accepted work", locked(e.jobId), owed(payee), split.amounts[i]));
-          add(e, e.jobId, "Unused budget refunded to the client", locked(e.jobId), owed(split.client), split.refund);
+          split.payees.forEach((payee, i) => add(e, e.jobId, "providerPaid", locked(e.jobId), owed(payee), split.amounts[i]));
+          add(e, e.jobId, "unusedRefunded", locked(e.jobId), owed(split.client), split.refund);
         } else {
           // JobRefunded comes from a failed verdict (amount = stored refund) or a timeout refund (the whole budget).
-          add(e, e.jobId, "Client refunded", locked(e.jobId), owed(split.client), e.amount);
+          add(e, e.jobId, "clientRefunded", locked(e.jobId), owed(split.client), e.amount);
         }
         break;
       }
       case "cancelled": {
         const split = splits.get(lower(e.jobId));
-        if (split) add(e, e.jobId, "Client cancelled before work started", locked(e.jobId), owed(split.client), split.budget);
+        if (split) add(e, e.jobId, "cancelled", locked(e.jobId), owed(split.client), split.budget);
         else problems.push(`No stored job for cancelled ${e.jobId}`);
         break;
       }
       case "withdrawal":
-        add(e, null, "Withdrawn to the wallet", owed(e.account), wallet(e.account), e.amount);
+        add(e, null, "withdrawn", owed(e.account), wallet(e.account), e.amount);
         break;
       default:
         break; // activated, anchor and attested move no money.
@@ -174,6 +192,10 @@ export interface Reconciliation {
   title: string;
   passed: boolean;
   detail: string;
+  /** The same check for the translation layer (messages: demo.chain.check.<key>.title, and .<detailKey> with `values`). */
+  key: "solvent" | "locked" | "owed" | "wallets" | "journal";
+  detailKey: string;
+  values: Record<string, string | number>;
 }
 
 /** Three sources that must agree: the replayed journal, the contract's counters, and per-wallet balances. */
@@ -192,26 +214,42 @@ export function reconcile(
       title: "The escrow's USDC covers everything it owes",
       passed: res.solvent,
       detail: `Holds ${usdc(counters.held)} USDC against ${usdc(res.liabilities)} USDC locked or owed`,
+      key: "solvent",
+      detailKey: "detail",
+      values: { held: usdc(counters.held), owed: usdc(res.liabilities) },
     },
     {
       title: "Replayed events match the contract's locked total",
       passed: book.locked === counters.totalLocked,
       detail: `Journal ${usdc(book.locked)}, contract totalLocked() ${usdc(counters.totalLocked)}`,
+      key: "locked",
+      detailKey: "detail",
+      values: { journal: usdc(book.locked), contract: usdc(counters.totalLocked) },
     },
     {
       title: "Replayed events match the contract's owed total",
       passed: book.owed === counters.totalWithdrawable,
       detail: `Journal ${usdc(book.owed)}, contract totalWithdrawable() ${usdc(counters.totalWithdrawable)}`,
+      key: "owed",
+      detailKey: "detail",
+      values: { journal: usdc(book.owed), contract: usdc(counters.totalWithdrawable) },
     },
     {
       title: "Every wallet's balance matches withdrawable() on-chain",
       passed: walletMismatches.length === 0,
       detail: walletMismatches.length ? `Differs for ${walletMismatches.map(short).join(", ")}` : `${withdrawableOf.size} wallets checked one by one`,
+      key: "wallets",
+      detailKey: walletMismatches.length ? "differs" : "ok",
+      values: walletMismatches.length ? { wallets: walletMismatches.map(short).join(", ") } : { n: withdrawableOf.size },
     },
     {
       title: "Every journal entry balances",
       passed: book.problems.length === 0,
       detail: book.problems.length ? book.problems.join("; ") : `${book.entries.length} entries, ${usdc(debits)} USDC moved in total, debits equal credits`,
+      key: "journal",
+      // Problems are internal diagnostics, shown as written.
+      detailKey: book.problems.length ? "problems" : "ok",
+      values: book.problems.length ? { problems: book.problems.join("; ") } : { n: book.entries.length, moved: usdc(debits) },
     },
   ];
 }
