@@ -1520,7 +1520,53 @@
       "owedByEscrow": "Owed by the escrow",
       "usdcInWallet": "USDC in the wallet",
       "ethForGas": "ETH for gas",
-      "walletNote": "Nothing is signed or sent. The address is only used for these three reads."
+      "walletNote": "Nothing is signed or sent. The address is only used for these three reads.",
+      "memo": {
+        "createJob": "Client locked the budget (createJob)",
+        "disputeBond": "Client posted a dispute bond",
+        "bondReturned": "Bond returned to the client",
+        "bondForfeited": "Bond forfeited to the arbiter",
+        "bondTimeout": "Bond returned after the arbiter timeout",
+        "providerPaid": "Provider paid for accepted work",
+        "unusedRefunded": "Unused budget refunded to the client",
+        "clientRefunded": "Client refunded",
+        "cancelled": "Client cancelled before work started",
+        "withdrawn": "Withdrawn to the wallet"
+      },
+      "checks": {
+        "solvent": {
+          "title": "The escrow's USDC covers everything it owes",
+          "detail": "Holds {held} USDC against {owed} USDC locked or owed"
+        },
+        "locked": {
+          "title": "Replayed events match the contract's locked total",
+          "detail": "Journal {journal}, contract totalLocked() {contract}"
+        },
+        "owed": {
+          "title": "Replayed events match the contract's owed total",
+          "detail": "Journal {journal}, contract totalWithdrawable() {contract}"
+        },
+        "wallets": {
+          "title": "Every wallet's balance matches withdrawable() on-chain",
+          "differs": "Differs for {wallets}",
+          "ok": "{n} wallets checked one by one"
+        },
+        "journal": {
+          "title": "Every journal entry balances",
+          "problems": "{problems}",
+          "ok": "{n} entries, {moved} USDC moved in total, debits equal credits"
+        }
+      },
+      "state": {
+        "None": "None",
+        "Funded": "Funded",
+        "Active": "Active",
+        "Attested": "Attested",
+        "Disputed": "Disputed",
+        "Settled": "Settled",
+        "Refunded": "Refunded",
+        "Cancelled": "Cancelled"
+      }
     },
     "recovery": {
       "noneFits": "none fits",
@@ -1778,7 +1824,41 @@
       "watchRecorded": "Watch the recorded run",
       "missionControl": "Mission control",
       "noProvidersTitle": "No providers online",
-      "noProviders": "Start an agent, or play the replay to see the sample network."
+      "noProviders": "Start an agent, or play the replay to see the sample network.",
+      "unknown": "unknown"
+    },
+    "stage": {
+      "someProvider": "a provider",
+      "causeFallback": "failed",
+      "cause": {
+        "RUNTIME_EXIT": "lost its training process",
+        "OOM": "ran out of GPU memory",
+        "HEARTBEAT_LOSS": "stopped responding",
+        "DISCONNECT": "lost its connection",
+        "BAD_CHECKPOINT": "sent a checkpoint that failed its integrity check",
+        "START_FAILED": "couldn't start the job",
+        "DIVERGED": "diverged in training",
+        "NO_FINAL_CHECKPOINT": "finished without a final checkpoint"
+      },
+      "headline": {
+        "none": "No job yet",
+        "open": "Job created, waiting for funds in escrow",
+        "assigned": "Provider chosen, starting up",
+        "running": "Training on {name}",
+        "rejected": "{name}'s result was rejected. Rolling back",
+        "failedCause": "{name} {cause}. Recovering",
+        "validating": "Checking the final model",
+        "completed": "Result accepted. Dispute window open",
+        "settled": "Paid for accepted work only",
+        "disputed": "The client disputed the result",
+        "failed": "Job failed",
+        "refunded": "Client refunded",
+        "cancelled": "Job cancelled"
+      },
+      "detail": {
+        "waiting": "Waiting for the first event",
+        "step": "Step {step} of {total}"
+      }
     }
   },
   "help": {
