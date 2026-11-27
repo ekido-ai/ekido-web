@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Check, Copy, Cpu, Download, Lock, Power, ShieldCheck, Wallet } from "lucide-react";
 import { config } from "@/lib/config";
 import { Panel } from "@/components/ui/panel";
@@ -26,6 +27,7 @@ function fmt(n: number, digits = 2) {
 }
 
 function CopyBlock({ text, label }: { text: string; label: string }) {
+  const t = useTranslations("provide.copy");
   const [state, setState] = useState<"idle" | "done" | "fail">("idle");
   return (
     <div className="group relative">
@@ -45,11 +47,13 @@ function CopyBlock({ text, label }: { text: string; label: string }) {
         className="absolute right-2 top-2 inline-flex items-center gap-1.5 rounded-md border border-line-strong bg-surface-2 px-2.5 py-1 text-xs font-medium text-ink hover:bg-surface-3"
       >
         {state === "done" ? <Check className="size-3.5" aria-hidden /> : <Copy className="size-3.5" aria-hidden />}
-        {state === "done" ? "Copied" : state === "fail" ? "Select and copy" : "Copy"}
+        {t(state)}
       </button>
     </div>
   );
 }
+
+const strong = (c: React.ReactNode) => <strong className="text-ink">{c}</strong>;
 
 function Step({ n, title, children, done }: { n: number; title: string; children: React.ReactNode; done?: boolean }) {
   return (
@@ -73,37 +77,39 @@ function PriceBox({ gpu, hourly, setHourly, rate, setRate, step }: {
   setRate: (v: string) => void;
   step: ReturnType<typeof perStepPrice>;
 }) {
+  const t = useTranslations("provide.price");
+  const tg = useTranslations("provide.gpu");
   const client = step ? clientHourly(step.effectiveHourly) : null;
   return (
     <div className="rounded-lg border border-line bg-surface-2 p-4">
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="space-y-1 text-sm text-ink">
-          Your rate, USDC per hour of accepted work
+          {t("rate")}
           <input value={hourly} onChange={(e) => setHourly(e.target.value)} inputMode="decimal" className="block w-full rounded-lg border border-line-strong bg-surface px-3 py-2 tabular" />
         </label>
         <label className="space-y-1 text-sm text-ink">
-          Your speed, steps per second
+          {t("speed")}
           <input value={rate} onChange={(e) => setRate(e.target.value)} inputMode="decimal" className="block w-full rounded-lg border border-line-strong bg-surface px-3 py-2 tabular" />
         </label>
       </div>
       {step ? (
         <p className="mt-3 text-sm text-ink">
-          That&apos;s <span className="font-semibold tabular">{step.price} USDC</span> per accepted step
-          {Math.abs(step.effectiveHourly - Number(hourly)) / Number(hourly) > 0.02 && <> (rounds to {step.effectiveHourly.toFixed(3)} an hour)</>}.
+          {t.rich("perStep", { price: step.price, b: (c) => <span className="font-semibold tabular">{c}</span> })}
+          {Math.abs(step.effectiveHourly - Number(hourly)) / Number(hourly) > 0.02 && t("rounds", { hourly: step.effectiveHourly.toFixed(3) })}.
         </p>
       ) : (
-        <p className="mt-3 text-sm text-critical">Enter a rate and a speed above zero.</p>
+        <p className="mt-3 text-sm text-critical">{t("invalid")}</p>
       )}
       <p className="mt-1 text-xs text-ink-2">
-        Typical market rate for this class: about {gpu.marketHourly.toFixed(2)} an hour ({gpu.source}). We suggest about 15% under it.
-        {client !== null && <> With the planned {PROPOSED_FEE_BPS / 100}% fee a client would pay {client.toFixed(3)} an hour, and nothing for failed time.</>}
+        {t("market", { rate: gpu.marketHourly.toFixed(2), source: tg(`${gpu.id}.source`) })}
+        {client !== null && <> {t("client", { fee: String(PROPOSED_FEE_BPS / 100), client: client.toFixed(3) })}</>}
       </p>
       {step && (
-        <div className="mt-3 space-y-1.5" aria-label="Your rate next to the market">
+        <div className="mt-3 space-y-1.5" aria-label={t("barsAria")}>
           {[
-            { k: "Typical market rate", v: gpu.marketHourly, cls: "bg-surface-3" },
-            { k: "You earn", v: step.effectiveHourly, cls: "bg-accent" },
-            { k: "Client pays, fee included", v: client ?? 0, cls: "bg-trust" },
+            { k: t("barMarket"), v: gpu.marketHourly, cls: "bg-surface-3" },
+            { k: t("barYou"), v: step.effectiveHourly, cls: "bg-accent" },
+            { k: t("barClient"), v: client ?? 0, cls: "bg-trust" },
           ].map((b) => (
             <div key={b.k} className="grid grid-cols-[9.5rem_1fr_4rem] items-center gap-2 text-xs">
               <span className="text-ink-2">{b.k}</span>
@@ -113,7 +119,7 @@ function PriceBox({ gpu, hourly, setHourly, rate, setRate, step }: {
           ))}
         </div>
       )}
-      {!gpu.measuredStepsPerS && <p className="mt-1 text-xs text-ink-2">We haven&apos;t measured this class ourselves, so put in your own speed. The figure shown is our RTX 3060&apos;s.</p>}
+      {!gpu.measuredStepsPerS && <p className="mt-1 text-xs text-ink-2">{t("unmeasured")}</p>}
     </div>
   );
 }
@@ -124,6 +130,8 @@ function guessOs(): Os {
 }
 
 export default function ProvidePage() {
+  const t = useTranslations("provide");
+  const scenes = useTranslations("scenes");
   // The OS and origin are read after hydration (the server renders Windows and the production address); a tab
   // the person picks replaces the guess.
   const guessedOs = useSyncExternalStore(noSubscribe, guessOs, () => "windows" as Os);
@@ -183,16 +191,16 @@ export default function ProvidePage() {
       <section className="relative overflow-hidden panel rounded-2xl border border-line">
         <div className="grid items-center gap-6 p-6 sm:p-8 lg:grid-cols-[1.3fr_1fr]">
           <div>
-            <h1 className="font-serif text-4xl text-ink sm:text-5xl">Earn with your idle device</h1>
+            <h1 className="font-serif text-4xl text-ink sm:text-5xl">{t("hero.title")}</h1>
             <p className="mt-3 max-w-xl text-lg text-ink-2">
-              {`Your gaming PC or laptop trains small AI models for businesses while you're not using it. When the job's model passes its quality test, you're paid for your accepted training steps. You set the price, your key never leaves your machine, and you can stop whenever you like.`}
+              {t("hero.lead")}
             </p>
             <ul className="mt-5 flex flex-wrap gap-2 text-sm">
               {[
-                [Wallet, "Test money for now, no token"],
-                [Lock, "Budget locked before work starts"],
-                [ShieldCheck, "Approved workloads only"],
-                [Power, "Stop with Ctrl+C"],
+                [Wallet, t("hero.chips.wallet")],
+                [Lock, t("hero.chips.lock")],
+                [ShieldCheck, t("hero.chips.approved")],
+                [Power, t("hero.chips.stop")],
               ].map(([Icon, text]) => {
                 const I = Icon as typeof Wallet;
                 return (
@@ -205,24 +213,25 @@ export default function ProvidePage() {
             </ul>
             <div className="mt-6 flex flex-wrap gap-3">
               <a href={KIT} download className={buttonStyles("primary", "lg")}>
-                <Download className="size-5" aria-hidden /> Download the provider kit
+                <Download className="size-5" aria-hidden /> {t("hero.download")}
               </a>
-              <a href="#steps" className={buttonStyles("secondary", "lg")}>See the 4 steps</a>
+              <a href="#steps" className={buttonStyles("secondary", "lg")}>{t("hero.seeSteps")}</a>
             </div>
             <p className="mt-3 text-sm text-muted">
-              Windows, macOS or Linux{kitBytes ? ` · ${Math.round(kitBytes / 1024)} KB` : ""} · works with an NVIDIA GPU or just a CPU
+              {t("hero.platforms")}
+              {kitBytes ? ` · ${t("hero.size", { kb: Math.round(kitBytes / 1024) })}` : ""} · {t("hero.hardware")}
             </p>
           </div>
           <div className="relative hidden h-72 place-items-center overflow-hidden lg:grid">
-            <ProductScene name="devices" title="Ekido Devices" labels={["GAMING PCS", "LAPTOPS", "PHONES: NEXT", "OUTBOUND ONLY, NO OPEN PORTS"]} />
+            <ProductScene name="devices" title="Ekido Devices" labels={scenes.raw("devices") as string[]} />
           </div>
         </div>
       </section>
 
       <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
         {/* The four steps, in order. */}
-        <Panel title="Join in four steps" subtitle="Each step shows the exact command for your system">
-          <div id="steps" className="mb-5 inline-flex rounded-lg border border-line bg-surface-2 p-1 text-sm" role="tablist" aria-label="Your system">
+        <Panel title={t("steps.title")} subtitle={t("steps.subtitle")}>
+          <div id="steps" className="mb-5 inline-flex rounded-lg border border-line bg-surface-2 p-1 text-sm" role="tablist" aria-label={t("steps.osAria")}>
             {(["windows", "unix"] as Os[]).map((o) => (
               <button
                 key={o}
@@ -232,62 +241,62 @@ export default function ProvidePage() {
                 onClick={() => setOs(o)}
                 className={cx("rounded-md px-3 py-1.5 font-medium", os === o ? "bg-surface-3 text-ink" : "text-ink-2 hover:text-ink")}
               >
-                {o === "windows" ? "Windows" : "macOS or Linux"}
+                {t(o === "windows" ? "steps.windows" : "steps.unix")}
               </button>
             ))}
           </div>
           <ol>
-            <Step n={1} title="Download and check the kit">
-              <p>It holds the agent&apos;s Python source plus setup and join scripts. Compare the hash with the one below before you run anything.</p>
-              <CopyBlock text={unzip} label="Copy download commands" />
-              <p className="break-all font-mono text-xs text-muted">SHA-256 {sha ?? "loading…"}</p>
+            <Step n={1} title={t("steps.kit.title")}>
+              <p>{t("steps.kit.body")}</p>
+              <CopyBlock text={unzip} label={t("steps.kit.copy")} />
+              <p className="break-all font-mono text-xs text-muted">{t("steps.kit.sha", { sha: sha ?? t("steps.kit.loading") })}</p>
             </Step>
-            <Step n={2} title="Set it up, once">
-              <p>
-                It makes a private Python environment in the folder, installs PyTorch for your GPU (or the CPU), and downloads the model and dataset. Needs Python 3.11 or newer,
-                about 5 GB of disk, and for a GPU an NVIDIA driver.
-              </p>
-              <CopyBlock text={setup} label="Copy setup command" />
+            <Step n={2} title={t("steps.setup.title")}>
+              <p>{t("steps.setup.body")}</p>
+              <CopyBlock text={setup} label={t("steps.setup.copy")} />
             </Step>
-            <Step n={3} title="Join with your name and price">
+            <Step n={3} title={t("steps.join.title")}>
               <div className="grid gap-3 sm:grid-cols-3">
                 <label className="space-y-1 text-sm text-ink">
-                  Name others see
+                  {t("steps.join.name")}
                   <input value={name} onChange={(e) => setName(e.target.value)} maxLength={60} className="block w-full rounded-lg border border-line-strong bg-surface-2 px-3 py-2" />
                 </label>
                 <label className="space-y-1 text-sm text-ink">
-                  Your hardware
+                  {t("steps.join.hardware")}
                   <select value={cls} onChange={(e) => pickClass(e.target.value)} className="block w-full rounded-lg border border-line-strong bg-surface-2 px-3 py-2">
-                    {GPU_CLASSES.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
+                    {GPU_CLASSES.map((c) => <option key={c.id} value={c.id}>{t.has(`gpu.${c.id}.label`) ? t(`gpu.${c.id}.label`) : c.label}</option>)}
                   </select>
                 </label>
                 <label className="space-y-1 text-sm text-ink">
-                  Run on
+                  {t("steps.join.runOn")}
                   <select value={device} onChange={(e) => setDevice(e.target.value as typeof device)} className="block w-full rounded-lg border border-line-strong bg-surface-2 px-3 py-2">
-                    <option value="auto">Best available</option>
-                    <option value="cuda">NVIDIA GPU</option>
-                    <option value="cpu">CPU only</option>
+                    <option value="auto">{t("steps.join.auto")}</option>
+                    <option value="cuda">{t("steps.join.cuda")}</option>
+                    <option value="cpu">{t("steps.join.cpu")}</option>
                   </select>
                 </label>
               </div>
-              {!nameOk && <p className="text-sm text-critical">Use letters, numbers, spaces, dots, hyphens or underscores.</p>}
+              {!nameOk && <p className="text-sm text-critical">{t("steps.join.nameBad")}</p>}
               <PriceBox gpu={gpu} hourly={hourly} setHourly={setHourly} rate={rate} setRate={setRate} step={step} />
               {publicNet ? (
-                nameOk && priceOk && <CopyBlock text={join} label="Copy join command" />
+                nameOk && priceOk && <CopyBlock text={join} label={t("steps.join.copy")} />
               ) : (
                 <p className="rounded-lg border border-line bg-surface-2 p-3 text-sm text-ink">
-                  This copy of the site runs the local demo network. To join the public test network, open this page on{" "}
-                  <a className="underline underline-offset-4" href="https://ekido.duckdns.org/provide">ekido.duckdns.org</a>.
+                  {t.rich("steps.join.localNet", {
+                    link: (c) => <a className="underline underline-offset-4" href="https://ekido.duckdns.org/provide">{c}</a>,
+                  })}
                 </p>
               )}
               <p className="text-sm">
-                The first run creates your key in <code className="font-mono text-xs">~/.ekido/provider.key</code> (a key made by an earlier version of the kit keeps working) and prints only your address. Never share that file.
+                {t.rich("steps.join.key", { code: (c) => <code className="font-mono text-xs">{c}</code> })}
               </p>
             </Step>
-            <Step n={4} title="Get paid">
+            <Step n={4} title={t("steps.paid.title")}>
               <p>
-                When a job you worked on settles, your share waits in the escrow under your address. Paste the address into{" "}
-                <Link href="/chain" className="text-ink underline underline-offset-4">Check any wallet</Link> to see it, then call <code className="font-mono text-xs">withdraw()</code> from that wallet whenever you like.
+                {t.rich("steps.paid.body", {
+                  link: (c) => <Link href="/chain" className="text-ink underline underline-offset-4">{c}</Link>,
+                  code: (c) => <code className="font-mono text-xs">{c}</code>,
+                })}
               </p>
             </Step>
           </ol>
@@ -296,54 +305,52 @@ export default function ProvidePage() {
         <div className="space-y-6">
           <ProviderChecklist />
           {/* Estimator: the number every provider wants first. */}
-          <Panel title="What could you earn?" subtitle="An estimate from your price and speed, not a promise">
+          <Panel title={t("earn.title")} subtitle={t("earn.subtitle")}>
             <div className="grid grid-cols-2 gap-3 text-sm">
               <label className="space-y-1 text-ink">
-                Steps per second
+                {t("earn.speed")}
                 <input value={rate} onChange={(e) => setRate(e.target.value)} inputMode="decimal" className="block w-full rounded-lg border border-line-strong bg-surface-2 px-3 py-2 tabular" />
               </label>
               <label className="space-y-1 text-ink">
-                Your rate, USDC an hour
+                {t("earn.rate")}
                 <input value={hourly} onChange={(e) => setHourly(e.target.value)} inputMode="decimal" className="block w-full rounded-lg border border-line-strong bg-surface-2 px-3 py-2 tabular" />
               </label>
               <label className="col-span-2 space-y-1 text-ink">
-                Hours a day you&apos;re connected: <span className="font-semibold tabular">{hours}</span>
+                {t.rich("earn.hours", { hours, b: (c) => <span className="font-semibold tabular">{c}</span> })}
                 <input type="range" min={1} max={24} value={hours} onChange={(e) => setHours(Number(e.target.value))} className="block w-full accent-[var(--accent)]" />
               </label>
               <label className="col-span-2 space-y-1 text-ink">
-                Share of that time with a job: <span className="font-semibold tabular">{busy}%</span>
+                {t.rich("earn.busy", { busy, b: (c) => <span className="font-semibold tabular">{c}</span> })}
                 <input type="range" min={5} max={100} step={5} value={busy} onChange={(e) => setBusy(Number(e.target.value))} className="block w-full accent-[var(--accent)]" />
               </label>
             </div>
             <dl className="mt-5 grid grid-cols-3 gap-3 border-t border-line pt-4 text-center">
               {[
-                ["While training", est?.perHour, "/ hour"],
-                ["Per day", est?.perDay, "/ day"],
-                ["Per month", est?.perMonth, "/ 30 days"],
+                [t("earn.perHour"), est?.perHour, t("earn.unitHour")],
+                [t("earn.perDay"), est?.perDay, t("earn.unitDay")],
+                [t("earn.perMonth"), est?.perMonth, t("earn.unitMonth")],
               ].map(([label, value, unit]) => (
                 <div key={label as string}>
                   <dt className="text-xs text-muted">{label as string}</dt>
                   <dd className="mt-0.5 text-xl font-semibold text-ink tabular">{value == null ? "–" : fmt(value as number)}</dd>
-                  <dd className="text-xs text-ink-2">USDC {unit as string}</dd>
+                  <dd className="text-xs text-ink-2">{unit as string}</dd>
                 </div>
               ))}
             </dl>
             <p className="mt-4 text-xs text-muted">
-              Rate × hours × share busy, after rounding your rate to a whole micro-USDC per step. {MEASURED_3060_STEPS_PER_S} steps/s is what our RTX 3060 Laptop measured on this
-              workload; yours will differ. How busy you are depends on demand, which is small on a test network. Only accepted steps pay, and this network uses test USDC with no value.
+              {t("earn.note", { measured: MEASURED_3060_STEPS_PER_S })}
             </p>
           </Panel>
 
-          <Panel title="What runs on your machine">
+          <Panel title={t("runs.title")}>
             <ul className="space-y-3 text-sm text-ink-2">
-              <li className="flex gap-2"><Cpu className="mt-0.5 size-4 shrink-0 text-ink" aria-hidden /><span><strong className="text-ink">Only approved training jobs.</strong> Today that&apos;s fine-tuning a small text model on a public dataset. No one can send you arbitrary code.</span></li>
-              <li className="flex gap-2"><ShieldCheck className="mt-0.5 size-4 shrink-0 text-ink" aria-hidden /><span><strong className="text-ink">Checkpoints are data, never code.</strong> They&apos;re safetensors and JSON, checked for size, shape and bad values before loading.</span></li>
-              <li className="flex gap-2"><Lock className="mt-0.5 size-4 shrink-0 text-ink" aria-hidden /><span><strong className="text-ink">Your key stays put.</strong> The site never asks for it. The agent signs your work with it locally.</span></li>
-              <li className="flex gap-2"><Power className="mt-0.5 size-4 shrink-0 text-ink" aria-hidden /><span><strong className="text-ink">Stop any time.</strong> The job moves on from its last checkpoint, and the accepted steps you did are still yours.</span></li>
+              <li className="flex gap-2"><Cpu className="mt-0.5 size-4 shrink-0 text-ink" aria-hidden /><span>{t.rich("runs.approved", { b: strong })}</span></li>
+              <li className="flex gap-2"><ShieldCheck className="mt-0.5 size-4 shrink-0 text-ink" aria-hidden /><span>{t.rich("runs.data", { b: strong })}</span></li>
+              <li className="flex gap-2"><Lock className="mt-0.5 size-4 shrink-0 text-ink" aria-hidden /><span>{t.rich("runs.key", { b: strong })}</span></li>
+              <li className="flex gap-2"><Power className="mt-0.5 size-4 shrink-0 text-ink" aria-hidden /><span>{t.rich("runs.stop", { b: strong })}</span></li>
             </ul>
             <p className="mt-4 rounded-lg border border-line bg-surface-2 p-3 text-xs text-ink-2">
-              The kit runs jobs as normal processes under your user, so only join a coordinator you trust. It&apos;s a prototype on a test network and is unaudited. More on the{" "}
-              <Link href="/security" className="underline underline-offset-4">security page</Link>.
+              {t.rich("runs.trust", { link: (c) => <Link href="/security" className="underline underline-offset-4">{c}</Link> })}
             </p>
           </Panel>
         </div>

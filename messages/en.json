@@ -1861,6 +1861,133 @@
       }
     }
   },
+  "provide": {
+    "copy": {
+      "idle": "Copy",
+      "done": "Copied",
+      "fail": "Select and copy"
+    },
+    "hero": {
+      "title": "Earn with your idle device",
+      "lead": "Your gaming PC or laptop trains small AI models for businesses while you're not using it. When the job's model passes its quality test, you're paid for your accepted training steps. You set the price, your key never leaves your machine, and you can stop whenever you like.",
+      "chips": {
+        "wallet": "Test money for now, no token",
+        "lock": "Budget locked before work starts",
+        "approved": "Approved workloads only",
+        "stop": "Stop with Ctrl+C"
+      },
+      "download": "Download the provider kit",
+      "seeSteps": "See the 4 steps",
+      "platforms": "Windows, macOS or Linux",
+      "size": "{kb} KB",
+      "hardware": "works with an NVIDIA GPU or just a CPU"
+    },
+    "steps": {
+      "title": "Join in four steps",
+      "subtitle": "Each step shows the exact command for your system",
+      "osAria": "Your system",
+      "windows": "Windows",
+      "unix": "macOS or Linux",
+      "kit": {
+        "title": "Download and check the kit",
+        "body": "It holds the agent's Python source plus setup and join scripts. Compare the hash with the one below before you run anything.",
+        "copy": "Copy download commands",
+        "sha": "SHA-256 {sha}",
+        "loading": "loading…"
+      },
+      "setup": {
+        "title": "Set it up, once",
+        "body": "It makes a private Python environment in the folder, installs PyTorch for your GPU (or the CPU), and downloads the model and dataset. Needs Python 3.11 or newer, about 5 GB of disk, and for a GPU an NVIDIA driver.",
+        "copy": "Copy setup command"
+      },
+      "join": {
+        "title": "Join with your name and price",
+        "name": "Name others see",
+        "hardware": "Your hardware",
+        "runOn": "Run on",
+        "auto": "Best available",
+        "cuda": "NVIDIA GPU",
+        "cpu": "CPU only",
+        "nameBad": "Use letters, numbers, spaces, dots, hyphens or underscores.",
+        "copy": "Copy join command",
+        "localNet": "This copy of the site runs the local demo network. To join the public test network, open this page on <link>ekido.duckdns.org</link>.",
+        "key": "The first run creates your key in <code>~/.ekido/provider.key</code> (a key made by an earlier version of the kit keeps working) and prints only your address. Never share that file."
+      },
+      "paid": {
+        "title": "Get paid",
+        "body": "When a job you worked on settles, your share waits in the escrow under your address. Paste the address into <link>Check any wallet</link> to see it, then call <code>withdraw()</code> from that wallet whenever you like."
+      }
+    },
+    "price": {
+      "rate": "Your rate, USDC per hour of accepted work",
+      "speed": "Your speed, steps per second",
+      "perStep": "That's <b>{price} USDC</b> per accepted step",
+      "rounds": " (rounds to {hourly} an hour)",
+      "invalid": "Enter a rate and a speed above zero.",
+      "market": "Typical market rate for this class: about {rate} an hour ({source}). We suggest about 15% under it.",
+      "client": "With the planned {fee}% fee a client would pay {client} an hour, and nothing for failed time.",
+      "barsAria": "Your rate next to the market",
+      "barMarket": "Typical market rate",
+      "barYou": "You earn",
+      "barClient": "Client pays, fee included",
+      "unmeasured": "We haven't measured this class ourselves, so put in your own speed. The figure shown is our RTX 3060's."
+    },
+    "earn": {
+      "title": "What could you earn?",
+      "subtitle": "An estimate from your price and speed, not a promise",
+      "speed": "Steps per second",
+      "rate": "Your rate, USDC an hour",
+      "hours": "Hours a day you're connected: <b>{hours}</b>",
+      "busy": "Share of that time with a job: <b>{busy}%</b>",
+      "perHour": "While training",
+      "perDay": "Per day",
+      "perMonth": "Per month",
+      "unitHour": "USDC / hour",
+      "unitDay": "USDC / day",
+      "unitMonth": "USDC / 30 days",
+      "note": "Rate × hours × share busy, after rounding your rate to a whole micro-USDC per step. {measured} steps/s is what our RTX 3060 Laptop measured on this workload; yours will differ. How busy you are depends on demand, which is small on a test network. Only accepted steps pay, and this network uses test USDC with no value."
+    },
+    "runs": {
+      "title": "What runs on your machine",
+      "approved": "<b>Only approved training jobs.</b> Today that's fine-tuning a small text model on a public dataset. No one can send you arbitrary code.",
+      "data": "<b>Checkpoints are data, never code.</b> They're safetensors and JSON, checked for size, shape and bad values before loading.",
+      "key": "<b>Your key stays put.</b> The site never asks for it. The agent signs your work with it locally.",
+      "stop": "<b>Stop any time.</b> The job moves on from its last checkpoint, and the accepted steps you did are still yours.",
+      "trust": "The kit runs jobs as normal processes under your user, so only join a coordinator you trust. It's a prototype on a test network and is unaudited. More on the <link>security page</link>."
+    },
+    "checklist": {
+      "steps": {
+        "price": "Chose your GPU and rate",
+        "kit": "Downloaded and checked the kit",
+        "setup": "Ran setup",
+        "join": "Joined the network",
+        "gas": "Added test ETH to list on-chain",
+        "paid": "Got your first payout"
+      },
+      "done": "You're a provider",
+      "progress": "{count} of {total} done",
+      "doneHint": "Nice. Check the On-chain page for your earnings.",
+      "hint": "Tick each step as you finish it."
+    },
+    "gpu": {
+      "rtx3060": {
+        "source": "Our estimate: no public figure found; priced below the RTX 4090 range"
+      },
+      "rtx4090": {
+        "source": "Vast.ai median, late Oct 2026 (joulemath.com)"
+      },
+      "a100": {
+        "source": "Marketplace range $0.40 to $1.19 (Vast.ai, RunPod), Oct 2026"
+      },
+      "h100": {
+        "source": "Marketplace range $1.50 to $2.99 (Vast.ai, RunPod), Oct 2026"
+      },
+      "cpu": {
+        "label": "CPU only",
+        "source": "Our estimate for a desktop CPU"
+      }
+    }
+  },
   "help": {
     "metaDescription": "How to rent out a GPU, submit a job, check a payout on-chain, and what every badge means.",
     "title": "Help",
