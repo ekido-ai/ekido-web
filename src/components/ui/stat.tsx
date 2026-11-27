@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { StatusIcon } from "./status";
 import { cx } from "./cx";
 
@@ -19,6 +20,7 @@ export function Stat({
   digits?: number;
   size?: "md" | "lg";
 }) {
+  const unknown = useTranslations("demo.shared")("unknown");
   const known = value !== null && value !== undefined && !(typeof value === "number" && Number.isNaN(value));
   const shown = !known ? null : typeof value === "number" ? value.toFixed(digits) : value;
   return (
@@ -31,7 +33,7 @@ export function Stat({
             {unit && <span className="ml-1 text-base font-normal text-ink-2">{unit}</span>}
           </>
         ) : (
-          <span className="text-lg font-normal italic text-muted">unknown</span>
+          <span className="text-lg font-normal italic text-muted">{unknown}</span>
         )}
       </div>
       {source && <div className="mt-0.5 text-xs text-muted">{source}</div>}
@@ -56,6 +58,7 @@ export function Meter({
   unit: string;
   warnAt?: number;
 }) {
+  const unknown = useTranslations("demo.shared")("unknown");
   const known = value !== null && max !== null && max > 0;
   const frac = known ? Math.min(1, value / max) : 0;
   const warn = known && frac >= warnAt;
@@ -70,7 +73,7 @@ export function Meter({
               {Math.round(value)} / {Math.round(max)} {unit}
             </>
           ) : (
-            <span className="italic text-muted">unknown</span>
+            <span className="italic text-muted">{unknown}</span>
           )}
         </span>
       </div>
