@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { canonical, compareListings, metadataHash, priceMicros, providerMetadata } from "./registry";
+import { canonical, compareListings, isProvider, metadataHash, priceMicros, providerMetadata } from "./registry";
 
 // Same vector as packages/ekido_core/tests/test_provider_meta.py.
 const VECTOR_JSON = '{"capacity_mib":8192,"kind":"gpuchain.provider_meta.v1","name":"Vaibhav RTX 4060","price_per_step_micros":4,"wallet":"0x00000000000000000000000000000000000000aa"}';
@@ -42,5 +42,20 @@ describe("comparing the chain with the coordinator", () => {
     const r = compareListings(onchain, [{ name: "Other", wallet_address: "0x" + "b".repeat(40), price_per_step: "0.000001", capacity_mib: null }]);
     expect(r.listings[0].status).toBe("not-listed");
     expect(r.offChainOnly).toBe(1);
+  });
+});
+
+describe("isProvider", () => {
+  it("counts a wallet paid for accepted work, even when it isn't listed or registered", () => {
+    expect(isProvider({ coordRow: null, listing: null, paidJobs: 1 })).toBe(true);
+  });
+
+  it("counts a listed or registered wallet with no payouts yet", () => {
+    expect(isProvider({ coordRow: { name: "x" }, listing: null, paidJobs: 0 })).toBe(true);
+    expect(isProvider({ coordRow: null, listing: { status: "matches" }, paidJobs: 0 })).toBe(true);
+  });
+
+  it("doesn't count a wallet with none of the three", () => {
+    expect(isProvider({ coordRow: null, listing: null, paidJobs: 0 })).toBe(false);
   });
 });
