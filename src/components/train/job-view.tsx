@@ -22,15 +22,20 @@ export function JobView({ jobId }: { jobId: string }) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Live over a WebSocket (ticket #156); the old polling takes over whenever the socket is not delivering.
     let stop = false;
     let timer: ReturnType<typeof setTimeout> | undefined;
+    let socket: WebSocket | undefined;
+    const show = (j: CustomerJob) => {
+      setJob(j);
+      setError(null);
+    };
     const tick = () =>
       train
         .job(jobId)
         .then((j) => {
           if (stop) return;
-          setJob(j);
-          setError(null);
+          show(j);
           if (!DONE.has(j.stage)) timer = setTimeout(tick, 5000);
         })
         .catch((e) => {
@@ -38,9 +43,32 @@ export function JobView({ jobId }: { jobId: string }) {
           setError(e instanceof PlatformError && e.status === 404 ? t("notFound") : (e as Error).message);
           timer = setTimeout(tick, 10000);
         });
-    void tick();
+    const connect = () => {
+      let last: CustomerJob | null = null;
+      try {
+        socket = new WebSocket(`${new URL(apiBase(), window.location.href).href.replace(/^http/, "ws")}/jobs/${encodeURIComponent(jobId)}/live`);
+      } catch {
+        void tick();
+        return;
+      }
+      socket.onmessage = (event) => {
+        try {
+          const message = JSON.parse(String(event.data)) as { type: string; job?: CustomerJob };
+          if (!stop && message.type === "job" && message.job) show((last = message.job));
+        } catch {
+          // Not our message: ignore it. The close handler still falls back to polling.
+        }
+      };
+      socket.onclose = () => {
+        // Finished: nothing more to watch. Anything else (refused, dropped, a proxy without WebSockets): poll.
+        if (!stop && !(last && DONE.has(last.stage))) void tick();
+      };
+    };
+    if (typeof WebSocket === "undefined") void tick();
+    else connect();
     return () => {
       stop = true;
+      socket?.close();
       if (timer) clearTimeout(timer);
     };
   }, [jobId, t]);
