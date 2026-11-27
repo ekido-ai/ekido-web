@@ -27,11 +27,12 @@ const evidenceText = {
 
 /** One compact reading: value in ink, unit and label muted. Unknown stays "unknown". */
 function Reading({ label, value, unit }: { label: string; value: number | null; unit: string }) {
+  const t = useTranslations("demo.shared");
   return (
     <span className="whitespace-nowrap">
       <span className="text-muted">{label} </span>
       {value === null ? (
-        <span className="italic text-muted">unknown</span>
+        <span className="italic text-muted">{t("unknown")}</span>
       ) : (
         <span className="tabular font-semibold text-ink">
           {Math.round(value)}

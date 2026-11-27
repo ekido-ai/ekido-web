@@ -6,8 +6,10 @@ import { DropZone, checkFile, fileSize } from "./drop-zone";
 import { QuoteCard, quoteTime } from "./quote-card";
 import { JobProgress, jobSteps } from "./job-progress";
 import { ApiKeyList } from "./api-key-list";
+import { MemberList } from "./member-list";
+import { RetryNotice, clock } from "./retry-notice";
 import type { CustomerJob, Quote } from "@/lib/platform/train";
-import type { ApiKey } from "@/lib/platform/api";
+import type { ApiKey, Member } from "@/lib/platform/api";
 
 /** P4 (ekido-ai/ekido-internal#45): one case per listed state of each component. */
 
@@ -285,5 +287,68 @@ describe("DropZone", () => {
     expect(checkFile({ name: "a.csv", size: 11 }, [".csv"], 10)).toBe("too-big");
     expect(checkFile({ name: "a.csv", size: 0 }, [".csv"], 10)).toBe("empty");
     expect([fileSize(900), fileSize(2048), fileSize(3 * MB)]).toEqual(["900 B", "2.0 KB", "3.0 MB"]);
+  });
+});
+
+describe("RetryNotice", () => {
+  it("clock: minutes and seconds, hours past an hour, never negative", () => {
+    expect([clock(0), clock(59.2), clock(61), clock(3000), clock(3725), clock(-5)]).toEqual(["0:00", "1:00", "1:01", "50:00", "1:02:05", "0:00"]);
+  });
+
+  it("waiting: says what happened, counts down, and Try again stays off until the wait is over", () => {
+    vi.useFakeTimers();
+    try {
+      let at = 1_000_000;
+      const again = vi.fn();
+      renderEn(<RetryNotice title="A short pause for a@x.co" detail="We're pausing for a bit." until={at + 90_000} againLabel="Send the invite again" onAgain={again} now={() => at} />);
+      expect(screen.getByText("A short pause for a@x.co")).toBeTruthy();
+      expect(document.body.textContent).toContain("1:30");
+      expect(document.body.textContent).toContain("2 minutes");
+      const button = screen.getByRole("button", { name: "Send the invite again" }) as HTMLButtonElement;
+      expect(button.disabled).toBe(true);
+      at += 31_000;
+      act(() => vi.advanceTimersByTime(1000));
+      expect(document.body.textContent).toContain("0:59");
+      at += 60_000;
+      act(() => vi.advanceTimersByTime(1000));
+      expect(button.disabled).toBe(false);
+      expect(document.body.textContent).toMatch(/try again now/i);
+      fireEvent.click(button);
+      expect(again).toHaveBeenCalledOnce();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+});
+
+const member = (m: Partial<Member>): Member => ({ user_id: "u1", email: "owner@x.co", role: "owner", status: "joined", ...m });
+
+describe("MemberList", () => {
+  it("an invited person shows as Invited, with when, and owners can resend or cancel", () => {
+    const resend = vi.fn(() => Promise.resolve(true));
+    const remove = vi.fn();
+    renderEn(
+      <MemberList
+        members={[member({}), member({ user_id: "u2", email: "staff@x.co", role: "member", status: "invited", invited_at: new Date(Date.now() - 2 * 3600_000).toISOString() })]}
+        myUserId="u1"
+        manage
+        onRemove={remove}
+        onResend={resend}
+      />,
+    );
+    const [owner, staff] = screen.getAllByRole("listitem");
+    expect(owner.textContent).not.toContain("Invited");
+    expect(staff.textContent).toContain("Invited");
+    expect(staff.textContent).toMatch(/Invite sent 2 hours ago/);
+    fireEvent.click(screen.getByRole("button", { name: /Resend/ }));
+    expect(resend).toHaveBeenCalledWith(expect.objectContaining({ email: "staff@x.co", role: "member" }));
+    expect(screen.getByRole("button", { name: "Cancel invite" })).toBeTruthy();
+    expect(document.body.textContent).not.toMatch(/settings\./);
+  });
+
+  it("a member can't resend or remove; an older Platform without status shows everyone as joined", () => {
+    renderEn(<MemberList members={[member({ status: undefined }), member({ user_id: "u2", email: "b@x.co", role: "member", status: undefined })]} myUserId="u2" manage={false} onRemove={vi.fn()} onResend={vi.fn()} />);
+    expect(screen.queryByRole("button")).toBeNull();
+    expect(document.body.textContent).not.toContain("Invited");
   });
 });

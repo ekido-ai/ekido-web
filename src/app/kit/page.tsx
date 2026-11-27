@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Skull } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button, ConfirmButton } from "@/components/ui/button";
 import { Panel } from "@/components/ui/panel";
 import { ProviderChip } from "@/components/ui/provider-chip";
@@ -20,15 +21,8 @@ import { PlatformKit } from "@/components/platform/kit-samples";
 import { TruthBadge, type Truth } from "@/components/ui/truth-badge";
 
 const truths: Truth[] = ["REAL", "REAL_SEPARATE", "CAPPED_PROFILE", "INJECTED_FAULT", "RECORDED", "SAMPLE", "LOCAL_CHAIN", "SYNTHETIC"];
-const tones: [Tone, string][] = [
-  ["good", "Accepted"],
-  ["warning", "Recovering"],
-  ["serious", "Injected fault"],
-  ["critical", "Rejected"],
-  ["active", "Training"],
-  ["neutral", "Online"],
-  ["idle", "Offline"],
-];
+// Each tone's sample word is in messages (kit.tones.<tone>).
+const tones: Tone[] = ["good", "warning", "serious", "critical", "active", "neutral", "idle"];
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -39,93 +33,92 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 }
 
 export default function KitPage() {
+  const t = useTranslations("kit");
   const [kills, setKills] = useState(0);
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-ink">Component kit</h1>
+        <h1 className="text-3xl font-bold text-ink">{t("title")}</h1>
         <p className="mt-1 max-w-3xl text-ink-2">
-          Every building block in every state. Color is reserved for meaning: status, provider identity, and caution
-          badges. Status always pairs an icon with a word.
+          {t("lead")}
         </p>
       </div>
 
-      <Section title="Truth badges">
-        {truths.map((t) => (
-          <TruthBadge key={t} truth={t} />
+      <Section title={t("truthBadges")}>
+        {truths.map((truth) => (
+          <TruthBadge key={truth} truth={truth} />
         ))}
       </Section>
 
-      <Section title="Status">
-        {tones.map(([t, l]) => (
-          <StatusPill key={t} tone={t}>
-            {l}
+      <Section title={t("status")}>
+        {tones.map((tone) => (
+          <StatusPill key={tone} tone={tone}>
+            {t(`tones.${tone}`)}
           </StatusPill>
         ))}
         <StatusPill tone="warning" size="lg">
-          Provider A stopped responding. Recovering
+          {t("statusLong")}
         </StatusPill>
       </Section>
 
-      <Section title="Provider identity">
+      <Section title={t("identity")}>
         {["A", "B", "R", "C", "P"].map((id) => (
           <ProviderChip key={id} id={id} />
         ))}
         <p className="w-full text-sm text-muted">
-          Fixed slot per provider id, never by rank. P (the injected-fault trainer) stays neutral so it never looks
-          like a real series.
+          {t("identityNote")}
         </p>
       </Section>
 
-      <Section title="Numbers: unit, source, and unknown">
+      <Section title={t("numbers")}>
         <div className="grid w-full grid-cols-2 gap-6 sm:grid-cols-4">
-          <Stat label="Throughput" value={1.62} digits={2} unit="steps/s" source="Measured by runtime" />
-          <Stat label="GPU temperature" value={74} unit="°C" source="Host NVML" />
-          <Stat label="Power" value={null} unit="W" source="Host NVML" />
-          <Stat label="Recovery time" value={41.3} digits={1} unit="s" source="Sample data" size="lg" />
+          <Stat label={t("throughput")} value={1.62} digits={2} unit={t("stepsPerS")} source={t("measuredRuntime")} />
+          <Stat label={t("gpuTemp")} value={74} unit="°C" source={t("hostNvml")} />
+          <Stat label={t("power")} value={null} unit="W" source={t("hostNvml")} />
+          <Stat label={t("recoveryTime")} value={41.3} digits={1} unit="s" source={t("sampleData")} size="lg" />
         </div>
         <div className="grid w-full gap-4 sm:grid-cols-3">
-          <Meter label="VRAM · Provider A" value={4810} max={6144} unit="MiB" />
-          <Meter label="VRAM · Provider B (cap)" value={2860} max={3072} unit="MiB" />
-          <Meter label="VRAM · Provider C" value={null} max={null} unit="MiB" />
+          <Meter label={t("vram", { id: "A" })} value={4810} max={6144} unit="MiB" />
+          <Meter label={t("vramCap", { id: "B" })} value={2860} max={3072} unit="MiB" />
+          <Meter label={t("vram", { id: "C" })} value={null} max={null} unit="MiB" />
         </div>
       </Section>
 
-      <Section title="Buttons">
-        <Button variant="primary">Submit job</Button>
-        <Button>Secondary</Button>
-        <Button variant="ghost">Ghost</Button>
-        <Button disabled>Disabled</Button>
-        <ConfirmButton size="lg" onConfirm={() => setKills((k) => k + 1)} confirmLabel="Press again to kill">
-          <Skull className="size-5" aria-hidden /> Kill Provider A
+      <Section title={t("buttons")}>
+        <Button variant="primary">{t("submitJob")}</Button>
+        <Button>{t("secondary")}</Button>
+        <Button variant="ghost">{t("ghost")}</Button>
+        <Button disabled>{t("disabled")}</Button>
+        <ConfirmButton size="lg" onConfirm={() => setKills((k) => k + 1)} confirmLabel={t("pressToKill")}>
+          <Skull className="size-5" aria-hidden /> {t("kill")}
         </ConfirmButton>
         <p className="w-full text-sm text-muted">
-          Kill needs a second press within 3 s. No browser dialog. Confirmed {kills} time{kills === 1 ? "" : "s"} here.
+          {t("killNote", { n: kills })}
         </p>
       </Section>
 
-      <Section title="Timeline">
+      <Section title={t("timeline")}>
         <div className="w-full max-w-2xl">
           <Timeline
             entries={[
-              { id: "1", time: "01:25", tone: "serious", title: "Provider A stopped", detail: "Container killed from the dashboard (docker kill)" },
-              { id: "2", time: "01:26", tone: "good", title: "Old worker fenced", detail: "Fencing token 1 → 2. Writes from the old worker are now rejected" },
-              { id: "3", time: "01:27", tone: "good", title: "Checkpoint chosen", detail: "Step 100, accepted. 12 steps lost" },
-              { id: "4", time: "01:28", tone: "active", title: "Finding a replacement" },
+              { id: "1", time: "01:25", tone: "serious", title: t("tl.stoppedTitle"), detail: t("tl.stoppedDetail") },
+              { id: "2", time: "01:26", tone: "good", title: t("tl.fencedTitle"), detail: t("tl.fencedDetail") },
+              { id: "3", time: "01:27", tone: "good", title: t("tl.chosenTitle"), detail: t("tl.chosenDetail") },
+              { id: "4", time: "01:28", tone: "active", title: t("tl.replacing") },
             ]}
           />
         </div>
       </Section>
 
-      <Panel title="States">
+      <Panel title={t("states")}>
         <div className="grid gap-4 md:grid-cols-2">
-          <EmptyState title="No providers online">Start an agent, or play the replay to see the sample network.</EmptyState>
+          <EmptyState title={t("noProvidersTitle")}>{t("noProviders")}</EmptyState>
           <div className="space-y-4">
-            <LoadingState waitingFor="the first heartbeat from Provider B" />
+            <LoadingState waitingFor={t("heartbeat")} />
             <SkeletonLines />
             <OfflineState since="10:02:14" />
             <ErrorState
-              title="Couldn't load checkpoints"
+              title={t("checkpointsError")}
               detail="GET /jobs/job-sample-0001/checkpoints returned 503"
               onRetry={() => {}}
             />

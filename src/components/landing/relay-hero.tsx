@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BadgeCheck, Gamepad2, Laptop, RotateCcw, Smartphone } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cx } from "@/components/ui/cx";
 
 /*
@@ -21,15 +22,10 @@ const TIMELINE: [Phase, number][] = [
   ["passed", 7900],
 ];
 
-const caption: Record<Phase, string> = {
-  pc: "A gaming PC is training your model.",
-  dropped: "The PC went offline. Its last checkpoint is safe.",
-  laptop: "A laptop picks up the sash and carries on from that checkpoint.",
-  checking: "Checking the model on your own test examples…",
-  passed: "It passed your test and beat the untrained model. Now it's yours.",
-};
+// Each phase's caption is in messages (relay.caption.<phase>).
 
 export function RelayHero() {
+  const t = useTranslations("relay");
   const [phase, setPhase] = useState<Phase>("pc");
   const [run, setRun] = useState(0);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
@@ -62,23 +58,23 @@ export function RelayHero() {
   const progress = phase === "pc" ? 45 : phase === "dropped" ? 45 : 100;
 
   const devices = [
-    { key: "pc", name: "Gaming PC", note: reached("dropped") ? "Went offline" : "Training", Icon: Gamepad2, lost: reached("dropped"), active: !reached("dropped") },
-    { key: "laptop", name: "Laptop", note: onLaptop ? (reached("checking") ? "Done" : "Picked up the sash") : "Idle, ready", Icon: Laptop, lost: false, active: onLaptop && !reached("checking") },
-    { key: "phone", name: "Phone", note: "Later: while charging", Icon: Smartphone, lost: false, active: false, later: true },
+    { key: "pc", name: t("devices.pc"), note: t(reached("dropped") ? "notes.offline" : "notes.training"), Icon: Gamepad2, lost: reached("dropped"), active: !reached("dropped") },
+    { key: "laptop", name: t("devices.laptop"), note: t(onLaptop ? (reached("checking") ? "notes.done" : "notes.pickedUp") : "notes.ready"), Icon: Laptop, lost: false, active: onLaptop && !reached("checking") },
+    { key: "phone", name: t("devices.phone"), note: t("notes.later"), Icon: Smartphone, lost: false, active: false, later: true },
   ];
 
   return (
-    <figure className="relative" aria-label="How Ekido trains a model: an illustration">
+    <figure className="relative" aria-label={t("aria")}>
       <div className="theme-dark device grain relative overflow-hidden p-5 sm:p-7">
         <div className="flex items-center justify-between gap-3 text-sm">
-          <span className="font-medium text-ink">Your job: sort support tickets</span>
+          <span className="font-medium text-ink">{t("job")}</span>
           <button
             type="button"
             onClick={play}
             className="press inline-flex items-center gap-1.5 rounded-full border border-line px-3 py-1 text-xs text-ink-2 hover:text-ink"
-            aria-label="Play the relay again"
+            aria-label={t("replayAria")}
           >
-            <RotateCcw className="size-3.5" aria-hidden /> Replay
+            <RotateCcw className="size-3.5" aria-hidden /> {t("replay")}
           </button>
         </div>
 
@@ -109,7 +105,7 @@ export function RelayHero() {
 
         <div className="mt-6">
           <div className="flex justify-between text-xs text-muted">
-            <span>Training</span>
+            <span>{t("training")}</span>
             <span className="tabular">{progress}%</span>
           </div>
           <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-surface-3">
@@ -129,16 +125,16 @@ export function RelayHero() {
         >
           <BadgeCheck className={cx("size-6 shrink-0", phase === "passed" ? "text-success" : "text-muted")} aria-hidden />
           <div className="min-w-0">
-            <div className="text-sm font-semibold text-ink">{phase === "passed" ? "Your model passed" : "Quality check"}</div>
-            <div className="text-xs text-ink-2">Must pass your test, and beat the untrained model. Otherwise, a full refund.</div>
+            <div className="text-sm font-semibold text-ink">{t(phase === "passed" ? "passed" : "check")}</div>
+            <div className="text-xs text-ink-2">{t("checkNote")}</div>
           </div>
         </div>
 
         <p className="mt-4 min-h-[2.5rem] text-sm text-ink" aria-live="polite">
-          {caption[phase]}
+          {t(`caption.${phase}`)}
         </p>
       </div>
-      <figcaption className="mt-2 text-xs text-muted">An illustration. The recorded run further down is the real thing.</figcaption>
+      <figcaption className="mt-2 text-xs text-muted">{t("figcaption")}</figcaption>
     </figure>
   );
 }

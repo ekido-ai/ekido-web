@@ -3,7 +3,7 @@
 import { Pause, Play, Radio, RotateCcw, SkipForward, History } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useDashboard, usePlayer, usePlayerSnapshot, useSourceControl } from "@/lib/events/source-context";
-import { describeStage, formatClock } from "@/lib/events/describe";
+import { describeStage, formatClock, localizeStage } from "@/lib/events/describe";
 import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Panel } from "@/components/ui/panel";
@@ -140,7 +140,9 @@ export default function SourcePage() {
   const view = useDashboard();
   const { mode, setMode } = useSourceControl();
   const { state } = view;
-  const stage = describeStage(state);
+  const ts = useTranslations("demo.stage");
+  const described = describeStage(state);
+  const stage = { ...described, ...localizeStage(described, ts) };
   const recent = state.log.slice(-40).reverse();
 
   return (

@@ -26,10 +26,11 @@ export function EmptyState({
 
 /** Loading always says what it is waiting for. No bare spinner. */
 export function LoadingState({ waitingFor }: { waitingFor: string }) {
+  const t = useTranslations("shell.states");
   return (
     <div className="flex items-center gap-3 rounded-lg border border-line bg-surface-2 px-4 py-3" role="status">
       <StatusIcon tone="active" />
-      <span className="text-sm text-ink">Waiting for {waitingFor}…</span>
+      <span className="text-sm text-ink">{t("waitingFor", { what: waitingFor })}</span>
     </div>
   );
 }
@@ -57,6 +58,7 @@ export function ErrorState({
   detail?: string;
   onRetry?: () => void;
 }) {
+  const t = useTranslations("shell.states");
   return (
     <div className="flex items-start gap-3 rounded-lg border border-critical bg-surface-2 px-4 py-3" role="alert">
       <StatusIcon tone="critical" className="mt-0.5" />
@@ -66,7 +68,7 @@ export function ErrorState({
       </div>
       {onRetry && (
         <Button size="sm" onClick={onRetry}>
-          Retry
+          {t("retry")}
         </Button>
       )}
     </div>
